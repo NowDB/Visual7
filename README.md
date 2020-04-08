@@ -1,5 +1,4 @@
 # Visual7
-===============
 
 [![Gitter](https://img.shields.io/:chat-on_gitter-ED2067.svg)](https://gitter.im/NowDB/Visual7)
 
