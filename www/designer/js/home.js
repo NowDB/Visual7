@@ -538,7 +538,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
                         onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/nowdb-data-manager-release/raw/master/NowDB%20Data%20Manager%201.1.0.exe", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe'));
+                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.exe", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe'));
                         }
                     }],
                     verticalButtons: false,
@@ -568,7 +568,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
                         onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/nowdb-data-manager-release/raw/master/NowDB%20Data%20Manager%201.1.0.dmg", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg'));
+                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager-1.1.0.dmg", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg'));
                         }
                     }],
                     verticalButtons: false,
@@ -598,7 +598,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
                         onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/nowdb-data-manager-release/raw/master/NowDB%20Data%20Manager%201.1.0.AppImage", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage'));
+                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.AppImage", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage'));
                         }
                     }],
                     verticalButtons: false,
