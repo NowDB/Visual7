@@ -8,3 +8,10 @@ npm install electron -g --verbose --unsafe-perm=true
 ```sh
 npm install
 ```
+
+## Additional Directory
+```sh
+cd www/
+mkdir file
+mkdir nowdb
+```
