@@ -1,82 +1,74 @@
-blockManager.add('fab link close', {
-    label: 'FAB Link',
+blockManager.add('fab_single', {
+    label: 'Single',
     attributes: {
-        class: 'fa fa-square',
-        title: 'FAB Link'
+        class: 'fa fa-square'
     },
-    content: '<div class="page">' +
-        '<div class="navbar">' +
-        '  <div class="navbar-inner">' +
-        '    <div class="title">Floating Action Buttons</div>' +
-        '  </div>' +
-        '</div>' +
-        '<div class="toolbar toolbar-bottom-md fab-morph-target">' +
-        '  <div class="toolbar-inner">' +
-        '    <a class="link fab-close">Link 1</a>' +
-        '    <a class="link fab-close">Link 2</a>' +
-        '    <a class="link fab-close">Link 3</a>' +
-        ' </div>' +
-        '</div>' +
-        '<div class="fab fab-left-top color-yellow">' +
+    content: '<div class="fab fab-right-bottom color-pink">' +
         '  <a href="#">' +
-        '    <i class="icon material-icons md-only">add</i>' +
-        '    <i class="icon material-icons md-only">close</i>' +
+        '    <i class="icon material-icons">add</i>' +
         '  </a>' +
-        '  <div class="fab-buttons fab-buttons-bottom">' +
-        '    <a href="">1</a>' +
-        '    <a href="">2</a>' +
-        '    <a href="">3</a>' +
-        '  </div>' +
-        '</div>' +
-        '<div class="fab fab-right-top color-pink">' +
+        '</div>',
+    category: {
+        label: 'FAB',
+        open: false
+    }
+});
+
+blockManager.add('fab_link', {
+    label: 'Link',
+    attributes: {
+        class: 'fa fa-square'
+    },
+    content: '<div class="fab fab-right-bottom color-pink">' +
         '  <a href="#">' +
-        '    <i class="icon material-icons md-only">add</i>' +
-        '    <i class="icon material-icons md-only">close</i>' +
-        '  </a>' +
-        '  <div class="fab-buttons fab-buttons-left">' +
-        '    <a href="">1</a>' +
-        '    <a href="">2</a>' +
-        '    <a href="">3</a>' +
-        '  </div>' +
-        '</div>' +
-        '<div class="fab fab-center-center color-green">' +
-        '  <a href="#">' +
-        '    <i class="icon material-icons md-only">add</i>' +
-        '    <i class="icon material-icons md-only">close</i>' +
-        '  </a>' +
-        '  <div class="fab-buttons fab-buttons-center">' +
-        '    <a href="">1</a>' +
-        '    <a href="">2</a>' +
-        '    <a href="">3</a>' +
-        '  </div>' +
-        '</div>' +
-        '<div class="fab fab-left-bottom color-orange">' +
-        '  <a href="#">' +
-        '    <i class="icon material-icons md-only">add</i>' +
-        '    <i class="icon material-icons md-only">close</i>' +
+        '    <i class="icon material-icons">add</i>' +
+        '    <i class="icon material-icons">close</i>' +
         '  </a>' +
         '  <div class="fab-buttons fab-buttons-top">' +
         '    <a href="">1</a>' +
         '    <a href="">2</a>' +
         '    <a href="">3</a>' +
         '  </div>' +
-        '</div>' +
-        '<div class="fab fab-right-bottom fab-morph" data-morph-to=".toolbar">' +
+        '</div>',
+    category: {
+        label: 'FAB',
+        open: false
+    }
+});
+
+blockManager.add('fab_link_center', {
+    label: 'Link Center',
+    attributes: {
+        class: 'fa fa-square'
+    },
+    content: '<div class="fab fab-center-center color-pink">' +
         '  <a href="#">' +
-        '    <i class="icon material-icons md-only">add</i>' +
-        '    <i class="icon material-icons md-only">close</i>' +
+        '    <i class="icon material-icons">add</i>' +
+        '    <i class="icon material-icons">close</i>' +
         '  </a>' +
-        '  <div class="fab-buttons fab-buttons-bottom">' +
+        '  <div class="fab-buttons fab-buttons-center">' +
         '    <a href="">1</a>' +
         '    <a href="">2</a>' +
         '    <a href="">3</a>' +
         '  </div>' +
-        '</div>' +
-        '<div class="page-content">' +
-        '  <div class="block">' +
-        '    <p>Lorem ipsum dolor sit amet...</p>' +
-        '  </div>' +
-        '</div>' +
+        '</div>',
+    category: {
+        label: 'FAB',
+        open: false
+    }
+});
+
+blockManager.add('fab_text', {
+    label: 'Text',
+    attributes: {
+        class: 'fa fa-square'
+    },
+    content: ' <div class="fab fab-extended fab-center-bottom color-red">' +
+        '   <a href="#">' +
+        '       <i class="icon f7-icons">plus</i>' +
+        '       <i class="icon material-icons md-only">add</i>' +
+        '       <div class="fab-text">Create</div>' +
+        '   </a>' +
         '</div>',
     category: {
         label: 'FAB',

@@ -11,7 +11,7 @@ var editor = grapesjs.init({
     container: '#gjs',
     height: '100%',
     canvas: {
-        styles: ['css/framework7.bundle.css', 'css/framework7-icons.css', 'fonts/material-icons.css'],
+        styles: ['css/framework7.bundle.css', 'css/framework7-icons.css', 'fonts/material-icons.css', 'css/custom.css'],
         scripts: ['js/framework7.bundle.min.js', 'designer/grapesjs/app.js']
     },
     allowScripts: 1
