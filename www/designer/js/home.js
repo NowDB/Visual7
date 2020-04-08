@@ -178,18 +178,10 @@ function file_list_other() {
     });
 }
 
-$$(document).on('page:afterin', '.page[data-name="home"]', function() {
-    app.preloader.show();
-
-    setTimeout(function() {
-        file_list_html();
-        file_list_js();
-        file_list_css();
-        file_list_other();
-
-        app.preloader.hide();
-    }, 10);
-});
+file_list_html();
+file_list_js();
+file_list_css();
+file_list_other();
 
 $$(document).on('click', '#btn-app-run', function() {
     let runWindow
