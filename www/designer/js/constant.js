@@ -1,0 +1,10 @@
+var localStorage = require('localStorage');
+const { ipcRenderer } = require('electron');
+const electron = require('electron');
+const BrowserWindow = electron.remote.BrowserWindow;
+const remote = require('electron').remote;
+const { dialog } = electron.remote;
+const request = require('request');
+const path = require('path');
+const url = require('url');
+const fs = require('fs');
