@@ -4,9 +4,12 @@ var path = require('path');
 let mainWindow;
 
 function createWindow() {
+    const { screen } = require('electron');
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
     mainWindow = new BrowserWindow({
-        width: 400,
-        height: 650,
+        width: (width * 90) / 100,
+        height: (height * 90) / 100,
         frame: false,
         resizable: false,
         webPreferences: {

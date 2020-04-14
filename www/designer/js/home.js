@@ -1,3 +1,14 @@
+$$(document).on('click', '#btn-reload', function() {
+    app.preloader.show();
+
+    window.location.reload();
+});
+
+file_list_html();
+file_list_js();
+file_list_css();
+file_list_other();
+
 function file_list_html() {
     fs.readdir(path.join(__dirname, 'pages/'), (err, dir) => {
         $$(document).find('#list-file-html').empty();
@@ -24,7 +35,7 @@ function file_list_html() {
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
                         '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-html" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-html-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '       </div>' +
                         '   </div>' +
@@ -38,7 +49,7 @@ function file_list_html() {
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
                         '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-html" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-html-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '       </div>' +
                         '   </div>' +
@@ -74,7 +85,7 @@ function file_list_js() {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-js" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-js-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '        </div>' +
                         '   </div>' +
@@ -87,7 +98,7 @@ function file_list_js() {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-js" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-js-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '        </div>' +
                         '   </div>' +
@@ -123,7 +134,8 @@ function file_list_css() {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-css" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        // '               <i title="Code Editor" class="material-icons" id="btn-code-css" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-css-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '        </div>' +
                         '   </div>' +
@@ -136,7 +148,8 @@ function file_list_css() {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-css" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        // '               <i title="Code Editor" class="material-icons" id="btn-code-css" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-css-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '        </div>' +
                         '   </div>' +
@@ -178,10 +191,9 @@ function file_list_other() {
     });
 }
 
-file_list_html();
-file_list_js();
-file_list_css();
-file_list_other();
+$$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
+    panel_left_morph();
+});
 
 $$(document).on('click', '#btn-app-run', function() {
     let runWindow
@@ -303,130 +315,266 @@ $$(document).on('click', '#btn-create-file', function() {
     }
 });
 
-$$(document).on('click', '#btn-design-html', function() {
-    var fileName = $$(this).attr('data-file');
-
-    let loadpage
-
-    loadpage = new BrowserWindow({
-        width: (window.screen.width * 90) / 100,
-        height: (window.screen.height * 90) / 100,
-        resizable: false,
-        webPreferences: {
-            nodeIntegration: true
-        },
-        icon: path.join(__dirname, 'img/favicon.png')
-    })
-
-    loadpage.loadURL(url.format({
-        pathname: path.join(__dirname, 'designer.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
-
-    fs.writeFileSync(path.join(__dirname, 'temp.html'), fileName, 'utf-8');
-});
-
-$$(document).on('click', '#btn-code-html', function() {
-    var fileName = $$(this).attr('data-file');
-
-    let loadpage
-
-    loadpage = new BrowserWindow({
-        width: (window.screen.width * 90) / 100,
-        height: (window.screen.height * 90) / 100,
-        resizable: false,
-        webPreferences: {
-            nodeIntegration: true
-        },
-        icon: path.join(__dirname, 'img/favicon.png')
-    })
-
-    loadpage.loadURL(url.format({
-        pathname: path.join(__dirname, 'editor_html.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
-
-    fs.writeFileSync(path.join(__dirname, 'temp.html'), fileName, 'utf-8');
-});
-
 $$(document).on('click', '#btn-code-html-index', function() {
     var fileName = $$(this).attr('data-file');
 
-    let loadpage
-
-    loadpage = new BrowserWindow({
-        width: (window.screen.width * 90) / 100,
-        height: (window.screen.height * 90) / 100,
-        resizable: false,
-        webPreferences: {
-            nodeIntegration: true
-        },
-        icon: path.join(__dirname, 'img/favicon.png')
-    })
-
-    loadpage.loadURL(url.format({
-        pathname: path.join(__dirname, 'editor_html_index.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
-
-    fs.writeFileSync(path.join(__dirname, 'temp.html'), fileName, 'utf-8');
+    navigate_main_to('/editor_html_index/' + fileName + '/', false, false, false, true, true, false);
 });
 
-$$(document).on('click', '#btn-code-js', function() {
-    var fileName = $$(this).attr('data-file');
+$$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function(callback) {
+    panel_left_morph();
 
-    let loadpage
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
 
-    loadpage = new BrowserWindow({
-        width: (window.screen.width * 90) / 100,
-        height: (window.screen.height * 90) / 100,
-        resizable: false,
-        webPreferences: {
-            nodeIntegration: true
-        },
-        icon: path.join(__dirname, 'img/favicon.png')
-    })
+    $$(document).find('#page-title').html(filename);
 
-    loadpage.loadURL(url.format({
-        pathname: path.join(__dirname, 'editor_js.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
+    self.module = undefined;
 
-    fs.writeFileSync(path.join(__dirname, 'temp.html'), fileName, 'utf-8');
+    fs.readFile(path.join(__dirname, filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
+                    monaco.editor.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    monaco.editor.setTheme(callback.base);
+
+                    window.editor = monaco.editor.create(document.getElementById('container'), {
+                        value: [code_data].join('\n'),
+                        language: 'html'
+                    });
+                });
+
+                app.preloader.hide();
+            });
+        }
+    });
 });
 
-$$(document).on('click', '#btn-code-css', function() {
+$$(document).on('click', '#btn-save-html-index', function() {
+    var editor_html = window.editor.getValue();
+    fs.writeFileSync(path.join(__dirname, file_open_active), editor_html, 'utf-8');
+    app.dialog.create({
+        title: 'Information',
+        text: 'File Saved',
+        buttons: [{
+            text: '<span class="text-color-teal">Ok</span>',
+        }],
+        verticalButtons: false,
+        animate: false
+    }).open();
+});
+
+$$(document).on('click', '#btn-code-html-2', function() {
     var fileName = $$(this).attr('data-file');
 
-    let loadpage
+    navigate_main_to('/editor_html/' + fileName + '/', false, false, false, true, true, false);
+});
 
-    loadpage = new BrowserWindow({
-        width: (window.screen.width * 90) / 100,
-        height: (window.screen.height * 90) / 100,
-        resizable: false,
-        webPreferences: {
-            nodeIntegration: true
-        },
-        icon: path.join(__dirname, 'img/favicon.png')
-    })
+$$(document).on('page:afterin', '.page[data-name="editor_html"]', function(callback) {
+    panel_left_morph();
 
-    loadpage.loadURL(url.format({
-        pathname: path.join(__dirname, 'editor_css.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
 
-    fs.writeFileSync(path.join(__dirname, 'temp.html'), fileName, 'utf-8');
+    $$(document).find('#page-title').html(filename);
+
+    self.module = undefined;
+
+    fs.readFile(path.join(__dirname, 'pages/' + filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
+                    monaco.editor.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    monaco.editor.setTheme(callback.base);
+
+                    window.editor = monaco.editor.create(document.getElementById('container'), {
+                        value: [code_data].join('\n'),
+                        language: 'html'
+                    });
+                });
+
+                app.preloader.hide();
+            });
+        }
+    });
+});
+
+$$(document).on('click', '#btn-save-html', function() {
+    var editor_html = window.editor.getValue();
+    fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), editor_html, 'utf-8');
+    app.dialog.create({
+        title: 'Information',
+        text: 'File Saved',
+        buttons: [{
+            text: '<span class="text-color-teal">Ok</span>',
+        }],
+        verticalButtons: false,
+        animate: false
+    }).open();
+});
+
+$$(document).on('click', '#btn-code-js-2', function() {
+    var fileName = $$(this).attr('data-file');
+
+    navigate_main_to('/editor_js/' + fileName + '/', false, false, false, true, true, false);
+});
+
+$$(document).on('page:afterin', '.page[data-name="editor_js"]', function(callback) {
+    panel_left_morph();
+
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
+
+    $$(document).find('#page-title').html(filename);
+
+    self.module = undefined;
+
+    fs.readFile(path.join(__dirname, 'js_app/' + filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
+                    monaco.editor.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    monaco.editor.setTheme(callback.base);
+
+                    window.editor = monaco.editor.create(document.getElementById('container'), {
+                        value: [code_data].join('\n'),
+                        language: 'javascript'
+                    });
+                });
+
+                app.preloader.hide();
+            });
+        }
+    });
+});
+
+$$(document).on('click', '#btn-save-js', function() {
+    var editor_js = window.editor.getValue();
+    fs.writeFileSync(path.join(__dirname, 'js_app/' + file_open_active), editor_js, 'utf-8');
+    app.dialog.create({
+        title: 'Information',
+        text: 'File Saved',
+        buttons: [{
+            text: '<span class="text-color-teal">Ok</span>',
+        }],
+        verticalButtons: false,
+        animate: false
+    }).open();
+});
+
+$$(document).on('click', '#btn-code-css-2', function() {
+    var fileName = $$(this).attr('data-file');
+
+    navigate_main_to('/editor_css/' + fileName + '/', false, false, false, true, true, false);
+});
+
+$$(document).on('page:afterin', '.page[data-name="editor_css"]', function(callback) {
+    panel_left_morph();
+
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
+
+    $$(document).find('#page-title').html(filename);
+
+    self.module = undefined;
+
+    fs.readFile(path.join(__dirname, 'css/' + filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
+                    monaco.editor.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    monaco.editor.setTheme(callback.base);
+
+                    window.editor = monaco.editor.create(document.getElementById('container'), {
+                        value: [code_data].join('\n'),
+                        language: 'css'
+                    });
+                });
+
+                app.preloader.hide();
+            });
+        }
+    });
+});
+
+$$(document).on('click', '#btn-save-css', function() {
+    var editor_js = window.editor.getValue();
+    fs.writeFileSync(path.join(__dirname, 'css/' + file_open_active), editor_js, 'utf-8');
+    app.dialog.create({
+        title: 'Information',
+        text: 'File Saved',
+        buttons: [{
+            text: '<span class="text-color-teal">Ok</span>',
+        }],
+        verticalButtons: false,
+        animate: false
+    }).open();
 });
 
 $$(document).on('click', '#btn-remove-html', function() {
     var fileName = $$(this).attr('data-file');
 
-    app.dialogapp.dialog.create({
+    app.dialog.create({
         title: 'Information',
         text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
         buttons: [{
@@ -440,6 +588,8 @@ $$(document).on('click', '#btn-remove-html', function() {
                     file_list_js();
                     file_list_css();
                     file_list_other();
+
+                    navigate_main_to('/');
                 });
             }
         }],
@@ -465,6 +615,8 @@ $$(document).on('click', '#btn-remove-js', function() {
                     file_list_js();
                     file_list_css();
                     file_list_other();
+
+                    navigate_main_to('/');
                 });
             }
         }],
@@ -490,6 +642,8 @@ $$(document).on('click', '#btn-remove-css', function() {
                     file_list_js();
                     file_list_css();
                     file_list_other();
+
+                    navigate_main_to('/');
                 });
             }
         }],
@@ -619,6 +773,48 @@ $$(document).on('click', '#btn-app-nowdb', function() {
     }
 });
 
+document.addEventListener('keydown', function(event) {
+    if (event.code == 'KeyS' && (event.ctrlKey || event.metaKey)) {
+        page_history = app.views.main.history;
+        page_count = page_history.length;
+        page_current = page_history[page_count - 1];
+        if (page_current.split('/')[1] === "designer") {
+            var editor_html = editor.getHtml();
+            var html = pretty(editor_html, { ocd: true });
+
+            fs.writeFileSync(path.join(__dirname, 'pages/' + page_current.split('/')[2]), html, 'utf-8');
+
+            window.localStorage.clear();
+        } else {
+            if (file_open_active === 'index.html') {
+                var editor_html = window.editor.getValue();
+                fs.writeFileSync(path.join(__dirname, file_open_active), editor_html, 'utf-8');
+            } else {
+                var file_type = file_open_active.split('.');
+                if (file_type[1] === "html") {
+                    var editor_html = window.editor.getValue();
+                    fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), editor_html, 'utf-8');
+                } else if (file_type[1] === "js") {
+                    var editor_html = window.editor.getValue();
+                    fs.writeFileSync(path.join(__dirname, 'js_app/' + file_open_active), editor_html, 'utf-8');
+                } else if (file_type[1] === "css") {
+                    var editor_html = window.editor.getValue();
+                    fs.writeFileSync(path.join(__dirname, 'css/' + file_open_active), editor_html, 'utf-8');
+                }
+            }
+        }
+        app.dialog.create({
+            title: 'Information',
+            text: 'File Saved',
+            buttons: [{
+                text: '<span class="text-color-teal">Ok</span>',
+            }],
+            verticalButtons: false,
+            animate: false
+        }).open();
+    }
+});
+
 var progress_nowdb = 0;
 var dialog_nowdb = null;
 
@@ -708,3 +904,229 @@ function showProgress(received, total) {
     dialog_nowdb.setText(percent + ' of 100%');
     // console.log(percentage + "% | " + received + " bytes out of " + total + " bytes.");
 }
+
+$$(document).on('click', '#btn-design-html', function() {
+    var fileName = $$(this).attr('data-file');
+
+    navigate_main_to('/designer/' + fileName + '/', true, false, false, false, true, false);
+});
+
+$$(document).on('page:afterin', '.page[data-name="designer"]', function(callback) {
+    panel_left_morph();
+
+    window.localStorage.clear();
+
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
+
+    $$(document).find('#page-title').html(filename);
+
+    app.preloader.show();
+
+    editor = grapesjs.init({
+        container: '#gjs',
+        height: '100%',
+        canvas: {
+            styles: ['css/framework7.bundle.css', 'css/framework7-icons.css', 'fonts/material-icons.css', 'css/custom.css'],
+            scripts: ['js/framework7.bundle.min.js', 'designer/grapesjs/app.js']
+        },
+        allowScripts: 1
+    });
+
+    var config = editor.getConfig();
+
+    config.showDevices = 0;
+
+    editor.setDevice('Mobile portrait');
+
+    var panel = editor.Panels;
+    panel.getPanels().reset([{
+        id: 'views',
+        buttons: [{
+            id: 'open-blocks',
+            command: 'open-blocks',
+            active: true,
+            className: 'fa fa-th-large',
+            attributes: {
+                title: 'Components'
+            }
+        }, {
+            id: 'open-layers',
+            command: 'open-layers',
+            className: 'fa fa-bars',
+            attributes: {
+                title: 'Layers'
+            }
+        }, {
+            id: 'open-sm',
+            command: 'open-sm',
+            className: 'fa fa-paint-brush',
+            attributes: {
+                title: 'Styles'
+            }
+        }, {
+            id: 'open-tm',
+            command: 'open-tm',
+            className: 'fa fa-cog',
+            attributes: {
+                title: 'Configuration'
+            }
+        }]
+    }]);
+
+    blockManager = editor.BlockManager;
+    require('./designer/grapesjs/block/button.js');
+    require('./designer/grapesjs/block/card.js');
+    require('./designer/grapesjs/block/chiptag.js');
+    require('./designer/grapesjs/block/fab.js');
+    require('./designer/grapesjs/block/form.js');
+    require('./designer/grapesjs/block/form_item.js');
+    require('./designer/grapesjs/block/form_item_float.js');
+    require('./designer/grapesjs/block/grid.js');
+    require('./designer/grapesjs/block/grid_no_gap.js');
+    require('./designer/grapesjs/block/grid_responsive.js');
+    require('./designer/grapesjs/block/layout.js');
+    require('./designer/grapesjs/block/list.js');
+    require('./designer/grapesjs/block/list_media.js');
+    require('./designer/grapesjs/block/list_sortable.js');
+    require('./designer/grapesjs/block/list_view_accordion.js');
+    require('./designer/grapesjs/block/messages.js');
+    require('./designer/grapesjs/block/navbar.js');
+    require('./designer/grapesjs/block/popover.js');
+    require('./designer/grapesjs/block/progress_bar.js');
+    require('./designer/grapesjs/block/range_slider.js');
+    require('./designer/grapesjs/block/screen.js');
+    require('./designer/grapesjs/block/searchbar.js');
+    require('./designer/grapesjs/block/smart_select.js');
+    require('./designer/grapesjs/block/stepper.js');
+    require('./designer/grapesjs/block/swipeout.js');
+    require('./designer/grapesjs/block/swiper.js');
+    require('./designer/grapesjs/block/table.js');
+    require('./designer/grapesjs/block/table_card.js');
+    require('./designer/grapesjs/block/timeline.js');
+    require('./designer/grapesjs/block/toolbar.js');
+    require('./designer/grapesjs/block/toolbar_bottom_with_badge.js');
+
+    fs.readFile(path.join(__dirname, 'pages/' + filename), 'utf-8', (err, cb_data) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        app.preloader.hide();
+
+        editor.setComponents(cb_data);
+    });
+
+    delete require.cache[require.resolve('./designer/grapesjs/block/button.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/card.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/chiptag.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/fab.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/form.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/form_item.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/form_item_float.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/grid.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/grid_no_gap.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/grid_responsive.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/layout.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/list.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/list_media.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/list_sortable.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/list_view_accordion.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/messages.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/navbar.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/popover.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/progress_bar.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/range_slider.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/screen.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/searchbar.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/smart_select.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/stepper.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/swipeout.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/swiper.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/table.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/table_card.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/timeline.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/toolbar.js')];
+    delete require.cache[require.resolve('./designer/grapesjs/block/toolbar_bottom_with_badge.js')];
+});
+
+$$(document).on('click', '#btn-save-design', function() {
+    var editor_html = editor.getHtml();
+    var html = pretty(editor_html, { ocd: true });
+
+    fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), html, 'utf-8');
+
+    app.dialog.create({
+        title: 'Information',
+        text: 'File Saved',
+        buttons: [{
+            text: '<span class="text-color-teal">Ok</span>',
+            onClick: function() {
+                window.localStorage.clear();
+            }
+        }],
+        verticalButtons: false,
+        animate: false
+    }).open();
+});
+
+$$(document).on('click', '#btn-design-undo', function() {
+    editor.UndoManager.undo(1);
+});
+
+$$(document).on('click', '#btn-design-redo', function() {
+    editor.UndoManager.redo(1);
+});
+
+$$(document).on('click', '#btn-design-clear', function() {
+    app.dialog.create({
+        title: 'Information',
+        text: 'Do you want to clear all design?',
+        buttons: [{
+            text: '<span class="text-color-red">Cancel</span>'
+        }, {
+            text: '<span class="text-color-teal">Ok</span>',
+            onClick: function() {
+                editor.DomComponents.clear();
+
+                window.localStorage.clear();
+            }
+        }],
+        verticalButtons: false,
+        animate: false
+    }).open();
+});
+
+$$(document).on('click', '#btn-design-preview', function() {
+    editor.runCommand('preview');
+});
+
+$$(document).on('click', '#btn-design-code', function() {
+    editor.runCommand('export-template');
+});
+
+$$(document).on('click', '#btn-design-computer', function() {
+    editor.setDevice('Desktop');
+});
+
+$$(document).on('click', '#btn-design-tablet', function() {
+    editor.setDevice('Tablet');
+});
+
+$$(document).on('click', '#btn-design-smartphone', function() {
+    editor.setDevice('Mobile portrait');
+});
+
+
+$$(document).on('click', '#btn-design-outline', function() {
+    editor.runCommand('sw-visibility');
+    $$(document).find('#btn-design-unoutline').show();
+    $$(document).find('#btn-design-outline').hide();
+});
+
+$$(document).on('click', '#btn-design-unoutline', function() {
+    editor.stopCommand('sw-visibility');
+    $$(document).find('#btn-design-unoutline').hide();
+    $$(document).find('#btn-design-outline').show();
+});

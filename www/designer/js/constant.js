@@ -8,3 +8,13 @@ const request = require('request');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
+const spawn = require('child_process').spawn;
+const os = require('os');
+const prompt = require('electron-prompt');
+const pretty = require('pretty');
+const editorLoader = require('../node_modules/monaco-editor/min/vs/loader.js');
+const editorRequire = editorLoader.require;
+
+var editor = null;
+var blockManager = null;
+var file_open_active = '';
