@@ -23,7 +23,7 @@ var blockManager = null;
 // Code Editor
 var me = null;
 var we = null;
-// NowDB
+// NowDB Data Manager
 var progress_nowdb = 0;
 var dialog_nowdb = null;
 
