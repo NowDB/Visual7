@@ -8,6 +8,18 @@ file_list_html();
 file_list_js();
 file_list_css();
 file_list_other();
+file_list_project();
+
+function file_list_project() {
+    fs.readdir(path.join(os.homedir(), 'Visual7/'), (err, dir) => {
+        if (dir.length === 0) {
+            //Do Nothing
+        } else {
+            console.log(dir);
+        }
+    });
+}
+
 
 function file_list_html() {
     fs.readdir(path.join(__dirname, 'pages/'), (err, dir) => {
