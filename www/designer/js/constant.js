@@ -18,3 +18,9 @@ const editorRequire = editorLoader.require;
 var editor = null;
 var blockManager = null;
 var file_open_active = '';
+
+var me = null;
+var we = null;
+
+var progress_nowdb = 0;
+var dialog_nowdb = null;

@@ -366,7 +366,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function
 });
 
 $$(document).on('click', '#btn-save-html-index', function() {
-    var editor_html = window.editor.getValue();
+    var editor_html = we.getValue();
     fs.writeFileSync(path.join(__dirname, file_open_active), editor_html, 'utf-8');
     app.dialog.create({
         title: 'Information',
@@ -430,7 +430,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_html"]', function(callb
 });
 
 $$(document).on('click', '#btn-save-html', function() {
-    var editor_html = window.editor.getValue();
+    var editor_html = we.getValue();
     fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), editor_html, 'utf-8');
     app.dialog.create({
         title: 'Information',
@@ -473,15 +473,17 @@ $$(document).on('page:afterin', '.page[data-name="editor_js"]', function(callbac
 
             editorRequire(['vs/editor/editor.main'], function() {
                 loadTheme('Monokai').then(function(callback) {
-                    monaco.editor.defineTheme(callback.base, {
+                    me = monaco.editor;
+                    me.defineTheme(callback.base, {
                         base: callback.base,
                         inherit: true,
                         rules: [callback.rules],
                         colors: callback.colors
                     });
-                    monaco.editor.setTheme(callback.base);
+                    me.setTheme(callback.base);
 
-                    window.editor = monaco.editor.create(document.getElementById('container'), {
+                    we = window.editor;
+                    we = me.create(document.getElementById('container'), {
                         value: [code_data].join('\n'),
                         language: 'javascript'
                     });
@@ -494,7 +496,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_js"]', function(callbac
 });
 
 $$(document).on('click', '#btn-save-js', function() {
-    var editor_js = window.editor.getValue();
+    var editor_js = we.getValue();
     fs.writeFileSync(path.join(__dirname, 'js_app/' + file_open_active), editor_js, 'utf-8');
     app.dialog.create({
         title: 'Information',
@@ -558,7 +560,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_css"]', function(callba
 });
 
 $$(document).on('click', '#btn-save-css', function() {
-    var editor_js = window.editor.getValue();
+    var editor_js = we.getValue();
     fs.writeFileSync(path.join(__dirname, 'css/' + file_open_active), editor_js, 'utf-8');
     app.dialog.create({
         title: 'Information',
@@ -787,18 +789,18 @@ document.addEventListener('keydown', function(event) {
             window.localStorage.clear();
         } else {
             if (file_open_active === 'index.html') {
-                var editor_html = window.editor.getValue();
+                var editor_html = we.getValue();
                 fs.writeFileSync(path.join(__dirname, file_open_active), editor_html, 'utf-8');
             } else {
                 var file_type = file_open_active.split('.');
                 if (file_type[1] === "html") {
-                    var editor_html = window.editor.getValue();
+                    var editor_html = we.getValue();
                     fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), editor_html, 'utf-8');
                 } else if (file_type[1] === "js") {
-                    var editor_html = window.editor.getValue();
+                    var editor_html = we.getValue();
                     fs.writeFileSync(path.join(__dirname, 'js_app/' + file_open_active), editor_html, 'utf-8');
                 } else if (file_type[1] === "css") {
-                    var editor_html = window.editor.getValue();
+                    var editor_html = we.getValue();
                     fs.writeFileSync(path.join(__dirname, 'css/' + file_open_active), editor_html, 'utf-8');
                 }
             }
@@ -814,9 +816,6 @@ document.addEventListener('keydown', function(event) {
         }).open();
     }
 });
-
-var progress_nowdb = 0;
-var dialog_nowdb = null;
 
 function downloadNowDB(file_url, targetPath) {
     dialog_nowdb = app.dialog.progress('<i class="material-icons">get_app</i>', progress_nowdb);
@@ -1118,7 +1117,6 @@ $$(document).on('click', '#btn-design-smartphone', function() {
     editor.setDevice('Mobile portrait');
 });
 
-
 $$(document).on('click', '#btn-design-outline', function() {
     editor.runCommand('sw-visibility');
     $$(document).find('#btn-design-unoutline').show();
@@ -1129,4 +1127,53 @@ $$(document).on('click', '#btn-design-unoutline', function() {
     editor.stopCommand('sw-visibility');
     $$(document).find('#btn-design-unoutline').hide();
     $$(document).find('#btn-design-outline').show();
+});
+
+$$(document).on('click', '#code-if', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "if (variable === 0) {\n" +
+        "\tresult = false;\n" +
+        "}";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-if-else', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "if (variable === 0) {\n" +
+        "\tresult = false;\n" +
+        "} else {\n" +
+        "\tresult = true;\n" +
+        "}";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-if-else-if', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "if (variable === 0) {\n" +
+        "\tresult = false;\n" +
+        "} else if (variable === 1){\n" +
+        "\tresult = true;\n" +
+        "}";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
 });
