@@ -11,7 +11,7 @@ function createWindow() {
         width: (width * 90) / 100,
         height: (height * 90) / 100,
         frame: false,
-        resizable: false,
+        resizable: true,
         webPreferences: {
             nodeIntegration: true
         },
