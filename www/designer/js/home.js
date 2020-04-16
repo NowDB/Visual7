@@ -66,9 +66,9 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                     app.dialog.progress('Running npm install');
 
                     shell.exec('npm install', function(code, stdout, stderr) {
-                        console.log('Exit code:', code);
-                        console.log('Program output:', stdout);
-                        console.log('Program stderr:', stderr);
+                        // console.log('Exit code:', code);
+                        // console.log('Program output:', stdout);
+                        // console.log('Program stderr:', stderr);
                         shell.cd(os.homedir());
                         app.dialog.close();
                     });
@@ -124,6 +124,7 @@ $$(document).on('click', '#btn-project-open', function() {
 $$(document).on('page:afterin', '.page[data-name="project"]', function(callback) {
     var project = callback.detail.route.params.name;
 
+    $$(document).find('#project-name').html(project);
     $$(document).find('#btn-code-editor-html-index').attr('data-project', project);
     $$(document).find('#btn-code-editor-js-main').attr('data-project', project);
     $$(document).find('#btn-code-editor-js-package').attr('data-project', project);
@@ -145,9 +146,9 @@ $$(document).on('click', '#btn-app-run', function() {
 
         shell.cd(dir_project);
         shell.exec('electron .', function(code, stdout, stderr) {
-            console.log('Exit code:', code);
-            console.log('Program output:', stdout);
-            console.log('Program stderr:', stderr);
+            // console.log('Exit code:', code);
+            // console.log('Program output:', stdout);
+            // console.log('Program stderr:', stderr);
         });
         shell.cd(os.homedir());
 
