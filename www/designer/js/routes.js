@@ -8,7 +8,7 @@ routes = [{
     },
     {
         name: 'designer',
-        path: '/designer/:filename/',
+        path: '/designer/:project/:filename/',
         url: './designer/pages/designer.html'
     },
     {

@@ -422,7 +422,7 @@ function list_html(project) {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        // '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
+                        '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
                         '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '       </div>' +
@@ -436,7 +436,7 @@ function list_html(project) {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        // '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
+                        '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
                         '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '       </div>' +
@@ -1034,7 +1034,7 @@ document.addEventListener('keydown', function(event) {
             var editor_html = editor.getHtml();
             var html = pretty(editor_html, { ocd: true });
 
-            fs.writeFileSync(path.join(dir_project_www, 'pages/' + page_current.split('/')[2]), html, 'utf-8');
+            fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), html, 'utf-8');
 
             window.localStorage.clear();
         } else if (page_current.split('/')[1] === "editor_js_main") {
@@ -1075,9 +1075,10 @@ document.addEventListener('keydown', function(event) {
  */
 
 $$(document).on('click', '#btn-design-html', function() {
+    var project = $$(this).attr('data-project');
     var fileName = $$(this).attr('data-file');
 
-    navigate_main_to('/designer/' + fileName + '/', true, false, false, false, true, false);
+    navigate_main_to('/designer/' + project + '/' + fileName + '/', true, false, false, false, true, false);
 });
 
 $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback) {
@@ -1085,8 +1086,13 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback
 
     window.localStorage.clear();
 
+    var project = callback.detail.route.params.project;
     var filename = callback.detail.route.params.filename;
     file_open_active = filename;
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
 
     $$(document).find('#page-title').html(filename);
 
@@ -1096,8 +1102,8 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback
         container: '#gjs',
         height: '100%',
         canvas: {
-            styles: ['css/framework7.bundle.css', 'css/framework7-icons.css', 'fonts/material-icons.css', 'css/custom.css'],
-            scripts: ['js/framework7.bundle.min.js', 'designer/grapesjs/app.js']
+            styles: [path.join(__dirname, 'css/framework7.bundle.css'), path.join(__dirname, 'css/framework7-icons.css'), path.join(__dirname, 'fonts/material-icons.css'), path.join(__dirname, 'css/custom.css')],
+            scripts: [path.join(__dirname, 'js/framework7.bundle.min.js'), path.join(__dirname, 'designer/js/init_designer.js')]
         },
         allowScripts: 1
     });
@@ -1176,7 +1182,7 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback
     require('./designer/grapesjs/block/toolbar.js');
     require('./designer/grapesjs/block/toolbar_bottom_with_badge.js');
 
-    fs.readFile(path.join(__dirname, 'pages/' + filename), 'utf-8', (err, cb_data) => {
+    fs.readFile(path.join(dir_project_www, 'pages/' + filename), 'utf-8', (err, cb_data) => {
         if (err) {
             console.log(err);
             return;
@@ -1224,7 +1230,11 @@ $$(document).on('click', '#btn-save-design', function() {
     var editor_html = editor.getHtml();
     var html = pretty(editor_html, { ocd: true });
 
-    fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), html, 'utf-8');
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), html, 'utf-8');
 
     app.toast.create({
         text: 'File Saved',
