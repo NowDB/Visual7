@@ -66,9 +66,7 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                     app.dialog.progress('Running npm install');
 
                     shell.exec('npm install', function(code, stdout, stderr) {
-                        // console.log('Exit code:', code);
-                        // console.log('Program output:', stdout);
-                        // console.log('Program stderr:', stderr);
+                        shell.chmod('-R', 777, 'www/');
                         shell.cd(os.homedir());
                         app.dialog.close();
                     });
