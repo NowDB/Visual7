@@ -22,7 +22,7 @@
         <div class="appbar bg-color-teal">
             <div class="appbar-inner no-padding">
                 <div class="left no-margin text-color-white" style="height: 100%;width: 90%;-webkit-app-region: drag;padding-left: 15px;">
-                    Visual 7&nbsp;<span style="font-size: xx-small;">1.0.1</span>
+                    Visual 7&nbsp;<span style="font-size: xx-small;">1.1.1</span>
                 </div>
                 <div class="right" style="padding-right: 11px;">
                     <a class="link" title="Reload" id="btn-reload" style="margin-right: 10px;">
@@ -43,24 +43,31 @@
                     <div class="navbar">
                         <div class="navbar-bg"></div>
                         <div class="navbar-inner">
-                            <div class="left">
+                            <!-- <div class="left">
                                 <a class="link icon-only text-color-gray" title="NowDB Data Manager" id="btn-app-nowdb">
                                     <i class="icon material-icons">developer_board</i>
                                 </a>
-                            </div>
-                            <div class="right">
+                            </div> -->
+                            <!-- <div class="right">
                                 <a class="link icon-only text-color-deeporange" title="Run & Debugger" id="btn-app-run-debug">
                                     <i class="icon material-icons">play_arrow</i>
                                 </a>
                                 <a class="link icon-only text-color-teal" title="Run" id="btn-app-run">
                                     <i class="icon material-icons">play_arrow</i>
                                 </a>
+                            </div> -->
+                            <div class="title">Project</div>
+                            <div class="right">
+                                <a class="link icon-only text-color-deeporange" title="Create New Project" id="btn-application-new-electron">
+                                    <i class="icon material-icons">add</i>
+                                </a>
                             </div>
                         </div>
                     </div>
                     <div class="page-content">
                         <div class="list no-margin no-hairlines no-hairlines-between">
-                            <ul id="list-file-index">
+                            <ul id="list-file-project"></ul>
+                            <!-- <ul id="list-file-index">
                                 <li>
                                     <div class="item-content">
                                         <div class="item-inner">
@@ -71,11 +78,11 @@
                                         </div>
                                     </div>
                                 </li>
-                            </ul>
-                            <ul id="list-file-html"></ul>
+                            </ul> -->
+                            <!-- <ul id="list-file-html"></ul>
                             <ul id="list-file-js"></ul>
                             <ul id="list-file-css"></ul>
-                            <ul id="list-file-other"></ul>
+                            <ul id="list-file-other"></ul> -->
                         </div>
                     </div>
                 </div>

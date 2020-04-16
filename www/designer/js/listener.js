@@ -42,6 +42,26 @@ var navigate_main_to = function(path, reloadCurrent = false, reloadPrevious = fa
     });
 }
 
+var navigate_left_back = function() {
+    page_history = app.views[0].history;
+    page_count = page_history.length;
+    page_current = page_history[page_count - 1];
+    page_previous = page_history[page_count - 2];
+
+    app.views[0].router.back();
+}
+
+var navigate_left_to = function(path, reloadCurrent = false, reloadPrevious = false, reloadAll = false, clearPreviousHistory = false, ignoreCache = false, animate = false) {
+    app.views[0].router.navigate(path, {
+        reloadCurrent: reloadCurrent,
+        reloadPrevious: reloadPrevious,
+        reloadAll: reloadAll,
+        clearPreviousHistory: clearPreviousHistory,
+        ignoreCache: ignoreCache,
+        animate: animate,
+    });
+}
+
 function loadTheme(theme) {
     var path = '../node_modules/monaco-themes/themes/' + theme + '.json';
     return fetch(path).then(r => r.json()).then(data => {

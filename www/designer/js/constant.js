@@ -4,19 +4,19 @@ const { ipcRenderer } = require('electron');
 const remote = electron.remote;
 const { dialog } = electron.remote;
 const BrowserWindow = electron.remote.BrowserWindow;
-const request = require('request');
 const path = require('path');
 const url = require('url');
-const fs = require('fs');
+const fs = require('fs-extra');
 const os = require('os');
+const mkdirp = require('mkdirp');
+const pretty = require('pretty');
 const spawn = require('child_process').spawn;
 const prompt = require('electron-prompt');
-const pretty = require('pretty');
-const mkdirp = require('mkdirp');
 const editorLoader = require('../node_modules/monaco-editor/min/vs/loader.js');
 const editorRequire = editorLoader.require;
 
 var file_open_active = '';
+var project_open_active = '';
 // UI Designer
 var editor = null;
 var blockManager = null;

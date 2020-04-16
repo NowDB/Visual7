@@ -4,12 +4,9 @@ var path = require('path');
 let mainWindow;
 
 function createWindow() {
-    const { screen } = require('electron');
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-
     mainWindow = new BrowserWindow({
-        width: (width * 90) / 100,
-        height: (height * 90) / 100,
+        width: 400,
+        height: 650,
         frame: false,
         resizable: false,
         webPreferences: {
@@ -18,7 +15,7 @@ function createWindow() {
         icon: path.join(__dirname, '/www/img/256x256.png')
     });
 
-    mainWindow.loadFile('www/browser.html');
+    mainWindow.loadFile('www/index.html');
 
     // mainWindow.webContents.openDevTools();
 

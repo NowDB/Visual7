@@ -1,28 +1,404 @@
+/**
+ * Welcome
+ */
+
 $$(document).on('click', '#btn-reload', function() {
     app.preloader.show();
 
     window.location.reload();
 });
 
-file_list_html();
-file_list_js();
-file_list_css();
-file_list_other();
-file_list_project();
+$$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
+    panel_left_morph();
+});
 
-function file_list_project() {
+/**
+ * Project
+ */
+
+$$(document).on('click', '#btn-application-new-electron', function() {
+    app.dialog.prompt('Name', 'Create New Project', function(fileName) {
+        app.dialog.progress('Preparing Assets');
+
+        var fileName = fileName.replace(/\s+/g, '_');
+
+        var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+        var dir_project = path.join(dir_visual7, fileName);
+        var dir_project_www = path.join(dir_project, 'www/');
+        var dir_init = path.join(__dirname, 'init/');
+
+        fs.readdir(dir_visual7, (err, dir) => {
+            if (err) {
+                fs.mkdirSync(dir_visual7);
+                create_app();
+            } else {
+                create_app();
+            }
+        });
+
+        function create_app() {
+            fs.readdir(dir_project, (err, dir) => {
+                if (err) {
+                    fs.mkdirSync(dir_project);
+                    fs.mkdirSync(dir_project_www);
+                    fs.mkdirSync(path.join(dir_project_www, 'file/'));
+
+                    fs.copyFile(path.join(__dirname, 'index.html'), path.join(dir_project_www, 'index.html'));
+                    fs.copyFile(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
+                    fs.copyFile(path.join(dir_init, 'main.js'), path.join(dir_project, 'main.js'));
+                    fs.copyFile(path.join(dir_init, 'package.json'), path.join(dir_project, 'package.json'));
+
+                    fs.copy(path.join(__dirname, 'css/'), path.join(dir_project_www, 'css/'));
+                    fs.copy(path.join(__dirname, 'fonts/'), path.join(dir_project_www, 'fonts/'));
+                    fs.copy(path.join(__dirname, 'img/'), path.join(dir_project_www, 'img/'));
+                    fs.copy(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
+                    fs.copy(path.join(__dirname, 'js_app/'), path.join(dir_project_www, 'js_app/'));
+                    fs.copy(path.join(__dirname, 'pages/'), path.join(dir_project_www, 'pages/'));
+
+                    list_project();
+
+                    app.dialog.close();
+
+                    var shell = require('shelljs');
+
+                    shell.cd(dir_project);
+
+                    app.dialog.progress('Running npm install');
+
+                    shell.exec('npm install', function(code, stdout, stderr) {
+                        console.log('Exit code:', code);
+                        console.log('Program output:', stdout);
+                        console.log('Program stderr:', stderr);
+                        shell.cd(os.homedir());
+                        app.dialog.close();
+                    });
+                } else {
+                    app.dialog.create({
+                        title: '<span class="text-color-red">Failed</span>',
+                        text: 'Project Exist',
+                        buttons: [{
+                            text: '<span class="text-color-teal">Ok</span>'
+                        }],
+                        verticalButtons: false,
+                        animate: false
+                    }).open();
+                }
+            });
+        }
+    });
+});
+
+list_project();
+
+function list_project() {
     fs.readdir(path.join(os.homedir(), 'Visual7/'), (err, dir) => {
-        if (dir.length === 0) {
-            //Do Nothing
+        if (err) {
+            var dir = path.join(os.homedir(), 'Visual7/');
+            fs.mkdirSync(dir);
         } else {
-            console.log(dir);
+            if (dir.length === 0) {
+                //Do Nothing
+            } else {
+                $$(document).find('#list-file-project').empty();
+                for (var i = 0; i < dir.length; i++) {
+                    $$(document).find('#list-file-project').append(
+                        '<li id="btn-project-open" data-project="' + dir[i] + '">' +
+                        '   <div class="item-content item-link">' +
+                        '       <div class="item-inner">' +
+                        '           <div class="item-title">' + dir[i] + '</div>' +
+                        '       </div>' +
+                        '   </div>' +
+                        '</li>');
+                }
+            }
         }
     });
 }
 
+$$(document).on('click', '#btn-project-open', function() {
+    var project = $$(this).attr('data-project');
+    project_open_active = project;
+    navigate_left_to('/project/' + project + '/');
+});
 
-function file_list_html() {
-    fs.readdir(path.join(__dirname, 'pages/'), (err, dir) => {
+$$(document).on('page:afterin', '.page[data-name="project"]', function(callback) {
+    var project = callback.detail.route.params.name;
+
+    $$(document).find('#btn-code-editor-html-index').attr('data-project', project);
+    $$(document).find('#btn-code-editor-js-main').attr('data-project', project);
+    $$(document).find('#btn-code-editor-js-package').attr('data-project', project);
+
+    list_html(project);
+    list_js(project);
+    list_css(project);
+    list_other(project);
+});
+
+$$(document).on('click', '#btn-app-run', function() {
+    app.dialog.progress('Opening Your App');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+
+    setTimeout(function() {
+        var shell = require('shelljs');
+
+        shell.cd(dir_project);
+        shell.exec('electron .', function(code, stdout, stderr) {
+            console.log('Exit code:', code);
+            console.log('Program output:', stdout);
+            console.log('Program stderr:', stderr);
+        });
+        shell.cd(os.homedir());
+
+        app.dialog.close();
+    }, 10);
+});
+
+/**
+ * Index HTML
+ */
+
+$$(document).on('click', '#btn-code-editor-html-index', function() {
+    var project = $$(this).attr('data-project');
+    var filename = $$(this).attr('data-file');
+
+    navigate_main_to('/editor_html_index/' + project + '/' + filename + '/', false, false, false, true, true, false);
+});
+
+$$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function(callback) {
+    panel_left_morph();
+
+    var project = callback.detail.route.params.project;
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
+
+    $$(document).find('#page-title').html(filename);
+    $$(document).find('#btn-save-html-index').attr('data-project', project);
+
+    self.module = undefined;
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readFile(path.join(dir_project_www, filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
+                    me = monaco.editor;
+                    me.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    me.setTheme(callback.base);
+
+                    we = window.editor;
+                    we = me.create(document.getElementById('container'), {
+                        value: [code_data].join('\n'),
+                        language: 'html'
+                    });
+                });
+
+                app.preloader.hide();
+            });
+        }
+    });
+});
+
+$$(document).on('click', '#btn-save-html-index', function() {
+    var project = $$(this).attr('data-project');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    var editor_html = we.getValue();
+    fs.writeFileSync(path.join(dir_project_www, file_open_active), editor_html, 'utf-8');
+    app.toast.create({
+        text: 'File Saved',
+        position: 'center',
+        closeTimeout: 2000
+    }).open();
+});
+
+/**
+ * Main JS
+ */
+
+$$(document).on('click', '#btn-code-editor-js-main', function() {
+    var project = $$(this).attr('data-project');
+    var filename = $$(this).attr('data-file');
+
+    navigate_main_to('/editor_js_main/' + project + '/' + filename + '/', false, false, false, true, true, false);
+});
+
+$$(document).on('page:afterin', '.page[data-name="editor_js_main"]', function(callback) {
+    panel_left_morph();
+
+    var project = callback.detail.route.params.project;
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
+
+    $$(document).find('#page-title').html(filename);
+    $$(document).find('#btn-save-js-main').attr('data-project', project);
+
+    self.module = undefined;
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+
+    fs.readFile(path.join(dir_project, filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
+                    me = monaco.editor;
+                    me.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    me.setTheme(callback.base);
+
+                    we = window.editor;
+                    we = me.create(document.getElementById('container'), {
+                        value: [code_data].join('\n'),
+                        language: 'javascript'
+                    });
+                });
+
+                app.preloader.hide();
+            });
+        }
+    });
+});
+
+$$(document).on('click', '#btn-save-js-main', function() {
+    var project = $$(this).attr('data-project');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+
+    var editor_js = we.getValue();
+    fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
+    app.toast.create({
+        text: 'File Saved',
+        position: 'center',
+        closeTimeout: 2000
+    }).open();
+});
+
+/**
+ * Package json
+ */
+
+$$(document).on('click', '#btn-code-editor-js-package', function() {
+    var project = $$(this).attr('data-project');
+    var filename = $$(this).attr('data-file');
+
+    navigate_main_to('/editor_js_package/' + project + '/' + filename + '/', false, false, false, true, true, false);
+});
+
+$$(document).on('page:afterin', '.page[data-name="editor_js_package"]', function(callback) {
+    panel_left_morph();
+
+    var project = callback.detail.route.params.project;
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
+
+    $$(document).find('#page-title').html(filename);
+    $$(document).find('#btn-save-js-package').attr('data-project', project);
+
+    self.module = undefined;
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+
+    fs.readFile(path.join(dir_project, filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
+                    me = monaco.editor;
+                    me.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    me.setTheme(callback.base);
+
+                    we = window.editor;
+                    we = me.create(document.getElementById('container'), {
+                        value: [code_data].join('\n'),
+                        language: 'json'
+                    });
+                });
+
+                app.preloader.hide();
+            });
+        }
+    });
+});
+
+$$(document).on('click', '#btn-save-js-package', function() {
+    var project = $$(this).attr('data-project');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+
+    var editor_js = we.getValue();
+    fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
+    app.toast.create({
+        text: 'File Saved',
+        position: 'center',
+        closeTimeout: 2000
+    }).open();
+});
+
+
+/**
+ * HTML
+ */
+
+function list_html(project) {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readdir(path.join(dir_project_www, 'pages/'), (err, dir) => {
         $$(document).find('#list-file-html').empty();
         $$(document).find('#list-file-html').append(
             '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-html">' +
@@ -46,8 +422,8 @@ function file_list_html() {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-html-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        // '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '       </div>' +
                         '   </div>' +
@@ -60,8 +436,8 @@ function file_list_html() {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-html-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        // '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '       </div>' +
                         '   </div>' +
@@ -72,8 +448,138 @@ function file_list_html() {
     });
 }
 
-function file_list_js() {
-    fs.readdir(path.join(__dirname, 'js_app/'), (err, dir) => {
+$$(document).on('click', '#btn-code-editor-html', function() {
+    var project = $$(this).attr('data-project');
+    var filename = $$(this).attr('data-file');
+
+    navigate_main_to('/editor_html/' + project + '/' + filename + '/', false, false, false, true, true, false);
+});
+
+$$(document).on('page:afterin', '.page[data-name="editor_html"]', function(callback) {
+    panel_left_morph();
+
+    var project = callback.detail.route.params.project;
+    var filename = callback.detail.route.params.filename;
+    file_open_active = filename;
+
+    $$(document).find('#page-title').html(filename);
+    $$(document).find('#btn-save-html').attr('data-project', project);
+
+    self.module = undefined;
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readFile(path.join(dir_project_www, 'pages/' + filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
+                    me = monaco.editor;
+                    me.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    me.setTheme(callback.base);
+
+                    we = window.editor;
+                    we = me.create(document.getElementById('container'), {
+                        value: [code_data].join('\n'),
+                        language: 'html'
+                    });
+                });
+
+                app.preloader.hide();
+            });
+        }
+    });
+});
+
+$$(document).on('click', '#btn-save-html', function() {
+    var project = $$(this).attr('data-project');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    var editor_html = we.getValue();
+    fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_html, 'utf-8');
+    app.toast.create({
+        text: 'File Saved',
+        position: 'center',
+        closeTimeout: 2000
+    }).open();
+});
+
+$$(document).on('click', '#btn-create-html', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    app.dialog.prompt('Filename', 'New HTML File', function(fileName) {
+        fileType = fileName.split('.');
+        if (fileType[1] !== 'html') {
+            app.dialog.alert('Allow .html only', 'Information');
+        } else if (fileType === null) {
+            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName + '.html'), '', 'utf-8');
+        } else {
+            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName), '', 'utf-8');
+        }
+
+        list_html(project_open_active);
+    });
+});
+
+$$(document).on('click', '#btn-remove-html', function() {
+    var fileName = $$(this).attr('data-file');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    app.dialog.create({
+        title: 'Information',
+        text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
+        buttons: [{
+            text: '<span class="text-color-red">cancel</span>'
+        }, {
+            text: '<span class="text-color-teal">Ok</span>',
+            onClick: function() {
+                fs.unlink(path.join(dir_project_www, 'pages/' + fileName), function(err) {
+                    if (err) return console.log(err);
+                    list_html(project_open_active);
+
+                    navigate_main_to('/');
+                });
+            }
+        }],
+        verticalButtons: false,
+        animate: false
+    }).open();
+});
+
+/**
+ * JS
+ */
+
+function list_js(project) {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readdir(path.join(dir_project_www, 'js_app/'), (err, dir) => {
         $$(document).find('#list-file-js').empty();
         $$(document).find('#list-file-js').append(
             '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-js">' +
@@ -97,7 +603,7 @@ function file_list_js() {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-js-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '        </div>' +
                         '   </div>' +
@@ -110,7 +616,7 @@ function file_list_js() {
                         '       <div class="item-inner">' +
                         '           <div class="item-title">' + fileName + '</div>' +
                         '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-js-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
                         '           </div>' +
                         '        </div>' +
                         '   </div>' +
@@ -121,357 +627,30 @@ function file_list_js() {
     });
 }
 
-function file_list_css() {
-    fs.readdir(path.join(__dirname, 'css/'), (err, dir) => {
-        $$(document).find('#list-file-css').empty();
-        $$(document).find('#list-file-css').append(
-            '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-css">' +
-            '   <div class="item-content">' +
-            '       <div class="item-inner">' +
-            '           <div class="item-title text-color-teal">css/</div>' +
-            '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-            '       </div>' +
-            '   </div>' +
-            '</li>');
-        if (dir.length === 0) {
-            //Do Nothing
-        } else {
-            for (var i = 0; i < dir.length; i++) {
-                let fileName = dir[i];
-                if (fileName === 'framework7-icons.css' || fileName === 'framework7.bundle.css' || fileName === 'framework7.bundle.min.css' || fileName === 'framework7.bundle.rtl.css' || fileName === 'framework7.bundle.rtl.min.css' || fileName === 'framework7.css' || fileName === 'framework7.min.css' || fileName === 'framework7.rtl.css' || fileName === 'framework7.rtl.min.css' || fileName === 'custom.css') {
-                    $$(document).find('#list-file-css').append(
-                        '<li>' +
-                        '   <div class="item-content">' +
-                        '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
-                        '       <div class="item-inner">' +
-                        '           <div class="item-title">' + fileName + '</div>' +
-                        '           <div class="item-after">' +
-                        // '               <i title="Code Editor" class="material-icons" id="btn-code-css" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-css-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '           </div>' +
-                        '        </div>' +
-                        '   </div>' +
-                        '</li>');
-                } else {
-                    $$(document).find('#list-file-css').append(
-                        '<li>' +
-                        '   <div class="item-content">' +
-                        '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-css" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
-                        '       <div class="item-inner">' +
-                        '           <div class="item-title">' + fileName + '</div>' +
-                        '           <div class="item-after">' +
-                        // '               <i title="Code Editor" class="material-icons" id="btn-code-css" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-css-2" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '           </div>' +
-                        '        </div>' +
-                        '   </div>' +
-                        '</li>');
-                }
-            }
-        }
-    });
-}
+$$(document).on('click', '#btn-code-editor-js', function() {
+    var project = $$(this).attr('data-project');
+    var filename = $$(this).attr('data-file');
 
-function file_list_other() {
-    fs.readdir(path.join(__dirname, 'file/'), (err, dir) => {
-        $$(document).find('#list-file-other').empty();
-        $$(document).find('#list-file-other').append(
-            '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-file">' +
-            '   <div class="item-content">' +
-            '       <div class="item-inner">' +
-            '           <div class="item-title text-color-teal">file/</div>' +
-            '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-            '       </div>' +
-            '   </div>' +
-            '</li>');
-        if (dir.length === 0) {
-            //Do Nothing
-        } else {
-            for (var i = 0; i < dir.length; i++) {
-                let fileName = dir[i];
-                $$(document).find('#list-file-other').append(
-                    '<li>' +
-                    '    <div class="item-content">' +
-                    '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-other" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
-                    '       <div class="item-inner">' +
-                    '       <div class="item-title">' + fileName + '</div>' +
-                    '       </div>' +
-                    '    </div>' +
-                    '</li>');
-            }
-        }
-    });
-}
-
-$$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
-    panel_left_morph();
-});
-
-$$(document).on('click', '#btn-app-run', function() {
-    let runWindow
-
-    runWindow = new BrowserWindow({
-        width: 400,
-        height: 650,
-        frame: false,
-        resizable: false,
-        webPreferences: {
-            nodeIntegration: true
-        },
-        icon: path.join(__dirname, '/www/img/256x256.png')
-    });
-
-    runWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
-});
-
-$$(document).on('click', '#btn-app-run-debug', function() {
-    let runWindow
-
-    runWindow = new BrowserWindow({
-        width: 400,
-        height: 650,
-        frame: false,
-        resizable: false,
-        webPreferences: {
-            nodeIntegration: true
-        },
-        icon: path.join(__dirname, '/www/img/256x256.png')
-    });
-
-    runWindow.webContents.openDevTools({ mode: 'detach' });
-
-    runWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
-});
-
-$$(document).on('click', '#btn-create-html', function() {
-    app.dialog.prompt('Filename', 'New HTML File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'html') {
-            app.dialog.alert('Allow .html only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(__dirname, 'pages/' + fileName + '.html'), '', 'utf-8');
-        } else {
-            fs.writeFileSync(path.join(__dirname, 'pages/' + fileName), '', 'utf-8');
-        }
-        file_list_html();
-        file_list_js();
-        file_list_css();
-        file_list_other();
-    });
-});
-
-$$(document).on('click', '#btn-create-js', function() {
-    app.dialog.prompt('Filename', 'New Javascript File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'js') {
-            app.dialog.alert('Allow .js only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(__dirname, 'js_app/' + fileName + '.js'), '', 'utf-8');
-        } else {
-            fs.writeFileSync(path.join(__dirname, 'js_app/' + fileName), '', 'utf-8');
-        }
-        file_list_html();
-        file_list_js();
-        file_list_css();
-        file_list_other();
-    });
-});
-
-$$(document).on('click', '#btn-create-css', function() {
-    app.dialog.prompt('Filename', 'New CSS File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'css') {
-            app.dialog.alert('Allow .css only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(__dirname, 'css/' + fileName + '.js'), '', 'utf-8');
-        } else {
-            fs.writeFileSync(path.join(__dirname, 'css/' + fileName), '', 'utf-8');
-        }
-        file_list_html();
-        file_list_js();
-        file_list_css();
-        file_list_other();
-    });
-});
-
-$$(document).on('click', '#btn-create-file', function() {
-    dialog.showOpenDialog(function(fileName) {
-        if (fileName === undefined) {
-            app.dialog.alert("No file selected");
-        } else {
-            readFile(fileName[0]);
-        }
-    });
-
-    function readFile(filepath) {
-        fs.readFile(filepath, 'utf-8', (err, data) => {
-            if (err) {
-                alert("An error ocurred reading the file :" + err.message)
-                return
-            }
-            let namefile = filepath.replace(/^.*[\\\/]/, '');
-            fs.writeFileSync(path.join(__dirname, 'file/' + namefile), data, 'utf-8');
-            file_list_html();
-            file_list_js();
-            file_list_css();
-            file_list_other();
-        })
-    }
-});
-
-$$(document).on('click', '#btn-code-html-index', function() {
-    var fileName = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_html_index/' + fileName + '/', false, false, false, true, true, false);
-});
-
-$$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function(callback) {
-    panel_left_morph();
-
-    var filename = callback.detail.route.params.filename;
-    file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-
-    self.module = undefined;
-
-    fs.readFile(path.join(__dirname, filename), 'utf-8', (err, code_data) => {
-        app.preloader.show();
-
-        if (err) {
-            app.preloader.hide();
-            console.log(err);
-            return;
-        } else {
-            editorRequire.config({
-                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
-            });
-
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
-                    monaco.editor.defineTheme(callback.base, {
-                        base: callback.base,
-                        inherit: true,
-                        rules: [callback.rules],
-                        colors: callback.colors
-                    });
-                    monaco.editor.setTheme(callback.base);
-
-                    window.editor = monaco.editor.create(document.getElementById('container'), {
-                        value: [code_data].join('\n'),
-                        language: 'html'
-                    });
-                });
-
-                app.preloader.hide();
-            });
-        }
-    });
-});
-
-$$(document).on('click', '#btn-save-html-index', function() {
-    var editor_html = we.getValue();
-    fs.writeFileSync(path.join(__dirname, file_open_active), editor_html, 'utf-8');
-    app.dialog.create({
-        title: 'Information',
-        text: 'File Saved',
-        buttons: [{
-            text: '<span class="text-color-teal">Ok</span>',
-        }],
-        verticalButtons: false,
-        animate: false
-    }).open();
-});
-
-$$(document).on('click', '#btn-code-html-2', function() {
-    var fileName = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_html/' + fileName + '/', false, false, false, true, true, false);
-});
-
-$$(document).on('page:afterin', '.page[data-name="editor_html"]', function(callback) {
-    panel_left_morph();
-
-    var filename = callback.detail.route.params.filename;
-    file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-
-    self.module = undefined;
-
-    fs.readFile(path.join(__dirname, 'pages/' + filename), 'utf-8', (err, code_data) => {
-        app.preloader.show();
-
-        if (err) {
-            app.preloader.hide();
-            console.log(err);
-            return;
-        } else {
-            editorRequire.config({
-                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
-            });
-
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
-                    monaco.editor.defineTheme(callback.base, {
-                        base: callback.base,
-                        inherit: true,
-                        rules: [callback.rules],
-                        colors: callback.colors
-                    });
-                    monaco.editor.setTheme(callback.base);
-
-                    window.editor = monaco.editor.create(document.getElementById('container'), {
-                        value: [code_data].join('\n'),
-                        language: 'html'
-                    });
-                });
-
-                app.preloader.hide();
-            });
-        }
-    });
-});
-
-$$(document).on('click', '#btn-save-html', function() {
-    var editor_html = we.getValue();
-    fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), editor_html, 'utf-8');
-    app.dialog.create({
-        title: 'Information',
-        text: 'File Saved',
-        buttons: [{
-            text: '<span class="text-color-teal">Ok</span>',
-        }],
-        verticalButtons: false,
-        animate: false
-    }).open();
-});
-
-$$(document).on('click', '#btn-code-js-2', function() {
-    var fileName = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_js/' + fileName + '/', false, false, false, true, true, false);
+    navigate_main_to('/editor_js/' + project + '/' + filename + '/', false, false, false, true, true, false);
 });
 
 $$(document).on('page:afterin', '.page[data-name="editor_js"]', function(callback) {
     panel_left_morph();
 
+    var project = callback.detail.route.params.project;
     var filename = callback.detail.route.params.filename;
     file_open_active = filename;
 
     $$(document).find('#page-title').html(filename);
+    $$(document).find('#btn-save-js').attr('data-project', project);
 
     self.module = undefined;
 
-    fs.readFile(path.join(__dirname, 'js_app/' + filename), 'utf-8', (err, code_data) => {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readFile(path.join(dir_project_www, 'js_app/' + filename), 'utf-8', (err, code_data) => {
         app.preloader.show();
 
         if (err) {
@@ -508,36 +687,149 @@ $$(document).on('page:afterin', '.page[data-name="editor_js"]', function(callbac
 });
 
 $$(document).on('click', '#btn-save-js', function() {
+    var project = $$(this).attr('data-project');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
     var editor_js = we.getValue();
-    fs.writeFileSync(path.join(__dirname, 'js_app/' + file_open_active), editor_js, 'utf-8');
+    fs.writeFileSync(path.join(dir_project_www, 'js_app/' + file_open_active), editor_js, 'utf-8');
+    app.toast.create({
+        text: 'File Saved',
+        position: 'center',
+        closeTimeout: 2000
+    }).open();
+});
+
+$$(document).on('click', '#btn-create-js', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    app.dialog.prompt('Filename', 'New Javascript File', function(fileName) {
+        fileType = fileName.split('.');
+        if (fileType[1] !== 'js') {
+            app.dialog.alert('Allow .js only', 'Information');
+        } else if (fileType === null) {
+            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName + '.js'), '', 'utf-8');
+        } else {
+            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName), '', 'utf-8');
+        }
+
+        list_js(project_open_active);
+    });
+});
+
+$$(document).on('click', '#btn-remove-js', function() {
+    var fileName = $$(this).attr('data-file');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
     app.dialog.create({
         title: 'Information',
-        text: 'File Saved',
+        text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
         buttons: [{
+            text: '<span class="text-color-red">cancel</span>'
+        }, {
             text: '<span class="text-color-teal">Ok</span>',
+            onClick: function() {
+                fs.unlink(path.join(dir_project_www, 'js_app/' + fileName), function(err) {
+                    if (err) return console.log(err);
+                    list_js(project_open_active);
+
+                    navigate_main_to('/');
+                });
+            }
         }],
         verticalButtons: false,
         animate: false
     }).open();
 });
 
-$$(document).on('click', '#btn-code-css-2', function() {
-    var fileName = $$(this).attr('data-file');
+/**
+ * CSS
+ */
 
-    navigate_main_to('/editor_css/' + fileName + '/', false, false, false, true, true, false);
+function list_css(project) {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readdir(path.join(dir_project_www, 'css/'), (err, dir) => {
+        $$(document).find('#list-file-css').empty();
+        $$(document).find('#list-file-css').append(
+            '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-css">' +
+            '   <div class="item-content">' +
+            '       <div class="item-inner">' +
+            '           <div class="item-title text-color-teal">css/</div>' +
+            '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
+            '       </div>' +
+            '   </div>' +
+            '</li>');
+        if (dir.length === 0) {
+            //Do Nothing
+        } else {
+            for (var i = 0; i < dir.length; i++) {
+                let fileName = dir[i];
+                if (fileName === 'framework7-icons.css' || fileName === 'framework7.bundle.css' || fileName === 'framework7.bundle.min.css' || fileName === 'framework7.bundle.rtl.css' || fileName === 'framework7.bundle.rtl.min.css' || fileName === 'framework7.css' || fileName === 'framework7.min.css' || fileName === 'framework7.rtl.css' || fileName === 'framework7.rtl.min.css' || fileName === 'custom.css') {
+                    $$(document).find('#list-file-css').append(
+                        '<li>' +
+                        '   <div class="item-content">' +
+                        '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
+                        '       <div class="item-inner">' +
+                        '           <div class="item-title">' + fileName + '</div>' +
+                        '           <div class="item-after">' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '           </div>' +
+                        '        </div>' +
+                        '   </div>' +
+                        '</li>');
+                } else {
+                    $$(document).find('#list-file-css').append(
+                        '<li>' +
+                        '   <div class="item-content">' +
+                        '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-css" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
+                        '       <div class="item-inner">' +
+                        '           <div class="item-title">' + fileName + '</div>' +
+                        '           <div class="item-after">' +
+                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                        '           </div>' +
+                        '        </div>' +
+                        '   </div>' +
+                        '</li>');
+                }
+            }
+        }
+    });
+}
+
+$$(document).on('click', '#btn-code-editor-css', function() {
+    var project = $$(this).attr('data-project');
+    var filename = $$(this).attr('data-file');
+
+    navigate_main_to('/editor_css/' + project + '/' + filename + '/', false, false, false, true, true, false);
 });
 
 $$(document).on('page:afterin', '.page[data-name="editor_css"]', function(callback) {
     panel_left_morph();
 
+    var project = callback.detail.route.params.project;
     var filename = callback.detail.route.params.filename;
     file_open_active = filename;
 
     $$(document).find('#page-title').html(filename);
+    $$(document).find('#btn-save-css').attr('data-project', project);
 
     self.module = undefined;
 
-    fs.readFile(path.join(__dirname, 'css/' + filename), 'utf-8', (err, code_data) => {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readFile(path.join(dir_project_www, 'css/' + filename), 'utf-8', (err, code_data) => {
         app.preloader.show();
 
         if (err) {
@@ -551,15 +843,17 @@ $$(document).on('page:afterin', '.page[data-name="editor_css"]', function(callba
 
             editorRequire(['vs/editor/editor.main'], function() {
                 loadTheme('Monokai').then(function(callback) {
-                    monaco.editor.defineTheme(callback.base, {
+                    me = monaco.editor;
+                    me.defineTheme(callback.base, {
                         base: callback.base,
                         inherit: true,
                         rules: [callback.rules],
                         colors: callback.colors
                     });
-                    monaco.editor.setTheme(callback.base);
+                    me.setTheme(callback.base);
 
-                    window.editor = monaco.editor.create(document.getElementById('container'), {
+                    we = window.editor;
+                    we = me.create(document.getElementById('container'), {
                         value: [code_data].join('\n'),
                         language: 'css'
                     });
@@ -572,76 +866,47 @@ $$(document).on('page:afterin', '.page[data-name="editor_css"]', function(callba
 });
 
 $$(document).on('click', '#btn-save-css', function() {
-    var editor_js = we.getValue();
-    fs.writeFileSync(path.join(__dirname, 'css/' + file_open_active), editor_js, 'utf-8');
-    app.dialog.create({
-        title: 'Information',
+    var project = $$(this).attr('data-project');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    var editor_css = we.getValue();
+    fs.writeFileSync(path.join(dir_project_www, 'css/' + file_open_active), editor_css, 'utf-8');
+    app.toast.create({
         text: 'File Saved',
-        buttons: [{
-            text: '<span class="text-color-teal">Ok</span>',
-        }],
-        verticalButtons: false,
-        animate: false
+        position: 'center',
+        closeTimeout: 2000
     }).open();
 });
 
-$$(document).on('click', '#btn-remove-html', function() {
-    var fileName = $$(this).attr('data-file');
+$$(document).on('click', '#btn-create-css', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.create({
-        title: 'Information',
-        text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
-        buttons: [{
-            text: '<span class="text-color-red">cancel</span>'
-        }, {
-            text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(__dirname, 'pages/' + fileName), function(err) {
-                    if (err) return console.log(err);
-                    file_list_html();
-                    file_list_js();
-                    file_list_css();
-                    file_list_other();
+    app.dialog.prompt('Filename', 'New CSS File', function(fileName) {
+        fileType = fileName.split('.');
+        if (fileType[1] !== 'css') {
+            app.dialog.alert('Allow .css only', 'Information');
+        } else if (fileType === null) {
+            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName + '.js'), '', 'utf-8');
+        } else {
+            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName), '', 'utf-8');
+        }
 
-                    navigate_main_to('/');
-                });
-            }
-        }],
-        verticalButtons: false,
-        animate: false
-    }).open();
-});
-
-$$(document).on('click', '#btn-remove-js', function() {
-    var fileName = $$(this).attr('data-file');
-
-    app.dialog.create({
-        title: 'Information',
-        text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
-        buttons: [{
-            text: '<span class="text-color-red">cancel</span>'
-        }, {
-            text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(__dirname, 'js_app/' + fileName), function(err) {
-                    if (err) return console.log(err);
-                    file_list_html();
-                    file_list_js();
-                    file_list_css();
-                    file_list_other();
-
-                    navigate_main_to('/');
-                });
-            }
-        }],
-        verticalButtons: false,
-        animate: false
-    }).open();
+        list_css(project_open_active);
+    });
 });
 
 $$(document).on('click', '#btn-remove-css', function() {
     var fileName = $$(this).attr('data-file');
 
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
     app.dialog.create({
         title: 'Information',
         text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
@@ -650,12 +915,9 @@ $$(document).on('click', '#btn-remove-css', function() {
         }, {
             text: '<span class="text-color-teal">Ok</span>',
             onClick: function() {
-                fs.unlink(path.join(__dirname, 'css/' + fileName), function(err) {
+                fs.unlink(path.join(dir_project_www, 'css/' + fileName), function(err) {
                     if (err) return console.log(err);
-                    file_list_html();
-                    file_list_js();
-                    file_list_css();
-                    file_list_other();
+                    list_css(project_open_active);
 
                     navigate_main_to('/');
                 });
@@ -666,8 +928,74 @@ $$(document).on('click', '#btn-remove-css', function() {
     }).open();
 });
 
+/**
+ * Other
+ */
+
+function list_other(project) {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readdir(path.join(dir_project_www, 'file/'), (err, dir) => {
+        $$(document).find('#list-file-other').empty();
+        $$(document).find('#list-file-other').append(
+            '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-file">' +
+            '   <div class="item-content">' +
+            '       <div class="item-inner">' +
+            '           <div class="item-title text-color-teal">file/</div>' +
+            '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
+            '       </div>' +
+            '   </div>' +
+            '</li>');
+        if (dir.length === 0) {
+            //Do Nothing
+        } else {
+            for (var i = 0; i < dir.length; i++) {
+                let fileName = dir[i];
+                $$(document).find('#list-file-other').append(
+                    '<li>' +
+                    '    <div class="item-content">' +
+                    '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-other" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
+                    '       <div class="item-inner">' +
+                    '       <div class="item-title">' + fileName + '</div>' +
+                    '       </div>' +
+                    '    </div>' +
+                    '</li>');
+            }
+        }
+    });
+}
+
+$$(document).on('click', '#btn-create-file', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    dialog.showOpenDialog(function(fileName) {
+        if (fileName === undefined) {
+            app.dialog.alert("No file selected");
+        } else {
+            readFile(fileName[0]);
+        }
+    });
+
+    function readFile(filepath) {
+        let namefile = filepath.replace(/^.*[\\\/]/, '');
+
+        fs.copy(filepath, path.join(dir_project_www, 'file/' + namefile), err => {
+            if (err) return console.error(err)
+            list_other(project_open_active);
+        });
+    }
+});
+
 $$(document).on('click', '#btn-remove-other', function() {
     var fileName = $$(this).attr('data-file');
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
 
     app.dialog.create({
         title: 'Information',
@@ -677,12 +1005,9 @@ $$(document).on('click', '#btn-remove-other', function() {
         }, {
             text: '<span class="text-color-teal">Ok</span>',
             onClick: function() {
-                fs.unlink(path.join(__dirname, 'file/' + fileName), function(err) {
+                fs.unlink(path.join(dir_project_www, 'file/' + fileName), function(err) {
                     if (err) return console.log(err);
-                    file_list_html();
-                    file_list_js();
-                    file_list_css();
-                    file_list_other();
+                    list_other(project_open_active);
                 });
             }
         }],
@@ -691,230 +1016,63 @@ $$(document).on('click', '#btn-remove-other', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-app-nowdb', function() {
-    var executablePath = null;
-
-    if (app.device.os === "windows") {
-        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe');
-        fs.stat(executablePath, function fsStat(err, stats) {
-            if (err) {
-                app.dialog.create({
-                    title: 'Information',
-                    text: 'NowDB Data Manager is Not Available',
-                    buttons: [{
-                        text: '<span class="text-color-red">Later</span>'
-                    }, {
-                        text: '<span class="text-color-teal">Download</span>',
-                        onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.exe", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe'));
-                        }
-                    }],
-                    verticalButtons: false,
-                    animate: false
-                }).open();
-            } else {
-                var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
-
-                    console.log(data.toString());
-                });
-            }
-        });
-    } else if (app.device.os === "macos") {
-        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg');
-        fs.stat(executablePath, function fsStat(err, stats) {
-            if (err) {
-                app.dialog.create({
-                    title: 'Information',
-                    text: 'NowDB Data Manager is Not Available',
-                    buttons: [{
-                        text: '<span class="text-color-red">Later</span>'
-                    }, {
-                        text: '<span class="text-color-teal">Download</span>',
-                        onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager-1.1.0.dmg", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg'));
-                        }
-                    }],
-                    verticalButtons: false,
-                    animate: false
-                }).open();
-            } else {
-                var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
-
-                    console.log(data.toString());
-                });
-            }
-        });
-    } else {
-        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage');
-        fs.stat(executablePath, function fsStat(err, stats) {
-            if (err) {
-                app.dialog.create({
-                    title: 'Information',
-                    text: 'NowDB Data Manager is Not Available',
-                    buttons: [{
-                        text: '<span class="text-color-red">Later</span>'
-                    }, {
-                        text: '<span class="text-color-teal">Download</span>',
-                        onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.AppImage", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage'));
-                        }
-                    }],
-                    verticalButtons: false,
-                    animate: false
-                }).open();
-            } else {
-                var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
-
-                    console.log(data.toString());
-                });
-            }
-        });
-    }
-});
+/**
+ * Keyboard Binding
+ */
 
 document.addEventListener('keydown', function(event) {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
     if (event.code == 'KeyS' && (event.ctrlKey || event.metaKey)) {
         page_history = app.views.main.history;
         page_count = page_history.length;
         page_current = page_history[page_count - 1];
+
         if (page_current.split('/')[1] === "designer") {
             var editor_html = editor.getHtml();
             var html = pretty(editor_html, { ocd: true });
 
-            fs.writeFileSync(path.join(__dirname, 'pages/' + page_current.split('/')[2]), html, 'utf-8');
+            fs.writeFileSync(path.join(dir_project_www, 'pages/' + page_current.split('/')[2]), html, 'utf-8');
 
             window.localStorage.clear();
+        } else if (page_current.split('/')[1] === "editor_js_main") {
+            var editor_js = we.getValue();
+            fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
+        } else if (page_current.split('/')[1] === "editor_js_package") {
+            var editor_js = we.getValue();
+            fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
         } else {
             if (file_open_active === 'index.html') {
                 var editor_html = we.getValue();
-                fs.writeFileSync(path.join(__dirname, file_open_active), editor_html, 'utf-8');
+                fs.writeFileSync(path.join(dir_project_www, file_open_active), editor_html, 'utf-8');
             } else {
                 var file_type = file_open_active.split('.');
                 if (file_type[1] === "html") {
                     var editor_html = we.getValue();
-                    fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), editor_html, 'utf-8');
+                    fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_html, 'utf-8');
                 } else if (file_type[1] === "js") {
-                    var editor_html = we.getValue();
-                    fs.writeFileSync(path.join(__dirname, 'js_app/' + file_open_active), editor_html, 'utf-8');
+                    var editor_js = we.getValue();
+                    fs.writeFileSync(path.join(dir_project_www, 'js_app/' + file_open_active), editor_js, 'utf-8');
                 } else if (file_type[1] === "css") {
-                    var editor_html = we.getValue();
-                    fs.writeFileSync(path.join(__dirname, 'css/' + file_open_active), editor_html, 'utf-8');
+                    var editor_css = we.getValue();
+                    fs.writeFileSync(path.join(dir_project_www, 'css/' + file_open_active), editor_css, 'utf-8');
                 }
             }
         }
-        app.dialog.create({
-            title: 'Information',
+
+        app.toast.create({
             text: 'File Saved',
-            buttons: [{
-                text: '<span class="text-color-teal">Ok</span>',
-            }],
-            verticalButtons: false,
-            animate: false
+            position: 'center',
+            closeTimeout: 2000
         }).open();
     }
 });
 
-function downloadNowDB(file_url, targetPath) {
-    dialog_nowdb = app.dialog.progress('<i class="material-icons">get_app</i>', progress_nowdb);
-    dialog_nowdb.setText('0 of 100%');
-
-    var received_bytes = 0;
-    var total_bytes = 0;
-
-    var req = request({
-        method: 'GET',
-        uri: file_url
-    });
-
-    var out = fs.createWriteStream(targetPath);
-    req.pipe(out);
-
-    req.on('response', function(data) {
-        total_bytes = parseInt(data.headers['content-length']);
-    });
-
-    req.on('data', function(chunk) {
-        received_bytes += chunk.length;
-
-        showProgress(received_bytes, total_bytes);
-    });
-
-    req.on('end', function() {
-        dialog_nowdb.close();
-
-        app.dialog.create({
-            title: 'Information',
-            text: 'File Downloaded',
-            buttons: [{
-                text: '<span class="text-color-teal">Open</span>',
-                onClick: function() {
-                    if (app.device.os === "windows") {
-                        var child = require('child_process').execFile;
-                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe');
-
-                        child(executablePath, function(err, data) {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-
-                            console.log(data.toString());
-                        });
-                    } else if (app.device.os === "macos") {
-                        var child = require('child_process').execFile;
-                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg');
-
-                        child(executablePath, function(err, data) {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-
-                            console.log(data.toString());
-                        });
-                    } else {
-                        var child = require('child_process').execFile;
-                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage');
-
-                        child(executablePath, function(err, data) {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-
-                            console.log(data.toString());
-                        });
-                    }
-                }
-            }],
-            verticalButtons: false,
-            animate: false
-        }).open();
-    });
-}
-
-function showProgress(received, total) {
-    var percentage = (received * 100) / total;
-    var percent = Math.round(percentage).toFixed(0);
-    dialog_nowdb.setProgress(percent);
-    dialog_nowdb.setText(percent + ' of 100%');
-    // console.log(percentage + "% | " + received + " bytes out of " + total + " bytes.");
-}
+/**
+ * UI Designer
+ */
 
 $$(document).on('click', '#btn-design-html', function() {
     var fileName = $$(this).attr('data-file');
@@ -1068,17 +1226,10 @@ $$(document).on('click', '#btn-save-design', function() {
 
     fs.writeFileSync(path.join(__dirname, 'pages/' + file_open_active), html, 'utf-8');
 
-    app.dialog.create({
-        title: 'Information',
+    app.toast.create({
         text: 'File Saved',
-        buttons: [{
-            text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                window.localStorage.clear();
-            }
-        }],
-        verticalButtons: false,
-        animate: false
+        position: 'center',
+        closeTimeout: 2000
     }).open();
 });
 
@@ -1141,6 +1292,10 @@ $$(document).on('click', '#btn-design-unoutline', function() {
     $$(document).find('#btn-design-outline').show();
 });
 
+/**
+ * Snippet Code
+ */
+
 $$(document).on('click', '#code-if', function() {
     app.popover.close();
 
@@ -1189,3 +1344,190 @@ $$(document).on('click', '#code-if-else-if', function() {
     we.setValue(splitedText.join("\n"));
     we.setPosition(position);
 });
+
+/**
+ * NowDB Data Manager
+ */
+
+$$(document).on('click', '#btn-app-nowdb', function() {
+    var executablePath = null;
+
+    if (app.device.os === "windows") {
+        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe');
+        fs.stat(executablePath, function fsStat(err, stats) {
+            if (err) {
+                app.dialog.create({
+                    title: 'Information',
+                    text: 'NowDB Data Manager is Not Available',
+                    buttons: [{
+                        text: '<span class="text-color-red">Later</span>'
+                    }, {
+                        text: '<span class="text-color-teal">Download</span>',
+                        onClick: function() {
+                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.exe", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe'));
+                        }
+                    }],
+                    verticalButtons: false,
+                    animate: false
+                }).open();
+            } else {
+                var child = require('child_process').execFile;
+                child(executablePath, function(err, data) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+
+                    console.log(data.toString());
+                });
+            }
+        });
+    } else if (app.device.os === "macos") {
+        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg');
+        fs.stat(executablePath, function fsStat(err, stats) {
+            if (err) {
+                app.dialog.create({
+                    title: 'Information',
+                    text: 'NowDB Data Manager is Not Available',
+                    buttons: [{
+                        text: '<span class="text-color-red">Later</span>'
+                    }, {
+                        text: '<span class="text-color-teal">Download</span>',
+                        onClick: function() {
+                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager-1.1.0.dmg", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg'));
+                        }
+                    }],
+                    verticalButtons: false,
+                    animate: false
+                }).open();
+            } else {
+                var child = require('child_process').execFile;
+                child(executablePath, function(err, data) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+
+                    console.log(data.toString());
+                });
+            }
+        });
+    } else {
+        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage');
+        fs.stat(executablePath, function fsStat(err, stats) {
+            if (err) {
+                app.dialog.create({
+                    title: 'Information',
+                    text: 'NowDB Data Manager is Not Available',
+                    buttons: [{
+                        text: '<span class="text-color-red">Later</span>'
+                    }, {
+                        text: '<span class="text-color-teal">Download</span>',
+                        onClick: function() {
+                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.AppImage", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage'));
+                        }
+                    }],
+                    verticalButtons: false,
+                    animate: false
+                }).open();
+            } else {
+                var child = require('child_process').execFile;
+                child(executablePath, function(err, data) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+
+                    console.log(data.toString());
+                });
+            }
+        });
+    }
+});
+
+function downloadNowDB(file_url, targetPath) {
+    dialog_nowdb = app.dialog.progress('<i class="material-icons">get_app</i>', progress_nowdb);
+    dialog_nowdb.setText('0 of 100%');
+
+    var received_bytes = 0;
+    var total_bytes = 0;
+
+    var req = request({
+        method: 'GET',
+        uri: file_url
+    });
+
+    var out = fs.createWriteStream(targetPath);
+    req.pipe(out);
+
+    req.on('response', function(data) {
+        total_bytes = parseInt(data.headers['content-length']);
+    });
+
+    req.on('data', function(chunk) {
+        received_bytes += chunk.length;
+
+        showProgress(received_bytes, total_bytes);
+    });
+
+    req.on('end', function() {
+        dialog_nowdb.close();
+
+        app.dialog.create({
+            title: 'Information',
+            text: 'File Downloaded',
+            buttons: [{
+                text: '<span class="text-color-teal">Open</span>',
+                onClick: function() {
+                    if (app.device.os === "windows") {
+                        var child = require('child_process').execFile;
+                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe');
+
+                        child(executablePath, function(err, data) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+
+                            console.log(data.toString());
+                        });
+                    } else if (app.device.os === "macos") {
+                        var child = require('child_process').execFile;
+                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg');
+
+                        child(executablePath, function(err, data) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+
+                            console.log(data.toString());
+                        });
+                    } else {
+                        var child = require('child_process').execFile;
+                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage');
+
+                        child(executablePath, function(err, data) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+
+                            console.log(data.toString());
+                        });
+                    }
+                }
+            }],
+            verticalButtons: false,
+            animate: false
+        }).open();
+    });
+}
+
+function showProgress(received, total) {
+    var percentage = (received * 100) / total;
+    var percent = Math.round(percentage).toFixed(0);
+    dialog_nowdb.setProgress(percent);
+    dialog_nowdb.setText(percent + ' of 100%');
+    // console.log(percentage + "% | " + received + " bytes out of " + total + " bytes.");
+}

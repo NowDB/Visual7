@@ -1,8 +1,8 @@
 {
-    "name": "visual7",
-    "productName": "Visual7",
-    "version": "1.1.1",
-    "description": "Visual7 is EletronJS Starter Application based on Framework7",
+    "name": "myapp",
+    "productName": "My App",
+    "version": "0.0.1",
+    "description": "My App Description",
     "main": "main.js",
     "scripts": {
         "start": "electron .",
@@ -11,10 +11,9 @@
         "dist": "electron-builder --publish never"
     },
     "build": {
-        "appId": "com.nowdb.visual7",
+        "appId": "com.domain.sub",
         "dmg": {
-            "contents": [
-                {
+            "contents": [{
                     "x": 110,
                     "y": 150
                 },
@@ -37,20 +36,16 @@
     },
     "publish": "never",
     "keywords": [
-        "NowDB",
-        "UI Builder"
+        "Great",
+        "Application"
     ],
-    "author": "NowDB Developer Team",
+    "author": "My Team",
     "license": "CC0-1.0",
     "devDependencies": {
         "electron": "^8.2.2",
-        "electron-builder": "^22.4.1",
-        "electron-pdf-window": "^1.0.12"
+        "electron-builder": "^22.4.1"
     },
     "dependencies": {
-        "js-beautify": "^1.11.0",
-        "pretty": "^2.0.0",
-        "shelljs": "^0.8.3",
         "electron-packager": "^14.2.1",
         "electron-prompt": "^1.5.1",
         "electron-reload": "^1.5.0",
@@ -58,9 +53,6 @@
         "getmac": "^5.0.0",
         "localStorage": "^1.0.4",
         "mkdirp": "^1.0.4",
-        "monaco-editor": "^0.20.0",
-        "monaco-loader": "^0.8.2",
-        "monaco-themes": "^0.3.3",
         "sha1": "^1.1.1"
     }
 }
