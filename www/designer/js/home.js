@@ -62,7 +62,7 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                     if (os.platform() === "darwin") {
                         app.dialog.create({
                             title: '<span class="text-color-red">Manual Install</span>',
-                            text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest --unsafe-perm=true</span> and continue with <br/><span class="text-color-black">npm install</span>',
+                            text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest</span> and continue with <br/><span class="text-color-black">npm install</span>',
                             buttons: [{
                                 text: '<span class="text-color-teal">Ok</span>'
                             }],
