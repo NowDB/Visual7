@@ -43,24 +43,34 @@
     "author": "NowDB Developer Team",
     "license": "CC0-1.0",
     "devDependencies": {
-        "electron": "^8.2.2",
+        "electron": "^8.2.3",
         "electron-builder": "^22.4.1",
         "electron-pdf-window": "^1.0.12"
     },
     "dependencies": {
-        "js-beautify": "^1.11.0",
-        "pretty": "^2.0.0",
-        "shelljs": "^0.8.3",
         "electron-packager": "^14.2.1",
         "electron-prompt": "^1.5.1",
         "electron-reload": "^1.5.0",
+        "fs": "0.0.1-security",
         "fs-extra": "^9.0.0",
         "getmac": "^5.0.0",
+        "js-beautify": "^1.11.0",
         "localStorage": "^1.0.4",
         "mkdirp": "^1.0.4",
         "monaco-editor": "^0.20.0",
         "monaco-loader": "^0.8.2",
         "monaco-themes": "^0.3.3",
-        "sha1": "^1.1.1"
-    }
+        "pretty": "^2.0.0",
+        "sha1": "^1.1.1",
+        "shelljs": "^0.8.3",
+        "sudo-prompt": "^9.1.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NowDB/Visual7.git"
+    },
+    "bugs": {
+        "url": "https://github.com/NowDB/Visual7/issues"
+    },
+    "homepage": "https://github.com/NowDB/Visual7#readme"
 }

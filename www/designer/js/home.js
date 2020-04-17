@@ -39,37 +39,49 @@ $$(document).on('click', '#btn-application-new-electron', function() {
         function create_app() {
             fs.readdir(dir_project, (err, dir) => {
                 if (err) {
-                    fs.mkdirSync(dir_project);
-                    fs.mkdirSync(dir_project_www);
-                    fs.mkdirSync(path.join(dir_project_www, 'file/'));
+                    mkdir(dir_project);
+                    mkdir(dir_project_www);
+                    mkdir(path.join(dir_project_www, 'file/'));
 
-                    fs.copyFile(path.join(__dirname, 'index.html'), path.join(dir_project_www, 'index.html'));
-                    fs.copyFile(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
-                    fs.copyFile(path.join(dir_init, 'main.js'), path.join(dir_project, 'main.js'));
-                    fs.copyFile(path.join(dir_init, 'package.json'), path.join(dir_project, 'package.json'));
+                    copy(path.join(__dirname, 'index.html'), path.join(dir_project_www, 'index.html'));
+                    copy(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
+                    copy(path.join(dir_init, 'main.js'), path.join(dir_project, 'main.js'));
+                    copy(path.join(dir_init, 'package.json'), path.join(dir_project, 'package.json'));
 
-                    fs.copy(path.join(__dirname, 'css/'), path.join(dir_project_www, 'css/'));
-                    fs.copy(path.join(__dirname, 'fonts/'), path.join(dir_project_www, 'fonts/'));
-                    fs.copy(path.join(__dirname, 'img/'), path.join(dir_project_www, 'img/'));
-                    fs.copy(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
-                    fs.copy(path.join(__dirname, 'js_app/'), path.join(dir_project_www, 'js_app/'));
-                    fs.copy(path.join(__dirname, 'pages/'), path.join(dir_project_www, 'pages/'));
+                    copyDir(path.join(__dirname, 'css/'), path.join(dir_project_www, 'css/'));
+                    copyDir(path.join(__dirname, 'fonts/'), path.join(dir_project_www, 'fonts/'));
+                    copyDir(path.join(__dirname, 'img/'), path.join(dir_project_www, 'img/'));
+                    copyDir(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
+                    copyDir(path.join(__dirname, 'js_app/'), path.join(dir_project_www, 'js_app/'));
+                    copyDir(path.join(__dirname, 'pages/'), path.join(dir_project_www, 'pages/'));
 
                     list_project();
 
                     app.dialog.close();
 
-                    var shell = require('shelljs');
+                    if (os.platform() === "darwin") {
+                        app.dialog.create({
+                            title: '<span class="text-color-red">Manual Install</span>',
+                            text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest --unsafe-perm=true</span> and continue with <br/><span class="text-color-black">npm install</span>',
+                            buttons: [{
+                                text: '<span class="text-color-teal">Ok</span>'
+                            }],
+                            verticalButtons: false,
+                            animate: false
+                        }).open();
+                    } else {
+                        var shell = require('shelljs');
 
-                    shell.cd(dir_project);
+                        shell.cd(dir_project);
 
-                    app.dialog.progress('Running npm install');
+                        app.dialog.progress('Running npm install');
 
-                    shell.exec('npm install', function(code, stdout, stderr) {
-                        shell.chmod('-R', 777, 'www/');
-                        shell.cd(os.homedir());
-                        app.dialog.close();
-                    });
+                        shell.exec('npm install', function(code, stdout, stderr) {
+                            shell.chmod('-R', 777, 'www/');
+                            shell.cd(os.homedir());
+                            app.dialog.close();
+                        });
+                    }
                 } else {
                     app.dialog.create({
                         title: '<span class="text-color-red">Failed</span>',
@@ -140,17 +152,27 @@ $$(document).on('click', '#btn-app-run', function() {
     var dir_project = path.join(dir_visual7, project_open_active);
 
     setTimeout(function() {
-        var shell = require('shelljs');
+        if (os.platform() === "darwin") {
+            app.dialog.close();
 
-        shell.cd(dir_project);
-        shell.exec('electron .', function(code, stdout, stderr) {
-            // console.log('Exit code:', code);
-            // console.log('Program output:', stdout);
-            // console.log('Program stderr:', stderr);
-        });
-        shell.cd(os.homedir());
+            app.dialog.create({
+                title: '<span class="text-color-red">Manual Run Electron</span>',
+                text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
+                buttons: [{
+                    text: '<span class="text-color-teal">Ok</span>'
+                }],
+                verticalButtons: false,
+                animate: false
+            }).open();
+        } else {
+            var shell = require('shelljs');
 
-        app.dialog.close();
+            shell.cd(dir_project);
+            shell.exec('electron .');
+            shell.cd(os.homedir());
+
+            app.dialog.close();
+        }
     }, 10);
 });
 
@@ -982,7 +1004,7 @@ $$(document).on('click', '#btn-create-file', function() {
     function readFile(filepath) {
         let namefile = filepath.replace(/^.*[\\\/]/, '');
 
-        fs.copy(filepath, path.join(dir_project_www, 'file/' + namefile), err => {
+        fse.copy(filepath, path.join(dir_project_www, 'file/' + namefile), err => {
             if (err) return console.error(err)
             list_other(project_open_active);
         });
@@ -1101,7 +1123,7 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback
         container: '#gjs',
         height: '100%',
         canvas: {
-            styles: [path.join(__dirname, 'css/framework7.bundle.css'), path.join(__dirname, 'css/framework7-icons.css'), path.join(__dirname, 'fonts/material-icons.css'), path.join(__dirname, 'css/custom.css')],
+            styles: [path.join(__dirname, 'css/framework7.bundle.css'), path.join(__dirname, 'css/framework7-icons.css'), path.join(__dirname, 'fonts/material-icons.css'), path.join(dir_project_www, 'css/custom.css')],
             scripts: [path.join(__dirname, 'js/framework7.bundle.min.js'), path.join(__dirname, 'designer/js/init_designer.js')]
         },
         allowScripts: 1

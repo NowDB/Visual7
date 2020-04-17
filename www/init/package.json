@@ -42,7 +42,7 @@
     "author": "My Team",
     "license": "CC0-1.0",
     "devDependencies": {
-        "electron": "^8.2.2",
+        "electron": "^8.2.3",
         "electron-builder": "^22.4.1"
     },
     "dependencies": {
