@@ -8,8 +8,14 @@ $$(document).on('click', '#btn-minimize', function() {
     window.minimize();
 });
 
+$$(document).on('click', '#btn-maximize', function() {
+    var window = remote.getCurrentWindow();
+    window.maximize();
+});
+
 window.onresize = function() {
     panel_left_morph();
+    window.location.reload();
 };
 
 var panel_left_morph = function() {
