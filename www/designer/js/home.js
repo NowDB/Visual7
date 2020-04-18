@@ -2,6 +2,8 @@
  * Welcome
  */
 
+panel_left_morph();
+
 $$(document).on('click', '#btn-reload', function() {
     app.preloader.show();
 
