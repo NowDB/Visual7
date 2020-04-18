@@ -13,7 +13,8 @@
     "build": {
         "appId": "com.nowdb.visual7",
         "dmg": {
-            "contents": [{
+            "contents": [
+                {
                     "x": 110,
                     "y": 150
                 },
@@ -47,6 +48,7 @@
         "electron-pdf-window": "^1.0.12"
     },
     "dependencies": {
+        "child_process": "^1.0.2",
         "electron-packager": "^14.2.1",
         "electron-prompt": "^1.5.1",
         "electron-reload": "^1.5.0",
@@ -59,6 +61,7 @@
         "monaco-editor": "^0.20.0",
         "monaco-loader": "^0.8.2",
         "monaco-themes": "^0.3.3",
+        "open-file-explorer": "^1.0.2",
         "pretty": "^2.0.0",
         "sha1": "^1.1.1",
         "shelljs": "^0.8.3",

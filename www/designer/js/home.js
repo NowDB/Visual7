@@ -18,7 +18,10 @@ $$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
 
 $$(document).on('click', '#btn-application-new-electron', function() {
     app.dialog.prompt('Name', 'Create New Project', function(fileName) {
-        app.dialog.progress('Preparing Assets');
+        navigate_main_to('/');
+
+        app.progressbar.show('multi');
+        $$(document).find('#log-data').append('<br/>Creating New Project');
 
         var fileName = fileName.replace(/\s+/g, '_');
 
@@ -40,26 +43,40 @@ $$(document).on('click', '#btn-application-new-electron', function() {
             fs.readdir(dir_project, (err, dir) => {
                 if (err) {
                     mkdir(dir_project);
+                    $$(document).find('#log-data').append('<br/>Creating directory ' + dir_project);
                     mkdir(dir_project_www);
+                    $$(document).find('#log-data').append('<br/>Creating directory ' + dir_project_www);
                     mkdir(path.join(dir_project_www, 'file/'));
+                    $$(document).find('#log-data').append('<br/>Creating directory ' + dir_project_www + 'file');
 
                     copy(path.join(__dirname, 'index.html'), path.join(dir_project_www, 'index.html'));
+                    $$(document).find('#log-data').append('<br/>Creating ' + dir_project_www + 'index.html');
                     copy(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
+                    $$(document).find('#log-data').append('<br/>Creating ' + dir_project_www + 'LICENSE');
                     copy(path.join(dir_init, 'main.js'), path.join(dir_project, 'main.js'));
+                    $$(document).find('#log-data').append('<br/>Creating ' + dir_project_www + 'main.js');
                     copy(path.join(dir_init, 'package.json'), path.join(dir_project, 'package.json'));
+                    $$(document).find('#log-data').append('<br/>Creating ' + dir_project_www + 'package.json');
 
                     copyDir(path.join(__dirname, 'css/'), path.join(dir_project_www, 'css/'));
+                    $$(document).find('#log-data').append('<br/>Preparing css');
                     copyDir(path.join(__dirname, 'fonts/'), path.join(dir_project_www, 'fonts/'));
+                    $$(document).find('#log-data').append('<br/>Preparing fonts');
                     copyDir(path.join(__dirname, 'img/'), path.join(dir_project_www, 'img/'));
+                    $$(document).find('#log-data').append('<br/>Creating directory ' + dir_project_www + 'img');
                     copyDir(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
+                    $$(document).find('#log-data').append('<br/>Preparing default js');
                     copyDir(path.join(__dirname, 'js_app/'), path.join(dir_project_www, 'js_app/'));
+                    $$(document).find('#log-data').append('<br/>Preparing default js app');
                     copyDir(path.join(__dirname, 'pages/'), path.join(dir_project_www, 'pages/'));
+                    $$(document).find('#log-data').append('<br/>Preparing default pages');
 
                     list_project();
 
-                    app.dialog.close();
-
                     if (os.platform() === "darwin") {
+                        infiniteLoading = false;
+                        app.progressbar.hide();
+
                         app.dialog.create({
                             title: '<span class="text-color-red">Manual Install</span>',
                             text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest</span> and continue with <br/><span class="text-color-black">npm install</span>',
@@ -71,15 +88,29 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                         }).open();
                     } else {
                         var shell = require('shelljs');
+                        shell.config.execPath = String(shell.which('node'));
 
                         shell.cd(dir_project);
 
-                        app.dialog.progress('Running npm install');
+                        shell.chmod('-R', 777, 'www/');
 
-                        shell.exec('npm install', function(code, stdout, stderr) {
-                            shell.chmod('-R', 777, 'www/');
-                            shell.cd(os.homedir());
-                            app.dialog.close();
+                        $$(document).find('#log-data').append('<br/>Running npm install');
+
+                        var child = shell.exec('npm install', { async: true });
+                        child.stdout.on('data', function(data) {
+                            $$(document).find('#log-data').append('<br/>' + data);
+                        });
+
+                        child.on('close', (code) => {
+                            infiniteLoading = false;
+                            app.progressbar.hide();
+
+                            $$(document).find('#log-data').append('<br/>Running App First Time');
+
+                            var new_child = shell.exec('electron .', { async: true });
+                            new_child.on('close', (code) => {
+                                shell.cd(os.homedir());
+                            });
                         });
                     }
                 } else {
@@ -112,9 +143,9 @@ function list_project() {
                 $$(document).find('#list-file-project').empty();
                 for (var i = 0; i < dir.length; i++) {
                     $$(document).find('#list-file-project').append(
-                        '<li id="btn-project-open" data-project="' + dir[i] + '">' +
+                        '<li>' +
                         '   <div class="item-content item-link">' +
-                        '       <div class="item-inner">' +
+                        '       <div class="item-inner" id="btn-project-open" data-project="' + dir[i] + '">' +
                         '           <div class="item-title">' + dir[i] + '</div>' +
                         '       </div>' +
                         '   </div>' +
@@ -129,6 +160,28 @@ $$(document).on('click', '#btn-project-open', function() {
     var project = $$(this).attr('data-project');
     project_open_active = project;
     navigate_left_to('/project/' + project + '/');
+});
+
+$$(document).on('click', '#btn-project-folder-open', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    if (os.platform() === "darwin") {
+        app.dialog.create({
+            title: '<span class="text-color-red">Manual Run Electron</span>',
+            text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
+            buttons: [{
+                text: '<span class="text-color-teal">Ok</span>'
+            }],
+            verticalButtons: false,
+            animate: false
+        }).open();
+    } else {
+        const openExplorer = require('open-file-explorer');
+        openExplorer(dir_visual7, err => {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
 });
 
 $$(document).on('page:afterin', '.page[data-name="project"]', function(callback) {
@@ -146,15 +199,11 @@ $$(document).on('page:afterin', '.page[data-name="project"]', function(callback)
 });
 
 $$(document).on('click', '#btn-app-run', function() {
-    app.dialog.progress('Opening Your App');
-
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
 
     setTimeout(function() {
         if (os.platform() === "darwin") {
-            app.dialog.close();
-
             app.dialog.create({
                 title: '<span class="text-color-red">Manual Run Electron</span>',
                 text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
@@ -166,12 +215,11 @@ $$(document).on('click', '#btn-app-run', function() {
             }).open();
         } else {
             var shell = require('shelljs');
+            shell.config.execPath = String(shell.which('node'));
 
             shell.cd(dir_project);
-            shell.exec('electron .');
+            shell.exec('electron .', { async: true });
             shell.cd(os.homedir());
-
-            app.dialog.close();
         }
     }, 10);
 });
