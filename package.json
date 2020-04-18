@@ -13,7 +13,8 @@
     "build": {
         "appId": "com.nowdb.visual7",
         "dmg": {
-            "contents": [{
+            "contents": [
+                {
                     "x": 110,
                     "y": 150
                 },

@@ -4,10 +4,6 @@
 
 panel_left_morph();
 
-if (os.platform() === "darwin") {
-    $$(document).find('#btn-project-folder-open').hide();
-}
-
 $$(document).on('click', '#btn-reload', function() {
     app.preloader.show();
 
@@ -87,7 +83,12 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                             title: '<span class="text-color-red">Manual Install</span>',
                             text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest</span> and continue with <br/><span class="text-color-black">npm install</span>',
                             buttons: [{
-                                text: '<span class="text-color-teal">Ok</span>'
+                                text: '<span class="text-color-teal">Ok</span>',
+                                onClick: function() {
+                                    const { spawn, exec } = require('child_process');
+                                    let openTerminal = spawn('open', ['-a', 'Terminal', dir_project]);
+                                    openTerminal.on('error', (err) => { console.log(err); });
+                                }
                             }],
                             verticalButtons: false,
                             animate: false
@@ -171,15 +172,9 @@ $$(document).on('click', '#btn-project-open', function() {
 $$(document).on('click', '#btn-project-folder-open', function() {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     if (os.platform() === "darwin") {
-        app.dialog.create({
-            title: '<span class="text-color-red">Manual Run Electron</span>',
-            text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
-            buttons: [{
-                text: '<span class="text-color-teal">Ok</span>'
-            }],
-            verticalButtons: false,
-            animate: false
-        }).open();
+        const { spawn } = require('child_process');
+        let openTerminal = spawn('open', [dir_visual7]);
+        openTerminal.on('error', (err) => { console.log(err); });
     } else {
         const openExplorer = require('open-file-explorer');
         openExplorer(dir_visual7, err => {
@@ -214,7 +209,12 @@ $$(document).on('click', '#btn-app-run', function() {
                 title: '<span class="text-color-red">Manual Run Electron</span>',
                 text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
                 buttons: [{
-                    text: '<span class="text-color-teal">Ok</span>'
+                    text: '<span class="text-color-teal">Ok</span>',
+                    onClick: function() {
+                        const { spawn, exec } = require('child_process');
+                        let openTerminal = spawn('open', ['-a', 'Terminal', dir_project]);
+                        openTerminal.on('error', (err) => { console.log(err); });
+                    }
                 }],
                 verticalButtons: false,
                 animate: false
@@ -1048,15 +1048,9 @@ $$(document).on('click', '#btn-create-file', function() {
     var dir_project_www = path.join(dir_project, 'www/');
 
     if (os.platform() === "darwin") {
-        app.dialog.create({
-            title: '<span class="text-color-red">Manual Open Finder</span>',
-            text: 'Please go to <span class="text-color-black">' + dir_project_www + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
-            buttons: [{
-                text: '<span class="text-color-teal">Ok</span>'
-            }],
-            verticalButtons: false,
-            animate: false
-        }).open();
+        const { spawn } = require('child_process');
+        let openTerminal = spawn('open', [dir_project_www]);
+        openTerminal.on('error', (err) => { console.log(err); });
     } else {
         const openExplorer = require('open-file-explorer');
         openExplorer(dir_project_www, err => {
