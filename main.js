@@ -20,7 +20,7 @@ function createWindow() {
 
     mainWindow.loadFile('www/browser.html');
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function() {
         mainWindow = null

@@ -1047,20 +1047,22 @@ $$(document).on('click', '#btn-create-file', function() {
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    dialog.showOpenDialog(function(fileName) {
-        if (fileName === undefined) {
-            app.dialog.alert("No file selected");
-        } else {
-            readFile(fileName[0]);
-        }
-    });
-
-    function readFile(filepath) {
-        let namefile = filepath.replace(/^.*[\\\/]/, '');
-
-        fse.copy(filepath, path.join(dir_project_www, 'file/' + namefile), err => {
-            if (err) return console.error(err)
-            list_other(project_open_active);
+    if (os.platform() === "darwin") {
+        app.dialog.create({
+            title: '<span class="text-color-red">Manual Open Finder</span>',
+            text: 'Please go to <span class="text-color-black">' + dir_project_www + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
+            buttons: [{
+                text: '<span class="text-color-teal">Ok</span>'
+            }],
+            verticalButtons: false,
+            animate: false
+        }).open();
+    } else {
+        const openExplorer = require('open-file-explorer');
+        openExplorer(dir_project_www, err => {
+            if (err) {
+                console.log(err);
+            }
         });
     }
 });
