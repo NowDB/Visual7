@@ -4,6 +4,10 @@
 
 panel_left_morph();
 
+if (os.platform() === "darwin") {
+    $$(document).find('#btn-project-folder-open').hide();
+}
+
 $$(document).on('click', '#btn-reload', function() {
     app.preloader.show();
 
