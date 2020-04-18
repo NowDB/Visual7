@@ -1,7 +1,7 @@
 {
     "name": "visual7",
     "productName": "Visual7",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "description": "Visual7 is EletronJS Starter Application based on Framework7",
     "main": "main.js",
     "scripts": {
@@ -13,8 +13,7 @@
     "build": {
         "appId": "com.nowdb.visual7",
         "dmg": {
-            "contents": [
-                {
+            "contents": [{
                     "x": 110,
                     "y": 150
                 },
