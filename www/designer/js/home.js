@@ -4,13 +4,13 @@
 
 panel_left_morph();
 
-$$(document).on('click', '#btn-reload', function() {
+$$(document).on('click', '#btn-reload', function () {
     app.preloader.show();
 
     window.location.reload();
 });
 
-$$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
+$$(document).on('page:afterin', '.page[data-name="home"]', function (e) {
     panel_left_morph();
 });
 
@@ -18,8 +18,8 @@ $$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
  * Project
  */
 
-$$(document).on('click', '#btn-application-new-electron', function() {
-    app.dialog.prompt('Name', 'Create New Project', function(fileName) {
+$$(document).on('click', '#btn-application-new-electron', function () {
+    app.dialog.prompt('Name', 'Create New Project', function (fileName) {
         navigate_main_to('/');
 
         app.progressbar.show('multi');
@@ -84,9 +84,27 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                             text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest</span> and continue with <br/><span class="text-color-black">npm install</span>',
                             buttons: [{
                                 text: '<span class="text-color-teal">Ok</span>',
-                                onClick: function() {
+                                onClick: function () {
                                     const { spawn, exec } = require('child_process');
                                     let openTerminal = spawn('open', ['-a', 'Terminal', dir_project]);
+                                    openTerminal.on('error', (err) => { console.log(err); });
+                                }
+                            }],
+                            verticalButtons: false,
+                            animate: false
+                        }).open();
+                    } else if (os.platform() === "linux") {
+                        infiniteLoading = false;
+                        app.progressbar.hide();
+
+                        app.dialog.create({
+                            title: '<span class="text-color-red">Manual Install</span>',
+                            text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest</span> and continue with <br/><span class="text-color-black">npm install</span>',
+                            buttons: [{
+                                text: '<span class="text-color-teal">Ok</span>',
+                                onClick: function () {
+                                    const { spawn, exec } = require('child_process');
+                                    let openTerminal = spawn('gnome-terminal', ['--working-directory', dir_project]);
                                     openTerminal.on('error', (err) => { console.log(err); });
                                 }
                             }],
@@ -104,7 +122,7 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                         $$(document).find('#log-data').append('<br/>Running npm install');
 
                         var child = shell.exec('npm install', { async: true });
-                        child.stdout.on('data', function(data) {
+                        child.stdout.on('data', function (data) {
                             $$(document).find('#log-data').append('<br/>' + data);
                         });
 
@@ -163,17 +181,21 @@ function list_project() {
     });
 }
 
-$$(document).on('click', '#btn-project-open', function() {
+$$(document).on('click', '#btn-project-open', function () {
     var project = $$(this).attr('data-project');
     project_open_active = project;
     navigate_left_to('/project/' + project + '/');
 });
 
-$$(document).on('click', '#btn-project-folder-open', function() {
+$$(document).on('click', '#btn-project-folder-open', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     if (os.platform() === "darwin") {
         const { spawn } = require('child_process');
         let openTerminal = spawn('open', [dir_visual7]);
+        openTerminal.on('error', (err) => { console.log(err); });
+    } else if (os.platform() === "linux") {
+        const { spawn } = require('child_process');
+        let openTerminal = spawn('nautilus', [dir_visual7]);
         openTerminal.on('error', (err) => { console.log(err); });
     } else {
         const openExplorer = require('open-file-explorer');
@@ -185,7 +207,7 @@ $$(document).on('click', '#btn-project-folder-open', function() {
     }
 });
 
-$$(document).on('page:afterin', '.page[data-name="project"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="project"]', function (callback) {
     var project = callback.detail.route.params.name;
 
     $$(document).find('#project-name').html(project);
@@ -199,20 +221,35 @@ $$(document).on('page:afterin', '.page[data-name="project"]', function(callback)
     list_other(project);
 });
 
-$$(document).on('click', '#btn-app-run', function() {
+$$(document).on('click', '#btn-app-run', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
 
-    setTimeout(function() {
+    setTimeout(function () {
         if (os.platform() === "darwin") {
             app.dialog.create({
                 title: '<span class="text-color-red">Manual Run Electron</span>',
                 text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
                 buttons: [{
                     text: '<span class="text-color-teal">Ok</span>',
-                    onClick: function() {
+                    onClick: function () {
                         const { spawn, exec } = require('child_process');
                         let openTerminal = spawn('open', ['-a', 'Terminal', dir_project]);
+                        openTerminal.on('error', (err) => { console.log(err); });
+                    }
+                }],
+                verticalButtons: false,
+                animate: false
+            }).open();
+        } else if (os.platform() === "linux") {
+            app.dialog.create({
+                title: '<span class="text-color-red">Manual Run Electron</span>',
+                text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
+                buttons: [{
+                    text: '<span class="text-color-teal">Ok</span>',
+                    onClick: function () {
+                        const { spawn, exec } = require('child_process');
+                        let openTerminal = spawn('gnome-terminal', ['--working-directory', dir_project]);
                         openTerminal.on('error', (err) => { console.log(err); });
                     }
                 }],
@@ -234,14 +271,14 @@ $$(document).on('click', '#btn-app-run', function() {
  * Index HTML
  */
 
-$$(document).on('click', '#btn-code-editor-html-index', function() {
+$$(document).on('click', '#btn-code-editor-html-index', function () {
     var project = $$(this).attr('data-project');
     var filename = $$(this).attr('data-file');
 
     navigate_main_to('/editor_html_index/' + project + '/' + filename + '/', false, false, false, true, true, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function (callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
@@ -269,8 +306,8 @@ $$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function
                 baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
             });
 
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
+            editorRequire(['vs/editor/editor.main'], function () {
+                loadTheme('Monokai').then(function (callback) {
                     me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
@@ -293,7 +330,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function
     });
 });
 
-$$(document).on('click', '#btn-save-html-index', function() {
+$$(document).on('click', '#btn-save-html-index', function () {
     var project = $$(this).attr('data-project');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -313,14 +350,14 @@ $$(document).on('click', '#btn-save-html-index', function() {
  * Main JS
  */
 
-$$(document).on('click', '#btn-code-editor-js-main', function() {
+$$(document).on('click', '#btn-code-editor-js-main', function () {
     var project = $$(this).attr('data-project');
     var filename = $$(this).attr('data-file');
 
     navigate_main_to('/editor_js_main/' + project + '/' + filename + '/', false, false, false, true, true, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="editor_js_main"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="editor_js_main"]', function (callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
@@ -347,8 +384,8 @@ $$(document).on('page:afterin', '.page[data-name="editor_js_main"]', function(ca
                 baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
             });
 
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
+            editorRequire(['vs/editor/editor.main'], function () {
+                loadTheme('Monokai').then(function (callback) {
                     me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
@@ -371,7 +408,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_js_main"]', function(ca
     });
 });
 
-$$(document).on('click', '#btn-save-js-main', function() {
+$$(document).on('click', '#btn-save-js-main', function () {
     var project = $$(this).attr('data-project');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -390,14 +427,14 @@ $$(document).on('click', '#btn-save-js-main', function() {
  * Package json
  */
 
-$$(document).on('click', '#btn-code-editor-js-package', function() {
+$$(document).on('click', '#btn-code-editor-js-package', function () {
     var project = $$(this).attr('data-project');
     var filename = $$(this).attr('data-file');
 
     navigate_main_to('/editor_js_package/' + project + '/' + filename + '/', false, false, false, true, true, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="editor_js_package"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="editor_js_package"]', function (callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
@@ -424,8 +461,8 @@ $$(document).on('page:afterin', '.page[data-name="editor_js_package"]', function
                 baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
             });
 
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
+            editorRequire(['vs/editor/editor.main'], function () {
+                loadTheme('Monokai').then(function (callback) {
                     me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
@@ -448,7 +485,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_js_package"]', function
     });
 });
 
-$$(document).on('click', '#btn-save-js-package', function() {
+$$(document).on('click', '#btn-save-js-package', function () {
     var project = $$(this).attr('data-project');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -523,14 +560,14 @@ function list_html(project) {
     });
 }
 
-$$(document).on('click', '#btn-code-editor-html', function() {
+$$(document).on('click', '#btn-code-editor-html', function () {
     var project = $$(this).attr('data-project');
     var filename = $$(this).attr('data-file');
 
     navigate_main_to('/editor_html/' + project + '/' + filename + '/', false, false, false, true, true, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="editor_html"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="editor_html"]', function (callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
@@ -558,8 +595,8 @@ $$(document).on('page:afterin', '.page[data-name="editor_html"]', function(callb
                 baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
             });
 
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
+            editorRequire(['vs/editor/editor.main'], function () {
+                loadTheme('Monokai').then(function (callback) {
                     me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
@@ -582,7 +619,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_html"]', function(callb
     });
 });
 
-$$(document).on('click', '#btn-save-html', function() {
+$$(document).on('click', '#btn-save-html', function () {
     var project = $$(this).attr('data-project');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -598,12 +635,12 @@ $$(document).on('click', '#btn-save-html', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-create-html', function() {
+$$(document).on('click', '#btn-create-html', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New HTML File', function(fileName) {
+    app.dialog.prompt('Filename', 'New HTML File', function (fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'html') {
             app.dialog.alert('Allow .html only', 'Information');
@@ -617,7 +654,7 @@ $$(document).on('click', '#btn-create-html', function() {
     });
 });
 
-$$(document).on('click', '#btn-remove-html', function() {
+$$(document).on('click', '#btn-remove-html', function () {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -631,8 +668,8 @@ $$(document).on('click', '#btn-remove-html', function() {
             text: '<span class="text-color-red">cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(dir_project_www, 'pages/' + fileName), function(err) {
+            onClick: function () {
+                fs.unlink(path.join(dir_project_www, 'pages/' + fileName), function (err) {
                     if (err) return console.log(err);
                     list_html(project_open_active);
 
@@ -702,14 +739,14 @@ function list_js(project) {
     });
 }
 
-$$(document).on('click', '#btn-code-editor-js', function() {
+$$(document).on('click', '#btn-code-editor-js', function () {
     var project = $$(this).attr('data-project');
     var filename = $$(this).attr('data-file');
 
     navigate_main_to('/editor_js/' + project + '/' + filename + '/', false, false, false, true, true, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="editor_js"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="editor_js"]', function (callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
@@ -737,8 +774,8 @@ $$(document).on('page:afterin', '.page[data-name="editor_js"]', function(callbac
                 baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
             });
 
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
+            editorRequire(['vs/editor/editor.main'], function () {
+                loadTheme('Monokai').then(function (callback) {
                     me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
@@ -761,7 +798,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_js"]', function(callbac
     });
 });
 
-$$(document).on('click', '#btn-save-js', function() {
+$$(document).on('click', '#btn-save-js', function () {
     var project = $$(this).attr('data-project');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -777,12 +814,12 @@ $$(document).on('click', '#btn-save-js', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-create-js', function() {
+$$(document).on('click', '#btn-create-js', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New Javascript File', function(fileName) {
+    app.dialog.prompt('Filename', 'New Javascript File', function (fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'js') {
             app.dialog.alert('Allow .js only', 'Information');
@@ -796,7 +833,7 @@ $$(document).on('click', '#btn-create-js', function() {
     });
 });
 
-$$(document).on('click', '#btn-remove-js', function() {
+$$(document).on('click', '#btn-remove-js', function () {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -810,8 +847,8 @@ $$(document).on('click', '#btn-remove-js', function() {
             text: '<span class="text-color-red">cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(dir_project_www, 'js_app/' + fileName), function(err) {
+            onClick: function () {
+                fs.unlink(path.join(dir_project_www, 'js_app/' + fileName), function (err) {
                     if (err) return console.log(err);
                     list_js(project_open_active);
 
@@ -881,14 +918,14 @@ function list_css(project) {
     });
 }
 
-$$(document).on('click', '#btn-code-editor-css', function() {
+$$(document).on('click', '#btn-code-editor-css', function () {
     var project = $$(this).attr('data-project');
     var filename = $$(this).attr('data-file');
 
     navigate_main_to('/editor_css/' + project + '/' + filename + '/', false, false, false, true, true, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="editor_css"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="editor_css"]', function (callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
@@ -916,8 +953,8 @@ $$(document).on('page:afterin', '.page[data-name="editor_css"]', function(callba
                 baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
             });
 
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
+            editorRequire(['vs/editor/editor.main'], function () {
+                loadTheme('Monokai').then(function (callback) {
                     me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
@@ -940,7 +977,7 @@ $$(document).on('page:afterin', '.page[data-name="editor_css"]', function(callba
     });
 });
 
-$$(document).on('click', '#btn-save-css', function() {
+$$(document).on('click', '#btn-save-css', function () {
     var project = $$(this).attr('data-project');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -956,12 +993,12 @@ $$(document).on('click', '#btn-save-css', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-create-css', function() {
+$$(document).on('click', '#btn-create-css', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New CSS File', function(fileName) {
+    app.dialog.prompt('Filename', 'New CSS File', function (fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'css') {
             app.dialog.alert('Allow .css only', 'Information');
@@ -975,7 +1012,7 @@ $$(document).on('click', '#btn-create-css', function() {
     });
 });
 
-$$(document).on('click', '#btn-remove-css', function() {
+$$(document).on('click', '#btn-remove-css', function () {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -989,8 +1026,8 @@ $$(document).on('click', '#btn-remove-css', function() {
             text: '<span class="text-color-red">cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(dir_project_www, 'css/' + fileName), function(err) {
+            onClick: function () {
+                fs.unlink(path.join(dir_project_www, 'css/' + fileName), function (err) {
                     if (err) return console.log(err);
                     list_css(project_open_active);
 
@@ -1042,7 +1079,7 @@ function list_other(project) {
     });
 }
 
-$$(document).on('click', '#btn-create-file', function() {
+$$(document).on('click', '#btn-create-file', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
@@ -1050,6 +1087,10 @@ $$(document).on('click', '#btn-create-file', function() {
     if (os.platform() === "darwin") {
         const { spawn } = require('child_process');
         let openTerminal = spawn('open', [dir_project_www]);
+        openTerminal.on('error', (err) => { console.log(err); });
+    } else if (os.platform() === "linux") {
+        const { spawn } = require('child_process');
+        let openTerminal = spawn('nautilus', [dir_project_www]);
         openTerminal.on('error', (err) => { console.log(err); });
     } else {
         const openExplorer = require('open-file-explorer');
@@ -1061,7 +1102,7 @@ $$(document).on('click', '#btn-create-file', function() {
     }
 });
 
-$$(document).on('click', '#btn-remove-other', function() {
+$$(document).on('click', '#btn-remove-other', function () {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -1075,8 +1116,8 @@ $$(document).on('click', '#btn-remove-other', function() {
             text: '<span class="text-color-red">cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(dir_project_www, 'file/' + fileName), function(err) {
+            onClick: function () {
+                fs.unlink(path.join(dir_project_www, 'file/' + fileName), function (err) {
                     if (err) return console.log(err);
                     list_other(project_open_active);
                 });
@@ -1091,7 +1132,7 @@ $$(document).on('click', '#btn-remove-other', function() {
  * Keyboard Binding
  */
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
@@ -1145,14 +1186,14 @@ document.addEventListener('keydown', function(event) {
  * UI Designer
  */
 
-$$(document).on('click', '#btn-design-html', function() {
+$$(document).on('click', '#btn-design-html', function () {
     var project = $$(this).attr('data-project');
     var fileName = $$(this).attr('data-file');
 
     navigate_main_to('/designer/' + project + '/' + fileName + '/', true, false, false, false, true, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="designer"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="designer"]', function (callback) {
     panel_left_morph();
 
     window.localStorage.clear();
@@ -1297,7 +1338,7 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback
     delete require.cache[require.resolve('./designer/grapesjs/block/toolbar_bottom_with_badge.js')];
 });
 
-$$(document).on('click', '#btn-save-design', function() {
+$$(document).on('click', '#btn-save-design', function () {
     var editor_html = editor.getHtml();
     var html = pretty(editor_html, { ocd: true });
 
@@ -1314,15 +1355,15 @@ $$(document).on('click', '#btn-save-design', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-design-undo', function() {
+$$(document).on('click', '#btn-design-undo', function () {
     editor.UndoManager.undo(1);
 });
 
-$$(document).on('click', '#btn-design-redo', function() {
+$$(document).on('click', '#btn-design-redo', function () {
     editor.UndoManager.redo(1);
 });
 
-$$(document).on('click', '#btn-design-clear', function() {
+$$(document).on('click', '#btn-design-clear', function () {
     app.dialog.create({
         title: 'Information',
         text: 'Do you want to clear all design?',
@@ -1330,7 +1371,7 @@ $$(document).on('click', '#btn-design-clear', function() {
             text: '<span class="text-color-red">Cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
+            onClick: function () {
                 editor.DomComponents.clear();
 
                 window.localStorage.clear();
@@ -1341,33 +1382,33 @@ $$(document).on('click', '#btn-design-clear', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-design-preview', function() {
+$$(document).on('click', '#btn-design-preview', function () {
     editor.runCommand('preview');
 });
 
-$$(document).on('click', '#btn-design-code', function() {
+$$(document).on('click', '#btn-design-code', function () {
     editor.runCommand('export-template');
 });
 
-$$(document).on('click', '#btn-design-computer', function() {
+$$(document).on('click', '#btn-design-computer', function () {
     editor.setDevice('Desktop');
 });
 
-$$(document).on('click', '#btn-design-tablet', function() {
+$$(document).on('click', '#btn-design-tablet', function () {
     editor.setDevice('Tablet');
 });
 
-$$(document).on('click', '#btn-design-smartphone', function() {
+$$(document).on('click', '#btn-design-smartphone', function () {
     editor.setDevice('Mobile portrait');
 });
 
-$$(document).on('click', '#btn-design-outline', function() {
+$$(document).on('click', '#btn-design-outline', function () {
     editor.runCommand('sw-visibility');
     $$(document).find('#btn-design-unoutline').show();
     $$(document).find('#btn-design-outline').hide();
 });
 
-$$(document).on('click', '#btn-design-unoutline', function() {
+$$(document).on('click', '#btn-design-unoutline', function () {
     editor.stopCommand('sw-visibility');
     $$(document).find('#btn-design-unoutline').hide();
     $$(document).find('#btn-design-outline').show();
@@ -1377,7 +1418,7 @@ $$(document).on('click', '#btn-design-unoutline', function() {
  * Snippet Code
  */
 
-$$(document).on('click', '#code-if', function() {
+$$(document).on('click', '#code-if', function () {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1392,7 +1433,7 @@ $$(document).on('click', '#code-if', function() {
     we.setPosition(position);
 });
 
-$$(document).on('click', '#code-if-else', function() {
+$$(document).on('click', '#code-if-else', function () {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1409,7 +1450,7 @@ $$(document).on('click', '#code-if-else', function() {
     we.setPosition(position);
 });
 
-$$(document).on('click', '#code-if-else-if', function() {
+$$(document).on('click', '#code-if-else-if', function () {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1430,7 +1471,7 @@ $$(document).on('click', '#code-if-else-if', function() {
  * NowDB Data Manager
  */
 
-$$(document).on('click', '#btn-app-nowdb', function() {
+$$(document).on('click', '#btn-app-nowdb', function () {
     var executablePath = null;
 
     if (app.device.os === "windows") {
@@ -1444,7 +1485,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                         text: '<span class="text-color-red">Later</span>'
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
-                        onClick: function() {
+                        onClick: function () {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.exe", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe'));
                         }
                     }],
@@ -1453,7 +1494,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                 }).open();
             } else {
                 var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
+                child(executablePath, function (err, data) {
                     if (err) {
                         console.error(err);
                         return;
@@ -1474,7 +1515,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                         text: '<span class="text-color-red">Later</span>'
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
-                        onClick: function() {
+                        onClick: function () {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager-1.1.0.dmg", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg'));
                         }
                     }],
@@ -1483,7 +1524,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                 }).open();
             } else {
                 var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
+                child(executablePath, function (err, data) {
                     if (err) {
                         console.error(err);
                         return;
@@ -1504,7 +1545,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                         text: '<span class="text-color-red">Later</span>'
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
-                        onClick: function() {
+                        onClick: function () {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.AppImage", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage'));
                         }
                     }],
@@ -1513,7 +1554,7 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                 }).open();
             } else {
                 var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
+                child(executablePath, function (err, data) {
                     if (err) {
                         console.error(err);
                         return;
@@ -1541,17 +1582,17 @@ function downloadNowDB(file_url, targetPath) {
     var out = fs.createWriteStream(targetPath);
     req.pipe(out);
 
-    req.on('response', function(data) {
+    req.on('response', function (data) {
         total_bytes = parseInt(data.headers['content-length']);
     });
 
-    req.on('data', function(chunk) {
+    req.on('data', function (chunk) {
         received_bytes += chunk.length;
 
         showProgress(received_bytes, total_bytes);
     });
 
-    req.on('end', function() {
+    req.on('end', function () {
         dialog_nowdb.close();
 
         app.dialog.create({
@@ -1559,12 +1600,12 @@ function downloadNowDB(file_url, targetPath) {
             text: 'File Downloaded',
             buttons: [{
                 text: '<span class="text-color-teal">Open</span>',
-                onClick: function() {
+                onClick: function () {
                     if (app.device.os === "windows") {
                         var child = require('child_process').execFile;
                         var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe');
 
-                        child(executablePath, function(err, data) {
+                        child(executablePath, function (err, data) {
                             if (err) {
                                 console.error(err);
                                 return;
@@ -1576,7 +1617,7 @@ function downloadNowDB(file_url, targetPath) {
                         var child = require('child_process').execFile;
                         var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg');
 
-                        child(executablePath, function(err, data) {
+                        child(executablePath, function (err, data) {
                             if (err) {
                                 console.error(err);
                                 return;
@@ -1588,7 +1629,7 @@ function downloadNowDB(file_url, targetPath) {
                         var child = require('child_process').execFile;
                         var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage');
 
-                        child(executablePath, function(err, data) {
+                        child(executablePath, function (err, data) {
                             if (err) {
                                 console.error(err);
                                 return;
