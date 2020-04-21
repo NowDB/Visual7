@@ -13,8 +13,7 @@
     "build": {
         "appId": "com.nowdb.visual7",
         "dmg": {
-            "contents": [
-                {
+            "contents": [{
                     "x": 110,
                     "y": 150
                 },
@@ -32,7 +31,7 @@
         },
         "win": {
             "icon": "www/img/logo.png",
-            "target": "portable"
+            "target": "nsis"
         }
     },
     "publish": "never",

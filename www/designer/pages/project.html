@@ -21,44 +21,89 @@
                     <div class="item-content">
                         <div class="item-inner">
                             <div class="item-title text-color-deeporange" id="project-name">project</div>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title">index.html</div>
-                            <div class="item-after">
-                                <i title="Code Editor" class="material-icons" data-file="index.html" style="cursor: pointer;" id="btn-code-editor-html-index">code</i>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title">main.js</div>
-                            <div class="item-after">
-                                <i title="Code Editor" class="material-icons" data-file="main.js" style="cursor: pointer;" id="btn-code-editor-js-main">code</i>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title">package.json</div>
-                            <div class="item-after">
-                                <i title="Code Editor" class="material-icons" data-file="package.json" style="cursor: pointer;" id="btn-code-editor-js-package">code</i>
-                            </div>
+                            <div class=" item-after link popover-open" href="#" data-popover="#create-file"><i class="material-icons text-color-deeporange">add</i></div>
                         </div>
                     </div>
                 </li>
             </ul>
-            <ul id="list-file-html"></ul>
-            <ul id="list-file-js"></ul>
-            <ul id="list-file-css"></ul>
-            <ul id="list-file-other"></ul>
+        </div>
+        <div class="treeview">
+            <div class="treeview-item">
+                <div class="treeview-item-root">
+                    <div class="treeview-toggle"></div>
+                    <div class="treeview-item-content">
+                        <i class="icon material-icons">folder</i>
+                        <div class="treeview-item-label">css</div>
+                    </div>
+                </div>
+                <div class="treeview-item-children" id="list-file-css-new"></div>
+            </div>
+            <div class="treeview-item">
+                <div class="treeview-item-root">
+                    <div class="treeview-toggle"></div>
+                    <div class="treeview-item-content">
+                        <i class="icon material-icons">folder</i>
+                        <div class="treeview-item-label">js_app</div>
+                    </div>
+                </div>
+                <div class="treeview-item-children" id="list-file-js-new"></div>
+            </div>
+            <div class="treeview-item">
+                <div class="treeview-item-root">
+                    <div class="treeview-toggle"></div>
+                    <div class="treeview-item-content">
+                        <i class="icon material-icons">folder</i>
+                        <div class="treeview-item-label">pages</div>
+                    </div>
+                </div>
+                <div class="treeview-item-children" id="list-file-html-new"></div>
+            </div>
+            <div class="treeview-item">
+                <div class="treeview-item-root">
+                    <div class="treeview-toggle"></div>
+                    <div class="treeview-item-content">
+                        <i class="icon material-icons">folder</i>
+                        <div class="treeview-item-label">file</div>
+                    </div>
+                </div>
+                <div class="treeview-item-children" id="list-file-other-new"></div>
+            </div>
+            <div class="treeview-item" data-file="index.html" style="cursor: pointer;" id="btn-code-editor-html-index">
+                <div class="treeview-item-root">
+                    <div class="treeview-item-content">
+                        <i class="icon f7-icons">document_text_fill</i>
+                        <div class="treeview-item-label">index.html</div>
+                    </div>
+                </div>
+            </div>
+            <div class="treeview-item" data-file="main.js" style="cursor: pointer;" id="btn-code-editor-js-main">
+                <div class="treeview-item-root">
+                    <div class="treeview-item-content">
+                        <i class="icon f7-icons">document_text_fill</i>
+                        <div class="treeview-item-label">main.js</div>
+                    </div>
+                </div>
+            </div>
+            <div class="treeview-item" data-file="package.json" style="cursor: pointer;" id="btn-code-editor-js-package">
+                <div class="treeview-item-root">
+                    <div class="treeview-item-content">
+                        <i class="icon f7-icons">ldocument_text_fill</i>
+                        <div class="treeview-item-label">package.json</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popover popover-links" id="create-file">
+        <div class="popover-inner">
+            <div class="list">
+                <ul>
+                    <li><a class="list-button item-link" href="javascript:void(0);" id="btn-create-css">Create CSS</a></li>
+                    <li><a class="list-button item-link" href="javascript:void(0);" id="btn-create-js">Create JS</a></li>
+                    <li><a class="list-button item-link" href="javascript:void(0);" id="btn-create-html">Create HTML</a></li>
+                    <li><a class="list-button item-link" href="javascript:void(0);" id="btn-create-file">Upload File</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
