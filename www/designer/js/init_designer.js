@@ -2,8 +2,8 @@ var $$ = Dom7;
 
 var app = new Framework7({
     root: '#app',
-    id: 'com.app.myproject',
-    name: 'MyProject',
+    id: 'com.project.app',
+    name: 'Application',
     theme: 'md',
     touch: {
         fastclick: true,
