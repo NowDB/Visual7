@@ -68,7 +68,6 @@ $$(document).on('click', '#btn-application-new-electron', function () {
         navigate_main_to('/');
 
         app.progressbar.show('multi');
-        $$(document).find('#log-data').append('<br/>Creating New Project');
 
         var fileName = fileName.replace(/\s+/g, '_');
 
@@ -90,79 +89,53 @@ $$(document).on('click', '#btn-application-new-electron', function () {
             fs.readdir(dir_project, (err, dir) => {
                 if (err) {
                     mkdir(dir_project);
-                    $$(document).find('#log-data').append('<br/>Creating directory ' + dir_project);
                     mkdir(dir_project_www);
-                    $$(document).find('#log-data').append('<br/>Creating directory ' + dir_project_www);
                     mkdir(path.join(dir_project_www, 'file/'));
-                    $$(document).find('#log-data').append('<br/>Creating directory ' + dir_project_www + 'file');
-
+                    
                     copy(path.join(__dirname, 'index.html'), path.join(dir_project_www, 'index.html'));
-                    $$(document).find('#log-data').append('<br/>Creating ' + dir_project_www + 'index.html');
                     copy(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
-                    $$(document).find('#log-data').append('<br/>Creating ' + dir_project_www + 'LICENSE');
                     copy(path.join(dir_init, 'main.js'), path.join(dir_project, 'main.js'));
-                    $$(document).find('#log-data').append('<br/>Creating ' + dir_project_www + 'main.js');
                     copy(path.join(dir_init, 'package.json'), path.join(dir_project, 'package.json'));
-                    $$(document).find('#log-data').append('<br/>Creating ' + dir_project_www + 'package.json');
-
+                    
                     copyDir(path.join(__dirname, 'css/'), path.join(dir_project_www, 'css/'));
-                    $$(document).find('#log-data').append('<br/>Preparing css');
                     copyDir(path.join(__dirname, 'fonts/'), path.join(dir_project_www, 'fonts/'));
-                    $$(document).find('#log-data').append('<br/>Preparing fonts');
                     copyDir(path.join(__dirname, 'img/'), path.join(dir_project_www, 'img/'));
-                    $$(document).find('#log-data').append('<br/>Creating directory ' + dir_project_www + 'img');
                     copyDir(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
-                    $$(document).find('#log-data').append('<br/>Preparing default js');
                     copyDir(path.join(__dirname, 'js_app/'), path.join(dir_project_www, 'js_app/'));
-                    $$(document).find('#log-data').append('<br/>Preparing default js app');
                     copyDir(path.join(__dirname, 'pages/'), path.join(dir_project_www, 'pages/'));
-                    $$(document).find('#log-data').append('<br/>Preparing default pages');
-
+                    
                     list_project();
 
                     if (os.platform() === "darwin") {
-                        infiniteLoading = false;
                         app.progressbar.hide();
-
-                        app.dialog.create({
-                            title: '<span class="text-color-red">Manual Install</span>',
-                            text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest</span> and continue with <br/><span class="text-color-black">npm install</span>',
-                            buttons: [{
-                                text: '<span class="text-color-teal">Ok</span>',
-                                onClick: function () {
-                                    const { spawn, exec } = require('child_process');
-                                    let openTerminal = spawn('open', ['-a', 'Terminal', dir_project]);
-                                    openTerminal.on('error', (err) => { console.log(err); });
-                                }
-                            }],
-                            verticalButtons: false,
-                            animate: false
-                        }).open();
-                    } else if (os.platform() === "linux") {
-                        infiniteLoading = false;
-                        app.progressbar.hide();
-
-                        app.dialog.create({
-                            title: '<span class="text-color-red">Manual Install</span>',
-                            text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">npm i -D electron@latest</span> and continue with <br/><span class="text-color-black">npm install</span>',
-                            buttons: [{
-                                text: '<span class="text-color-teal">Ok</span>',
-                                onClick: function () {
-                                    const { spawn, exec } = require('child_process');
-                                    let openTerminal = spawn('gnome-terminal', ['--working-directory', dir_project]);
-                                    openTerminal.on('error', (err) => { console.log(err); });
-                                }
-                            }],
-                            verticalButtons: false,
-                            animate: false
-                        }).open();
-                    } else {
-                        ptyProcess.write('cd %homepath%\r');
+               
+                        ptyProcess.write('cd ~\r');
                         ptyProcess.write('cd Visual7\r');
                         ptyProcess.write('cd ' + fileName + '\r');
                         ptyProcess.write('npm install -D electron@latest\r');
                         ptyProcess.write('npm install\r');
                         ptyProcess.write('cd ..');
+                        ptyProcess.write('clear\r');
+                    } else if (os.platform() === "linux") {
+                        app.progressbar.hide();
+               
+                        ptyProcess.write('cd ~\r');
+                        ptyProcess.write('cd Visual7\r');
+                        ptyProcess.write('cd ' + fileName + '\r');
+                        ptyProcess.write('npm install -D electron@latest\r');
+                        ptyProcess.write('npm install\r');
+                        ptyProcess.write('cd ..\r');
+                        ptyProcess.write('clear\r');
+                    } else {
+                        app.progressbar.hide();
+               
+                        ptyProcess.write('cd %homepath%\r');
+                        ptyProcess.write('cd Visual7\r');
+                        ptyProcess.write('cd ' + fileName + '\r');
+                        ptyProcess.write('npm install -D electron@latest\r');
+                        ptyProcess.write('npm install\r');
+                        ptyProcess.write('cd ..\r');
+                        ptyProcess.write('cls\r');
                     }
                 } else {
                     app.dialog.create({
