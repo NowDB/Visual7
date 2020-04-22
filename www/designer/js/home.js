@@ -266,25 +266,23 @@ $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback)
 
                 app.preloader.hide();
 
-                /**
- * Terminal Project
- */
-                term = new Terminal({
+                // Terminal Project
+                termEditor = new Terminal({
                     fontFamily: 'Fira Code, Iosevka, monospace',
                     fontSize: 12,
                     experimentalCharAtlas: 'dynamic'
                 });
 
                 const fitAddon = new FitAddon();
-                term.loadAddon(fitAddon);
+                termEditor.loadAddon(fitAddon);
 
                 const terminalElem = document.getElementById('term-editor');
-                term.open(terminalElem);
+                termEditor.open(terminalElem);
 
                 fitAddon.fit();
 
                 const shell = process.env[os.platform() === 'win32' ? 'COMSPEC' : 'SHELL'];
-                ptyProcess = pty.spawn(shell, [], {
+                ptyProcessEditor = pty.spawn(shell, [], {
                     name: 'xterm-color',
                     cols: term.cols,
                     rows: term.rows,
@@ -292,36 +290,36 @@ $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback)
                     env: process.env
                 });
 
-                term.onData(function (data) {
-                    ptyProcess.write(data);
+                termEditor.onData(function (data) {
+                    ptyProcessEditor.write(data);
                 });
 
-                term.onResize(function (size) {
-                    ptyProcess.resize(
-                        Math.max(size ? size.cols : term.cols, 1),
-                        Math.max(size ? size.rows : term.rows, 1)
+                termEditor.onResize(function (size) {
+                    ptyProcessEditor.resize(
+                        Math.max(size ? size.cols : termEditor.cols, 1),
+                        Math.max(size ? size.rows : termEditor.rows, 1)
                     );
                 });
 
-                ptyProcess.on('data', function (data) {
-                    term.write(data);
+                ptyProcessEditor.on('data', function (data) {
+                    termEditor.write(data);
                 });
 
                 if (os.platform() === "darwin") {
-                    ptyProcess.write('cd ~\r');
-                    ptyProcess.write('cd Visual7\r');
-                    ptyProcess.write('cd ' + project + '\r');
-                    ptyProcess.write('clear\r');
+                    ptyProcessEditor.write('cd ~\r');
+                    ptyProcessEditor.write('cd Visual7\r');
+                    ptyProcessEditor.write('cd ' + project + '\r');
+                    ptyProcessEditor.write('clear\r');
                 } else if (os.platform() === "linux") {
-                    ptyProcess.write('cd ~\r');
-                    ptyProcess.write('cd Visual7\r');
-                    ptyProcess.write('cd ' + project + '\r');
-                    ptyProcess.write('clear\r');
+                    ptyProcessEditor.write('cd ~\r');
+                    ptyProcessEditor.write('cd Visual7\r');
+                    ptyProcessEditor.write('cd ' + project + '\r');
+                    ptyProcessEditor.write('clear\r');
                 } else {
-                    ptyProcess.write('cd %homepath%\r');
-                    ptyProcess.write('cd Visual7\r');
-                    ptyProcess.write('cd ' + project + '\r');
-                    ptyProcess.write('cls\r');
+                    ptyProcessEditor.write('cd %homepath%\r');
+                    ptyProcessEditor.write('cd Visual7\r');
+                    ptyProcessEditor.write('cd ' + project + '\r');
+                    ptyProcessEditor.write('cls\r');
                 }
             });
         }
@@ -343,49 +341,22 @@ $$(document).on('page:afterin', '.page[data-name="project"]', function (callback
 });
 
 $$(document).on('click', '#btn-app-run', function () {
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-
-    setTimeout(function () {
-        if (os.platform() === "darwin") {
-            app.dialog.create({
-                title: '<span class="text-color-red">Manual Run Electron</span>',
-                text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
-                buttons: [{
-                    text: '<span class="text-color-teal">Ok</span>',
-                    onClick: function () {
-                        const { spawn, exec } = require('child_process');
-                        let openTerminal = spawn('open', ['-a', 'Terminal', dir_project]);
-                        openTerminal.on('error', (err) => { console.log(err); });
-                    }
-                }],
-                verticalButtons: false,
-                animate: false
-            }).open();
-        } else if (os.platform() === "linux") {
-            app.dialog.create({
-                title: '<span class="text-color-red">Manual Run Electron</span>',
-                text: 'Please go to <span class="text-color-black">' + dir_project + '</span> using terminal and continue with <br/><span class="text-color-black">electron .</span>',
-                buttons: [{
-                    text: '<span class="text-color-teal">Ok</span>',
-                    onClick: function () {
-                        const { spawn, exec } = require('child_process');
-                        let openTerminal = spawn('gnome-terminal', ['--working-directory', dir_project]);
-                        openTerminal.on('error', (err) => { console.log(err); });
-                    }
-                }],
-                verticalButtons: false,
-                animate: false
-            }).open();
-        } else {
-            var shell = require('shelljs');
-            shell.config.execPath = String(shell.which('node'));
-
-            shell.cd(dir_project);
-            shell.exec('electron .', { async: true });
-            shell.cd(os.homedir());
-        }
-    }, 10);
+    if (os.platform() === "darwin") {
+        ptyProcessEditor.write('cd ~\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('electron .\r');
+    } else if (os.platform() === "linux") {
+        ptyProcessEditor.write('cd ~\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('electron .\r');
+    } else {
+        ptyProcessEditor.write('cd %homepath%\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('electron .\r');
+    }
 });
 
 /**

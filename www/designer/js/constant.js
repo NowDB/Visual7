@@ -20,6 +20,8 @@ const { Terminal } = require('xterm');
 const { FitAddon } = require('xterm-addon-fit');
 let term = null;
 let ptyProcess = null;
+let termEditor = null;
+let ptyProcessEditor = null;
 
 let file_open_active = '';
 let project_open_active = '';
