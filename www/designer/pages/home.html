@@ -11,67 +11,38 @@
         </div>
     </div>
     <div class="page-content">
-        <div class="row padding">
-            <div class="col-60">
-                <div class="card no-margin">
-                    <div class="card-header">Pre Requisite</div>
-                    <div class="card-content card-content-padding">
-                        <ol class="no-margin">
-                            <li>
-                                Install NodeJS<br/>
-                                <a>https://nodejs.org/en/</a>
-                            </li>
-                            <li>
-                                Install ElectronJS on Global<br/>
-                                <a>https://www.electronjs.org/</a>
-                            </li>
-                        </ol>
+        <div class="row no-margin no-padding" style="height: 100%;">
+            <div class="col-100 no-margin padding-top padding-left padding-right" style="height: 100%;">
+                <div class="row no-padding" style="height: 62%; min-height: 50px">
+                    <div class="col-50 no-padding">
+                        <div class="card no-margin">
+                            <div class="card-header">Pre Requisite</div>
+                            <div class="card-content card-content-padding">
+                                <ol class="no-margin">
+                                    <li>
+                                        Install NodeJS<br/>
+                                        <a>https://nodejs.org/en/</a>
+                                    </li>
+                                    <li>
+                                        Install ElectronJS on Global<br/>
+                                        <a>https://www.electronjs.org/</a>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-50 no-padding">
+                        <div class="card no-margin">
+                            <div class="card-header">Activities</div>
+                            <div class="card-content card-content-padding" id="log-data">
+                                No Activity
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <br/>
-                <div class="card no-margin">
-                    <div class="card-header">MacOS</div>
-                    <div class="card-content card-content-padding">
-                        <ol class="no-margin">
-                            <li>
-                                For some condition, you need to do manually command using terminal.
-                            </li>
-                            <li>
-                                If <span style="font-weight: bold;">npm install</span> stuck on some persentage, you can try to use alternative like <span style="font-weight: bold;">cnpm</span> from <a>https://www.npmjs.com/package/cnpm</a>
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-                <br/>
-                <div class="card no-margin">
-                    <div class="card-header">Milestone</div>
-                    <div class="card-content card-content-padding">
-                        <ol class="no-margin">
-                            <li>
-                                Enable Cordova Development
-                            </li>
-                            <li>
-                                Enable Static Website Development
-                            </li>
-                            <li>
-                                Enable ExpressJs Website Development
-                            </li>
-                            <li>
-                                Adding UI Component
-                            </li>
-                            <li>
-                                Adding Code Snippet
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            <div class="col-40">
-                <div class="card no-margin">
-                    <div class="card-header">Activities</div>
-                    <div class="card-content card-content-padding" id="log-data">
-                        No Activity
-                    </div>
+                <div class="row no-margin no-padding card" style="height: 30%; min-height: 50px">
+                    <div class="card-header">Terminal</div>
+                    <div class="col-100" style="height: 100%" id="term"></div>
                 </div>
             </div>
         </div>

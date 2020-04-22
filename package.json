@@ -8,7 +8,8 @@
         "start": "electron .",
         "postinstall": "electron-builder install-app-deps",
         "pack": "electron-builder --dir",
-        "dist": "electron-builder --publish never"
+        "dist": "electron-builder --publish never",
+        "rebuild": "electron-rebuild -f -w node-pty"
     },
     "build": {
         "appId": "com.nowdb.visual7",
@@ -32,7 +33,7 @@
         },
         "win": {
             "icon": "www/img/logo.png",
-            "target": "portable"
+            "target": "nsis"
         }
     },
     "publish": "never",
@@ -48,7 +49,8 @@
     "devDependencies": {
         "electron": "^8.2.3",
         "electron-builder": "^22.4.1",
-        "electron-pdf-window": "^1.0.12"
+        "electron-pdf-window": "^1.0.12",
+        "electron-rebuild": "^1.10.1"
     },
     "dependencies": {
         "child_process": "^1.0.2",
@@ -64,11 +66,15 @@
         "monaco-editor": "^0.20.0",
         "monaco-loader": "^0.8.2",
         "monaco-themes": "^0.3.3",
+        "node-pty": "^0.9.0",
         "open-file-explorer": "^1.0.2",
         "pretty": "^2.0.0",
+        "rebuild": "^0.1.2",
         "sha1": "^1.1.1",
         "shelljs": "^0.8.3",
-        "sudo-prompt": "^9.1.1"
+        "sudo-prompt": "^9.1.1",
+        "xterm": "^4.5.0",
+        "xterm-addon-fit": "^0.3.0"
     },
     "repository": {
         "type": "git",

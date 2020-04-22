@@ -15,6 +15,11 @@ const spawn = require('child_process').spawn;
 const prompt = require('electron-prompt');
 const editorLoader = require('../node_modules/monaco-editor/min/vs/loader.js');
 const editorRequire = editorLoader.require;
+const pty = require('node-pty');
+const { Terminal } = require('xterm');
+const { FitAddon } = require('xterm-addon-fit');
+let term = null;
+let ptyProcess = null;
 
 let file_open_active = '';
 let project_open_active = '';

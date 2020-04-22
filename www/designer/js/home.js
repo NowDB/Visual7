@@ -4,7 +4,49 @@
 
 panel_left_morph();
 
-$$(document).on('click', '#btn-reload', function () {
+var terminal_home = function() {
+    term = new Terminal({
+        fontFamily: 'Fira Code, Iosevka, monospace',
+        fontSize: 12,
+        experimentalCharAtlas: 'dynamic'
+    });
+
+    const fitAddon = new FitAddon();
+    term.loadAddon(fitAddon);
+
+    const terminalElem = document.getElementById('term');
+    term.open(terminalElem);
+
+    fitAddon.fit();
+
+    const shell = process.env[os.platform() === 'win32' ? 'COMSPEC' : 'SHELL'];
+    ptyProcess = pty.spawn(shell, [], {
+        name: 'xterm-color',
+        cols: term.cols,
+        rows: term.rows,
+        cwd: process.cwd(),
+        env: process.env
+    });
+
+    term.onData(function(data) {
+        ptyProcess.write(data);
+    });
+
+    term.onResize(function(size) {
+        ptyProcess.resize(
+            Math.max(size ? size.cols : term.cols, 1),
+            Math.max(size ? size.rows : term.rows, 1)
+        );
+    });
+
+    ptyProcess.on('data', function(data) {
+        term.write(data);
+    });
+}
+
+terminal_home();
+
+$$(document).on('click', '#btn-reload', function() {
     app.preloader.show();
 
     window.location.reload();
@@ -12,6 +54,9 @@ $$(document).on('click', '#btn-reload', function () {
 
 $$(document).on('page:afterin', '.page[data-name="home"]', function (e) {
     panel_left_morph();
+
+    var page_height = $$(document).find('.page-content').height();
+    $$(document).find('#page-welcome').height(parseInt(page_height));
 });
 
 /**
@@ -112,31 +157,12 @@ $$(document).on('click', '#btn-application-new-electron', function () {
                             animate: false
                         }).open();
                     } else {
-                        var shell = require('shelljs');
-                        shell.config.execPath = String(shell.which('node'));
-
-                        shell.cd(dir_project);
-
-                        shell.chmod('-R', 777, 'www/');
-
-                        $$(document).find('#log-data').append('<br/>Running npm install');
-
-                        var child = shell.exec('npm install', { async: true });
-                        child.stdout.on('data', function (data) {
-                            $$(document).find('#log-data').append('<br/>' + data);
-                        });
-
-                        child.on('close', (code) => {
-                            infiniteLoading = false;
-                            app.progressbar.hide();
-
-                            $$(document).find('#log-data').append('<br/>Running App First Time');
-
-                            var new_child = shell.exec('electron .', { async: true });
-                            new_child.on('close', (code) => {
-                                shell.cd(os.homedir());
-                            });
-                        });
+                        ptyProcess.write('cd %homepath%\r');
+                        ptyProcess.write('cd Visual7\r');
+                        ptyProcess.write('cd ' + fileName + '\r');
+                        ptyProcess.write('npm install -D electron@latest\r');
+                        ptyProcess.write('npm install\r');
+                        ptyProcess.write('cd ..');
                     }
                 } else {
                     app.dialog.create({
@@ -319,7 +345,17 @@ $$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function
 
                     we = window.editor;
                     we = me.create(document.getElementById('container'), {
-                        value: [code_data].join('\n'),
+                        value: '\n' + code_data,
+                        parameterHints: { enabled: true },
+                        scrollBeyondLastLine: false,
+                        fixedOverflowWidgets: true,
+                        lineNumbers: 'on',
+                        folding: true,
+                        foldingHighlight: true,
+                        showFoldingControls: 'always',
+                        fontLigatures: true,
+                        showUnused: true,
+                        smoothScrolling: true,
                         language: 'html'
                     });
                 });
@@ -397,7 +433,17 @@ $$(document).on('page:afterin', '.page[data-name="editor_js_main"]', function (c
 
                     we = window.editor;
                     we = me.create(document.getElementById('container'), {
-                        value: [code_data].join('\n'),
+                        value: '\n' + code_data,
+                        parameterHints: { enabled: true },
+                        scrollBeyondLastLine: false,
+                        fixedOverflowWidgets: true,
+                        lineNumbers: 'on',
+                        folding: true,
+                        foldingHighlight: true,
+                        showFoldingControls: 'always',
+                        fontLigatures: true,
+                        showUnused: true,
+                        smoothScrolling: true,
                         language: 'javascript'
                     });
                 });
@@ -474,7 +520,17 @@ $$(document).on('page:afterin', '.page[data-name="editor_js_package"]', function
 
                     we = window.editor;
                     we = me.create(document.getElementById('container'), {
-                        value: [code_data].join('\n'),
+                        value: '\n' + code_data,
+                        parameterHints: { enabled: true },
+                        scrollBeyondLastLine: false,
+                        fixedOverflowWidgets: true,
+                        lineNumbers: 'on',
+                        folding: true,
+                        foldingHighlight: true,
+                        showFoldingControls: 'always',
+                        fontLigatures: true,
+                        showUnused: true,
+                        smoothScrolling: true,
                         language: 'json'
                     });
                 });
@@ -511,49 +567,67 @@ function list_html(project) {
     var dir_project_www = path.join(dir_project, 'www/');
 
     fs.readdir(path.join(dir_project_www, 'pages/'), (err, dir) => {
-        $$(document).find('#list-file-html').empty();
-        $$(document).find('#list-file-html').append(
-            '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-html">' +
-            '   <div class="item-content">' +
-            '       <div class="item-inner">' +
-            '           <div class="item-title text-color-teal">pages/</div>' +
-            '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-            '       </div>' +
-            '   </div>' +
-            '</li>');
+        $$(document).find('#list-file-html-new').empty();
+        // $$(document).find('#list-file-html').append(
+        //     '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-html">' +
+        //     '   <div class="item-content">' +
+        //     '       <div class="item-inner">' +
+        //     '           <div class="item-title text-color-teal">pages/</div>' +
+        //     '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
+        //     '       </div>' +
+        //     '   </div>' +
+        //     '</li>');
         if (dir.length === 0) {
             //Do Nothing
         } else {
             for (var i = 0; i < dir.length; i++) {
                 let fileName = dir[i];
                 if (fileName === '404.html' || fileName === 'about.html' || fileName === 'home.html') {
-                    $$(document).find('#list-file-html').append(
-                        '<li>' +
-                        '   <div class="item-content">' +
-                        '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
-                        '       <div class="item-inner">' +
-                        '           <div class="item-title">' + fileName + '</div>' +
-                        '           <div class="item-after">' +
-                        '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '           </div>' +
-                        '       </div>' +
-                        '   </div>' +
-                        '</li>');
+                    // $$(document).find('#list-file-html').append(
+                    //     '<li>' +
+                    //     '   <div class="item-content">' +
+                    //     '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
+                    //     '       <div class="item-inner">' +
+                    //     '           <div class="item-title">' + fileName + '</div>' +
+                    //     '           <div class="item-after">' +
+                    //     '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
+                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                    //     '           </div>' +
+                    //     '       </div>' +
+                    //     '   </div>' +
+                    //     '</li>');
+                    $$(document).find('#list-file-html-new').append(
+                        '<div class="treeview-item" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '    <div class="treeview-item-root">' +
+                        '        <div class="treeview-item-content">' +
+                        '            <i class="icon f7-icons">document_text_fill</i>' +
+                        '            <div class="treeview-item-label">' + fileName + '</div>' +
+                        '        </div>' +
+                        '    </div>' +
+                        '</div>');
                 } else {
-                    $$(document).find('#list-file-html').append(
-                        '<li>' +
-                        '   <div class="item-content">' +
-                        '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-html" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
-                        '       <div class="item-inner">' +
-                        '           <div class="item-title">' + fileName + '</div>' +
-                        '           <div class="item-after">' +
-                        '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '           </div>' +
-                        '       </div>' +
-                        '   </div>' +
-                        '</li>');
+                    // $$(document).find('#list-file-html').append(
+                    //     '<li>' +
+                    //     '   <div class="item-content">' +
+                    //     '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-html" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
+                    //     '       <div class="item-inner">' +
+                    //     '           <div class="item-title">' + fileName + '</div>' +
+                    //     '           <div class="item-after">' +
+                    //     '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
+                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                    //     '           </div>' +
+                    //     '       </div>' +
+                    //     '   </div>' +
+                    //     '</li>');
+                    $$(document).find('#list-file-html-new').append(
+                        '<div class="treeview-item" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '    <div class="treeview-item-root">' +
+                        '        <div class="treeview-item-content">' +
+                        '            <i class="icon f7-icons">document_text_fill</i>' +
+                        '            <div class="treeview-item-label">' + fileName + '</div>' +
+                        '        </div>' +
+                        '    </div>' +
+                        '</div>');
                 }
             }
         }
@@ -576,6 +650,8 @@ $$(document).on('page:afterin', '.page[data-name="editor_html"]', function (call
 
     $$(document).find('#page-title').html(filename);
     $$(document).find('#btn-save-html').attr('data-project', project);
+    $$(document).find('#btn-design-html').attr('data-project', project);
+    $$(document).find('#btn-design-html').attr('data-file', filename);
 
     self.module = undefined;
 
@@ -608,7 +684,17 @@ $$(document).on('page:afterin', '.page[data-name="editor_html"]', function (call
 
                     we = window.editor;
                     we = me.create(document.getElementById('container'), {
-                        value: [code_data].join('\n'),
+                        value: '\n' + code_data,
+                        parameterHints: { enabled: true },
+                        scrollBeyondLastLine: false,
+                        fixedOverflowWidgets: true,
+                        lineNumbers: 'on',
+                        folding: true,
+                        foldingHighlight: true,
+                        showFoldingControls: 'always',
+                        fontLigatures: true,
+                        showUnused: true,
+                        smoothScrolling: true,
                         language: 'html'
                     });
                 });
@@ -692,47 +778,65 @@ function list_js(project) {
     var dir_project_www = path.join(dir_project, 'www/');
 
     fs.readdir(path.join(dir_project_www, 'js_app/'), (err, dir) => {
-        $$(document).find('#list-file-js').empty();
-        $$(document).find('#list-file-js').append(
-            '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-js">' +
-            '   <div class="item-content">' +
-            '       <div class="item-inner">' +
-            '           <div class="item-title text-color-teal">js_app/</div>' +
-            '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-            '       </div>' +
-            '   </div>' +
-            '</li>');
+        $$(document).find('#list-file-js-new').empty();
+        // $$(document).find('#list-file-js').append(
+        //     '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-js">' +
+        //     '   <div class="item-content">' +
+        //     '       <div class="item-inner">' +
+        //     '           <div class="item-title text-color-teal">js_app/</div>' +
+        //     '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
+        //     '       </div>' +
+        //     '   </div>' +
+        //     '</li>');
         if (dir.length === 0) {
             //Do Nothing
         } else {
             for (var i = 0; i < dir.length; i++) {
                 let fileName = dir[i];
                 if (fileName === 'constant.js' || fileName === 'init.js' || fileName === 'listener.js' || fileName === 'routes.js') {
-                    $$(document).find('#list-file-js').append(
-                        '<li>' +
-                        '   <div class="item-content">' +
-                        '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
-                        '       <div class="item-inner">' +
-                        '           <div class="item-title">' + fileName + '</div>' +
-                        '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '           </div>' +
+                    // $$(document).find('#list-file-js').append(
+                    //     '<li>' +
+                    //     '   <div class="item-content">' +
+                    //     '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
+                    //     '       <div class="item-inner">' +
+                    //     '           <div class="item-title">' + fileName + '</div>' +
+                    //     '           <div class="item-after">' +
+                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                    //     '           </div>' +
+                    //     '        </div>' +
+                    //     '   </div>' +
+                    //     '</li>');
+                    $$(document).find('#list-file-js-new').append(
+                        '<div class="treeview-item" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '    <div class="treeview-item-root">' +
+                        '        <div class="treeview-item-content">' +
+                        '            <i class="icon f7-icons">document_text_fill</i>' +
+                        '            <div class="treeview-item-label">' + fileName + '</div>' +
                         '        </div>' +
-                        '   </div>' +
-                        '</li>');
+                        '    </div>' +
+                        '</div>');
                 } else {
-                    $$(document).find('#list-file-js').append(
-                        '<li>' +
-                        '   <div class="item-content">' +
-                        '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-js" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
-                        '       <div class="item-inner">' +
-                        '           <div class="item-title">' + fileName + '</div>' +
-                        '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '           </div>' +
+                    // $$(document).find('#list-file-js').append(
+                    //     '<li>' +
+                    //     '   <div class="item-content">' +
+                    //     '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-js" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
+                    //     '       <div class="item-inner">' +
+                    //     '           <div class="item-title">' + fileName + '</div>' +
+                    //     '           <div class="item-after">' +
+                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                    //     '           </div>' +
+                    //     '        </div>' +
+                    //     '   </div>' +
+                    //     '</li>');
+                    $$(document).find('#list-file-js-new').append(
+                        '<div class="treeview-item" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '    <div class="treeview-item-root">' +
+                        '        <div class="treeview-item-content">' +
+                        '            <i class="icon f7-icons">document_text_fill</i>' +
+                        '            <div class="treeview-item-label">' + fileName + '</div>' +
                         '        </div>' +
-                        '   </div>' +
-                        '</li>');
+                        '    </div>' +
+                        '</div>');
                 }
             }
         }
@@ -787,7 +891,17 @@ $$(document).on('page:afterin', '.page[data-name="editor_js"]', function (callba
 
                     we = window.editor;
                     we = me.create(document.getElementById('container'), {
-                        value: [code_data].join('\n'),
+                        value: '\n' + code_data,
+                        parameterHints: { enabled: true },
+                        scrollBeyondLastLine: false,
+                        fixedOverflowWidgets: true,
+                        lineNumbers: 'on',
+                        folding: true,
+                        foldingHighlight: true,
+                        showFoldingControls: 'always',
+                        fontLigatures: true,
+                        showUnused: true,
+                        smoothScrolling: true,
                         language: 'javascript'
                     });
                 });
@@ -871,47 +985,65 @@ function list_css(project) {
     var dir_project_www = path.join(dir_project, 'www/');
 
     fs.readdir(path.join(dir_project_www, 'css/'), (err, dir) => {
-        $$(document).find('#list-file-css').empty();
-        $$(document).find('#list-file-css').append(
-            '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-css">' +
-            '   <div class="item-content">' +
-            '       <div class="item-inner">' +
-            '           <div class="item-title text-color-teal">css/</div>' +
-            '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-            '       </div>' +
-            '   </div>' +
-            '</li>');
+        $$(document).find('#list-file-css-new').empty();
+        // $$(document).find('#list-file-css').append(
+        //     '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-css">' +
+        //     '   <div class="item-content">' +
+        //     '       <div class="item-inner">' +
+        //     '           <div class="item-title text-color-teal">css/</div>' +
+        //     '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
+        //     '       </div>' +
+        //     '   </div>' +
+        //     '</li>');
         if (dir.length === 0) {
             //Do Nothing
         } else {
             for (var i = 0; i < dir.length; i++) {
                 let fileName = dir[i];
                 if (fileName === 'framework7-icons.css' || fileName === 'framework7.bundle.css' || fileName === 'framework7.bundle.min.css' || fileName === 'framework7.bundle.rtl.css' || fileName === 'framework7.bundle.rtl.min.css' || fileName === 'framework7.css' || fileName === 'framework7.min.css' || fileName === 'framework7.rtl.css' || fileName === 'framework7.rtl.min.css' || fileName === 'custom.css') {
-                    $$(document).find('#list-file-css').append(
-                        '<li>' +
-                        '   <div class="item-content">' +
-                        '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
-                        '       <div class="item-inner">' +
-                        '           <div class="item-title">' + fileName + '</div>' +
-                        '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '           </div>' +
+                    // $$(document).find('#list-file-css').append(
+                    //     '<li>' +
+                    //     '   <div class="item-content">' +
+                    //     '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
+                    //     '       <div class="item-inner">' +
+                    //     '           <div class="item-title">' + fileName + '</div>' +
+                    //     '           <div class="item-after">' +
+                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                    //     '           </div>' +
+                    //     '        </div>' +
+                    //     '   </div>' +
+                    //     '</li>');
+                    $$(document).find('#list-file-css-new').append(
+                        '<div class="treeview-item" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '    <div class="treeview-item-root">' +
+                        '        <div class="treeview-item-content">' +
+                        '            <i class="icon f7-icons">document_text_fill</i>' +
+                        '            <div class="treeview-item-label">' + fileName + '</div>' +
                         '        </div>' +
-                        '   </div>' +
-                        '</li>');
+                        '    </div>' +
+                        '</div>');
                 } else {
-                    $$(document).find('#list-file-css').append(
-                        '<li>' +
-                        '   <div class="item-content">' +
-                        '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-css" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
-                        '       <div class="item-inner">' +
-                        '           <div class="item-title">' + fileName + '</div>' +
-                        '           <div class="item-after">' +
-                        '               <i title="Code Editor" class="material-icons" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                        '           </div>' +
+                    // $$(document).find('#list-file-css').append(
+                    //     '<li>' +
+                    //     '   <div class="item-content">' +
+                    //     '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-css" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
+                    //     '       <div class="item-inner">' +
+                    //     '           <div class="item-title">' + fileName + '</div>' +
+                    //     '           <div class="item-after">' +
+                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
+                    //     '           </div>' +
+                    //     '        </div>' +
+                    //     '   </div>' +
+                    //     '</li>');
+                    $$(document).find('#list-file-css-new').append(
+                        '<div class="treeview-item" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '    <div class="treeview-item-root">' +
+                        '        <div class="treeview-item-content">' +
+                        '            <i class="icon f7-icons">document_text_fill</i>' +
+                        '            <div class="treeview-item-label">' + fileName + '</div>' +
                         '        </div>' +
-                        '   </div>' +
-                        '</li>');
+                        '    </div>' +
+                        '</div>');
                 }
             }
         }
@@ -966,7 +1098,17 @@ $$(document).on('page:afterin', '.page[data-name="editor_css"]', function (callb
 
                     we = window.editor;
                     we = me.create(document.getElementById('container'), {
-                        value: [code_data].join('\n'),
+                        value: '\n' + code_data,
+                        parameterHints: { enabled: true },
+                        scrollBeyondLastLine: false,
+                        fixedOverflowWidgets: true,
+                        lineNumbers: 'on',
+                        folding: true,
+                        foldingHighlight: true,
+                        showFoldingControls: 'always',
+                        fontLigatures: true,
+                        showUnused: true,
+                        smoothScrolling: true,
                         language: 'css'
                     });
                 });
@@ -1050,16 +1192,16 @@ function list_other(project) {
     var dir_project_www = path.join(dir_project, 'www/');
 
     fs.readdir(path.join(dir_project_www, 'file/'), (err, dir) => {
-        $$(document).find('#list-file-other').empty();
-        $$(document).find('#list-file-other').append(
-            '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-file">' +
-            '   <div class="item-content">' +
-            '       <div class="item-inner">' +
-            '           <div class="item-title text-color-teal">file/</div>' +
-            '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-            '       </div>' +
-            '   </div>' +
-            '</li>');
+        $$(document).find('#list-file-other-new').empty();
+        // $$(document).find('#list-file-other').append(
+        //     '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-file">' +
+        //     '   <div class="item-content">' +
+        //     '       <div class="item-inner">' +
+        //     '           <div class="item-title text-color-teal">file/</div>' +
+        //     '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
+        //     '       </div>' +
+        //     '   </div>' +
+        //     '</li>');
         if (dir.length === 0) {
             //Do Nothing
         } else {
@@ -1074,6 +1216,15 @@ function list_other(project) {
                     '       </div>' +
                     '    </div>' +
                     '</li>');
+                $$(document).find('#list-file-other-new').append(
+                    '<div class="treeview-item">' +
+                    '    <div class="treeview-item-root">' +
+                    '        <div class="treeview-item-content">' +
+                    '            <i class="icon f7-icons">document_text_fill</i>' +
+                    '            <div class="treeview-item-label">' + fileName + '</div>' +
+                    '        </div>' +
+                    '    </div>' +
+                    '</div>');
             }
         }
     });

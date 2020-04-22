@@ -15,7 +15,15 @@ $$(document).on('click', '#btn-maximize', function() {
 
 window.onresize = function() {
     panel_left_morph();
+
     view_main.router.refreshPage();
+
+    page_history = app.views[0].history;
+    page_count = page_history.length;
+    page_current = page_history[page_count - 1];
+    if (page_current === '/') {
+        terminal_home();
+    }
 };
 
 var panel_left_morph = function() {

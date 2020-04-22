@@ -39,3 +39,13 @@
 .demo-facebook-card .card-content-padding .likes {
     color: #8e8e93;
 }
+
+.grid-resizable-demo div[class*="col"] {
+    margin-bottom: 0;
+}
+
+.grid-resizable-demo .demo-col-center-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
