@@ -4,6 +4,48 @@
 
 panel_left_morph();
 
+var terminal_home = function() {
+    term = new Terminal({
+        fontFamily: 'Fira Code, Iosevka, monospace',
+        fontSize: 12,
+        experimentalCharAtlas: 'dynamic'
+    });
+
+    const fitAddon = new FitAddon();
+    term.loadAddon(fitAddon);
+
+    const terminalElem = document.getElementById('term');
+    term.open(terminalElem);
+
+    fitAddon.fit();
+
+    const shell = process.env[os.platform() === 'win32' ? 'COMSPEC' : 'SHELL'];
+    ptyProcess = pty.spawn(shell, [], {
+        name: 'xterm-color',
+        cols: term.cols,
+        rows: term.rows,
+        cwd: process.cwd(),
+        env: process.env
+    });
+
+    term.onData(function(data) {
+        ptyProcess.write(data);
+    });
+
+    term.onResize(function(size) {
+        ptyProcess.resize(
+            Math.max(size ? size.cols : term.cols, 1),
+            Math.max(size ? size.rows : term.rows, 1)
+        );
+    });
+
+    ptyProcess.on('data', function(data) {
+        term.write(data);
+    });
+}
+
+terminal_home();
+
 $$(document).on('click', '#btn-reload', function() {
     app.preloader.show();
 
@@ -12,6 +54,9 @@ $$(document).on('click', '#btn-reload', function() {
 
 $$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
     panel_left_morph();
+
+    var page_height = $$(document).find('.page-content').height();
+    $$(document).find('#page-welcome').height(parseInt(page_height));
 });
 
 /**
@@ -94,31 +139,12 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                             animate: false
                         }).open();
                     } else {
-                        var shell = require('shelljs');
-                        shell.config.execPath = String(shell.which('node'));
-
-                        shell.cd(dir_project);
-
-                        shell.chmod('-R', 777, 'www/');
-
-                        $$(document).find('#log-data').append('<br/>Running npm install');
-
-                        var child = shell.exec('npm install', { async: true });
-                        child.stdout.on('data', function(data) {
-                            $$(document).find('#log-data').append('<br/>' + data);
-                        });
-
-                        child.on('close', (code) => {
-                            infiniteLoading = false;
-                            app.progressbar.hide();
-
-                            $$(document).find('#log-data').append('<br/>Running App First Time');
-
-                            var new_child = shell.exec('electron .', { async: true });
-                            new_child.on('close', (code) => {
-                                shell.cd(os.homedir());
-                            });
-                        });
+                        ptyProcess.write('cd %homepath%\r');
+                        ptyProcess.write('cd Visual7\r');
+                        ptyProcess.write('cd ' + fileName + '\r');
+                        ptyProcess.write('npm install -D electron@latest\r');
+                        ptyProcess.write('npm install\r');
+                        ptyProcess.write('cd ..');
                     }
                 } else {
                     app.dialog.create({
