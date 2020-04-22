@@ -4,7 +4,7 @@
 
 panel_left_morph();
 
-var terminal_home = function() {
+var terminal_home = function () {
     term = new Terminal({
         fontFamily: 'Fira Code, Iosevka, monospace',
         fontSize: 12,
@@ -28,25 +28,25 @@ var terminal_home = function() {
         env: process.env
     });
 
-    term.onData(function(data) {
+    term.onData(function (data) {
         ptyProcess.write(data);
     });
 
-    term.onResize(function(size) {
+    term.onResize(function (size) {
         ptyProcess.resize(
             Math.max(size ? size.cols : term.cols, 1),
             Math.max(size ? size.rows : term.rows, 1)
         );
     });
 
-    ptyProcess.on('data', function(data) {
+    ptyProcess.on('data', function (data) {
         term.write(data);
     });
 }
 
 terminal_home();
 
-$$(document).on('click', '#btn-reload', function() {
+$$(document).on('click', '#btn-reload', function () {
     app.preloader.show();
 
     window.location.reload();
@@ -91,24 +91,24 @@ $$(document).on('click', '#btn-application-new-electron', function () {
                     mkdir(dir_project);
                     mkdir(dir_project_www);
                     mkdir(path.join(dir_project_www, 'file/'));
-                    
+
                     copy(path.join(__dirname, 'index.html'), path.join(dir_project_www, 'index.html'));
                     copy(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
                     copy(path.join(dir_init, 'main.js'), path.join(dir_project, 'main.js'));
                     copy(path.join(dir_init, 'package.json'), path.join(dir_project, 'package.json'));
-                    
+
                     copyDir(path.join(__dirname, 'css/'), path.join(dir_project_www, 'css/'));
                     copyDir(path.join(__dirname, 'fonts/'), path.join(dir_project_www, 'fonts/'));
                     copyDir(path.join(__dirname, 'img/'), path.join(dir_project_www, 'img/'));
                     copyDir(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
                     copyDir(path.join(__dirname, 'js_app/'), path.join(dir_project_www, 'js_app/'));
                     copyDir(path.join(__dirname, 'pages/'), path.join(dir_project_www, 'pages/'));
-                    
+
                     list_project();
 
                     if (os.platform() === "darwin") {
                         app.progressbar.hide();
-               
+
                         ptyProcess.write('cd ~\r');
                         ptyProcess.write('cd Visual7\r');
                         ptyProcess.write('cd ' + fileName + '\r');
@@ -118,7 +118,7 @@ $$(document).on('click', '#btn-application-new-electron', function () {
                         ptyProcess.write('clear\r');
                     } else if (os.platform() === "linux") {
                         app.progressbar.hide();
-               
+
                         ptyProcess.write('cd ~\r');
                         ptyProcess.write('cd Visual7\r');
                         ptyProcess.write('cd ' + fileName + '\r');
@@ -128,7 +128,7 @@ $$(document).on('click', '#btn-application-new-electron', function () {
                         ptyProcess.write('clear\r');
                     } else {
                         app.progressbar.hide();
-               
+
                         ptyProcess.write('cd %homepath%\r');
                         ptyProcess.write('cd Visual7\r');
                         ptyProcess.write('cd ' + fileName + '\r');
@@ -184,6 +184,7 @@ $$(document).on('click', '#btn-project-open', function () {
     var project = $$(this).attr('data-project');
     project_open_active = project;
     navigate_left_to('/project/' + project + '/');
+    navigate_main_to('/editor/' + project + '/index.html/');
 });
 
 $$(document).on('click', '#btn-project-folder-open', function () {
@@ -204,6 +205,127 @@ $$(document).on('click', '#btn-project-folder-open', function () {
             }
         });
     }
+});
+
+$$(document).on('page:afterin', '.page[data-name="editor"]', function (callback) {
+    panel_left_morph();
+
+    var project = callback.detail.route.params.project;
+    var filename = callback.detail.route.params.filename;
+
+    file_open_active = filename;
+
+    $$(document).find('#page-title').html(filename);
+    $$(document).find('#btn-save-html-index').attr('data-project', project);
+
+    self.module = undefined;
+
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readFile(path.join(dir_project_www, filename), 'utf-8', (err, code_data) => {
+        app.preloader.show();
+
+        if (err) {
+            app.preloader.hide();
+            console.log(err);
+            return;
+        } else {
+            editorRequire.config({
+                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+            });
+
+            editorRequire(['vs/editor/editor.main'], function () {
+                loadTheme('Monokai').then(function (callback) {
+                    me = monaco.editor;
+                    me.defineTheme(callback.base, {
+                        base: callback.base,
+                        inherit: true,
+                        rules: [callback.rules],
+                        colors: callback.colors
+                    });
+                    me.setTheme(callback.base);
+
+                    we = window.editor;
+                    we = me.create(document.getElementById('container'), {
+                        value: '\n' + code_data,
+                        parameterHints: { enabled: true },
+                        scrollBeyondLastLine: false,
+                        fixedOverflowWidgets: true,
+                        lineNumbers: 'on',
+                        folding: true,
+                        foldingHighlight: true,
+                        showFoldingControls: 'always',
+                        fontLigatures: true,
+                        showUnused: true,
+                        smoothScrolling: true,
+                        language: 'html'
+                    });
+                });
+
+                app.preloader.hide();
+
+                /**
+ * Terminal Project
+ */
+                term = new Terminal({
+                    fontFamily: 'Fira Code, Iosevka, monospace',
+                    fontSize: 12,
+                    experimentalCharAtlas: 'dynamic'
+                });
+
+                const fitAddon = new FitAddon();
+                term.loadAddon(fitAddon);
+
+                const terminalElem = document.getElementById('term-editor');
+                term.open(terminalElem);
+
+                fitAddon.fit();
+
+                const shell = process.env[os.platform() === 'win32' ? 'COMSPEC' : 'SHELL'];
+                ptyProcess = pty.spawn(shell, [], {
+                    name: 'xterm-color',
+                    cols: term.cols,
+                    rows: term.rows,
+                    cwd: process.cwd(),
+                    env: process.env
+                });
+
+                term.onData(function (data) {
+                    ptyProcess.write(data);
+                });
+
+                term.onResize(function (size) {
+                    ptyProcess.resize(
+                        Math.max(size ? size.cols : term.cols, 1),
+                        Math.max(size ? size.rows : term.rows, 1)
+                    );
+                });
+
+                ptyProcess.on('data', function (data) {
+                    term.write(data);
+                });
+
+                if (os.platform() === "darwin") {
+                    ptyProcess.write('cd ~\r');
+                    ptyProcess.write('cd Visual7\r');
+                    ptyProcess.write('cd ' + project + '\r');
+                    ptyProcess.write('clear\r');
+                } else if (os.platform() === "linux") {
+                    ptyProcess.write('cd ~\r');
+                    ptyProcess.write('cd Visual7\r');
+                    ptyProcess.write('cd ' + project + '\r');
+                    ptyProcess.write('clear\r');
+                } else {
+                    ptyProcess.write('cd %homepath%\r');
+                    ptyProcess.write('cd Visual7\r');
+                    ptyProcess.write('cd ' + project + '\r');
+                    ptyProcess.write('cls\r');
+                }
+            });
+        }
+    });
 });
 
 $$(document).on('page:afterin', '.page[data-name="project"]', function (callback) {

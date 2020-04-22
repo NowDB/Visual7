@@ -47,6 +47,11 @@ routes = [{
         url: './designer/pages/editor_css.html'
     },
     {
+        name: 'editor',
+        path: '/editor/:project/:filename/',
+        url: './designer/pages/editor.html'
+    },
+    {
         path: '(.*)',
         url: './designer/pages/404.html'
     }
