@@ -1,0 +1,43 @@
+<div class="page" data-name="editor">
+    <div class="navbar">
+        <div class="navbar-bg"></div>
+        <div class="navbar-inner">
+            <div class="left">
+                <a href="#" class="link icon-only panel-open" data-panel="left" id="btn-panel-left">
+                    <i class="icon material-icons color-gray">menu</i>
+                </a>
+            </div>
+            <div class="title" id="page-title"></div>
+            <div class="right">
+                <a class="link icon-only text-color-gray popover-open" title="Condition" href="#" data-popover=".popover-links">
+                    <i class="icon material-icons">memory</i>
+                </a>
+                <a class="link icon-only text-color-gray" title="Save" id="btn-save-js">
+                    <i class="icon material-icons">save</i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="page-content" style="overflow-y: hidden;">
+        <div class="row no-margin no-padding" style="height: 100%;">
+            <div class="col-100 no-margin" style="height: 100%;">
+                <div class="row no-margin no-padding" style="height: 70%;overflow: hidden;" id="container"></div>
+                <div class="row no-margin no-padding bg-color-gray" style="min-height: 8px;"><span class="text-color-white" style="margin-left: 5px;">Terminal</span></div>
+                <div class="row no-margin no-padding" style="height: 28%;min-height: 50px;">
+                    <div class="col-100" style="height: 100%" id="term-editor"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popover popover-links">
+        <div class="popover-inner">
+            <div class="list">
+                <ul>
+                    <li><a class="list-button item-link" href="#" id="code-if">if</a></li>
+                    <li><a class="list-button item-link" href="#" id="code-if-else">if else</a></li>
+                    <li><a class="list-button item-link" href="#" id="code-if-else-if">if else if</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
