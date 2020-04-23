@@ -24,6 +24,7 @@ let termEditor = null;
 let ptyProcessEditor = null;
 
 let file_open_active = '';
+let filepath_open_active = '';
 let project_open_active = '';
 
 // UI Designer

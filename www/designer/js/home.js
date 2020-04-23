@@ -207,22 +207,61 @@ $$(document).on('click', '#btn-project-folder-open', function () {
     }
 });
 
+$$(document).on('page:afterin', '.page[data-name="project"]', function (callback) {
+    var project = callback.detail.route.params.name;
+
+    $$(document).find('#project-name').html(project);
+    $$(document).find('#btn-code-editor-html-index').attr('data-project', project);
+    $$(document).find('#btn-code-editor-js-main').attr('data-project', project);
+    $$(document).find('#btn-code-editor-js-package').attr('data-project', project);
+    $$(document).find('#btn-code-editor').attr('data-project', project);
+
+    list_html(project);
+    list_js(project);
+    list_css(project);
+    list_other(project);
+});
+
+$$(document).on('click', '#btn-app-run', function () {
+    if (os.platform() === "darwin") {
+        ptyProcessEditor.write('cd ~\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('electron .\r');
+    } else if (os.platform() === "linux") {
+        ptyProcessEditor.write('cd ~\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('electron .\r');
+    } else {
+        ptyProcessEditor.write('cd %homepath%\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('electron .\r');
+    }
+});
+
+/**
+ * Code Editor
+ */
+
 $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
     var filename = callback.detail.route.params.filename;
-
-    file_open_active = filename;
-
+    
     $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-save-html-index').attr('data-project', project);
-
-    self.module = undefined;
+    $$(document).find('#btn-design-html').hide();
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project);
     var dir_project_www = path.join(dir_project, 'www/');
+
+    file_open_active = filename;
+    filepath_open_active = path.join(dir_project_www,filename);
+
+    self.module = undefined;
 
     fs.readFile(path.join(dir_project_www, filename), 'utf-8', (err, code_data) => {
         app.preloader.show();
@@ -326,67 +365,74 @@ $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback)
     });
 });
 
-$$(document).on('page:afterin', '.page[data-name="project"]', function (callback) {
-    var project = callback.detail.route.params.name;
+$$(document).on('click', '#btn-code-editor', function () {
+    var project = project_open_active;
+    var filename = $$(this).attr('data-file');
+    file_open_active = filename;
 
-    $$(document).find('#project-name').html(project);
-    $$(document).find('#btn-code-editor-html-index').attr('data-project', project);
-    $$(document).find('#btn-code-editor-js-main').attr('data-project', project);
-    $$(document).find('#btn-code-editor-js-package').attr('data-project', project);
+    $$(document).find('#page-title').html(filename);
+    $$(document).find('#btn-save').attr('data-project', project);
 
-    list_html(project);
-    list_js(project);
-    list_css(project);
-    list_other(project);
+    code_editor(project, filename);
 });
 
-$$(document).on('click', '#btn-app-run', function () {
-    if (os.platform() === "darwin") {
-        ptyProcessEditor.write('cd ~\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('electron .\r');
-    } else if (os.platform() === "linux") {
-        ptyProcessEditor.write('cd ~\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('electron .\r');
-    } else {
-        ptyProcessEditor.write('cd %homepath%\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('electron .\r');
+function code_editor(project, filename) {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+    var filepath = null;
+    var filelang = null;
+    var fileext = null;
+
+    var filename_raw = filename;
+    var filename_split = filename_raw.split('.');
+    fileext = filename_split.length - 1;
+
+    $$(document).find('#btn-design-html').attr('data-project', project);
+    $$(document).find('#btn-design-html').attr('data-file', filename_raw);
+
+    if (filename_split[fileext] === "html") {
+        if (filename_split[0] === "index") {
+            filepath = path.join(dir_project_www, filename_raw);
+            filelang = 'html';
+
+            $$(document).find('#btn-design-html').hide();
+        } else {
+            filepath = path.join(dir_project_www, 'pages');
+            filepath = path.join(filepath, filename_raw);
+            filelang = 'html';
+
+            $$(document).find('#btn-design-html').show();
+        }
+    } else if (filename_split[fileext] === "js") {
+        if (filename_split[0] === "main") {
+            filepath = path.join(dir_project, filename_raw);
+            filelang = 'javascript';
+        } else {
+            filepath = path.join(dir_project_www, 'js_app');
+            filepath = path.join(filepath, filename_raw);
+            filelang = 'javascript';
+        }
+
+        $$(document).find('#btn-design-html').hide();
+    } else if (filename_split[fileext] === "css") {
+        filepath = path.join(dir_project_www, 'css');
+        filepath = path.join(filepath, filename_raw);
+        filelang = 'css';
+
+        $$(document).find('#btn-design-html').hide();
+    } else if (filename_split[fileext] === "json") {
+        if (filename_split[0] === "package") {
+            filepath = path.join(dir_project, filename_raw);
+            filelang = 'json';
+        }
+
+        $$(document).find('#btn-design-html').hide();
     }
-});
 
-/**
- * Index HTML
- */
+    filepath_open_active = filepath;
 
-$$(document).on('click', '#btn-code-editor-html-index', function () {
-    var project = $$(this).attr('data-project');
-    var filename = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_html_index/' + project + '/' + filename + '/', false, false, false, true, true, false);
-});
-
-$$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function (callback) {
-    panel_left_morph();
-
-    var project = callback.detail.route.params.project;
-    var filename = callback.detail.route.params.filename;
-    file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-save-html-index').attr('data-project', project);
-
-    self.module = undefined;
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    fs.readFile(path.join(dir_project_www, filename), 'utf-8', (err, code_data) => {
+    fs.readFile(path.join(filepath), 'utf-8', (err, code_data) => {
         app.preloader.show();
 
         if (err) {
@@ -394,234 +440,22 @@ $$(document).on('page:afterin', '.page[data-name="editor_html_index"]', function
             console.log(err);
             return;
         } else {
-            editorRequire.config({
-                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
-            });
-
-            editorRequire(['vs/editor/editor.main'], function () {
-                loadTheme('Monokai').then(function (callback) {
-                    me = monaco.editor;
-                    me.defineTheme(callback.base, {
-                        base: callback.base,
-                        inherit: true,
-                        rules: [callback.rules],
-                        colors: callback.colors
-                    });
-                    me.setTheme(callback.base);
-
-                    we = window.editor;
-                    we = me.create(document.getElementById('container'), {
-                        value: '\n' + code_data,
-                        parameterHints: { enabled: true },
-                        scrollBeyondLastLine: false,
-                        fixedOverflowWidgets: true,
-                        lineNumbers: 'on',
-                        folding: true,
-                        foldingHighlight: true,
-                        showFoldingControls: 'always',
-                        fontLigatures: true,
-                        showUnused: true,
-                        smoothScrolling: true,
-                        language: 'html'
-                    });
-                });
-
-                app.preloader.hide();
-            });
-        }
-    });
-});
-
-$$(document).on('click', '#btn-save-html-index', function () {
-    var project = $$(this).attr('data-project');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    var editor_html = we.getValue();
-    fs.writeFileSync(path.join(dir_project_www, file_open_active), editor_html, 'utf-8');
-    app.toast.create({
-        text: 'File Saved',
-        position: 'center',
-        closeTimeout: 2000
-    }).open();
-});
-
-/**
- * Main JS
- */
-
-$$(document).on('click', '#btn-code-editor-js-main', function () {
-    var project = $$(this).attr('data-project');
-    var filename = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_js_main/' + project + '/' + filename + '/', false, false, false, true, true, false);
-});
-
-$$(document).on('page:afterin', '.page[data-name="editor_js_main"]', function (callback) {
-    panel_left_morph();
-
-    var project = callback.detail.route.params.project;
-    var filename = callback.detail.route.params.filename;
-    file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-save-js-main').attr('data-project', project);
-
-    self.module = undefined;
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-
-    fs.readFile(path.join(dir_project, filename), 'utf-8', (err, code_data) => {
-        app.preloader.show();
-
-        if (err) {
             app.preloader.hide();
-            console.log(err);
-            return;
-        } else {
-            editorRequire.config({
-                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
-            });
-
-            editorRequire(['vs/editor/editor.main'], function () {
-                loadTheme('Monokai').then(function (callback) {
-                    me = monaco.editor;
-                    me.defineTheme(callback.base, {
-                        base: callback.base,
-                        inherit: true,
-                        rules: [callback.rules],
-                        colors: callback.colors
-                    });
-                    me.setTheme(callback.base);
-
-                    we = window.editor;
-                    we = me.create(document.getElementById('container'), {
-                        value: '\n' + code_data,
-                        parameterHints: { enabled: true },
-                        scrollBeyondLastLine: false,
-                        fixedOverflowWidgets: true,
-                        lineNumbers: 'on',
-                        folding: true,
-                        foldingHighlight: true,
-                        showFoldingControls: 'always',
-                        fontLigatures: true,
-                        showUnused: true,
-                        smoothScrolling: true,
-                        language: 'javascript'
-                    });
-                });
-
-                app.preloader.hide();
-            });
+            we.setValue(code_data);
+            me.setModelLanguage(me.getModels()[0], filelang);
         }
     });
-});
+}
 
-$$(document).on('click', '#btn-save-js-main', function () {
-    var project = $$(this).attr('data-project');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-
-    var editor_js = we.getValue();
-    fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
+$$(document).on('click', '#btn-code-save', function () {
+    var editor_value = we.getValue();
+    fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
     app.toast.create({
         text: 'File Saved',
         position: 'center',
         closeTimeout: 2000
     }).open();
 });
-
-/**
- * Package json
- */
-
-$$(document).on('click', '#btn-code-editor-js-package', function () {
-    var project = $$(this).attr('data-project');
-    var filename = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_js_package/' + project + '/' + filename + '/', false, false, false, true, true, false);
-});
-
-$$(document).on('page:afterin', '.page[data-name="editor_js_package"]', function (callback) {
-    panel_left_morph();
-
-    var project = callback.detail.route.params.project;
-    var filename = callback.detail.route.params.filename;
-    file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-save-js-package').attr('data-project', project);
-
-    self.module = undefined;
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-
-    fs.readFile(path.join(dir_project, filename), 'utf-8', (err, code_data) => {
-        app.preloader.show();
-
-        if (err) {
-            app.preloader.hide();
-            console.log(err);
-            return;
-        } else {
-            editorRequire.config({
-                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
-            });
-
-            editorRequire(['vs/editor/editor.main'], function () {
-                loadTheme('Monokai').then(function (callback) {
-                    me = monaco.editor;
-                    me.defineTheme(callback.base, {
-                        base: callback.base,
-                        inherit: true,
-                        rules: [callback.rules],
-                        colors: callback.colors
-                    });
-                    me.setTheme(callback.base);
-
-                    we = window.editor;
-                    we = me.create(document.getElementById('container'), {
-                        value: '\n' + code_data,
-                        parameterHints: { enabled: true },
-                        scrollBeyondLastLine: false,
-                        fixedOverflowWidgets: true,
-                        lineNumbers: 'on',
-                        folding: true,
-                        foldingHighlight: true,
-                        showFoldingControls: 'always',
-                        fontLigatures: true,
-                        showUnused: true,
-                        smoothScrolling: true,
-                        language: 'json'
-                    });
-                });
-
-                app.preloader.hide();
-            });
-        }
-    });
-});
-
-$$(document).on('click', '#btn-save-js-package', function () {
-    var project = $$(this).attr('data-project');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-
-    var editor_js = we.getValue();
-    fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
-    app.toast.create({
-        text: 'File Saved',
-        position: 'center',
-        closeTimeout: 2000
-    }).open();
-});
-
 
 /**
  * HTML
@@ -663,7 +497,7 @@ function list_html(project) {
                     //     '   </div>' +
                     //     '</li>');
                     $$(document).find('#list-file-html-new').append(
-                        '<div class="treeview-item" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -686,7 +520,7 @@ function list_html(project) {
                     //     '   </div>' +
                     //     '</li>');
                     $$(document).find('#list-file-html-new').append(
-                        '<div class="treeview-item" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -699,93 +533,6 @@ function list_html(project) {
         }
     });
 }
-
-$$(document).on('click', '#btn-code-editor-html', function () {
-    var project = $$(this).attr('data-project');
-    var filename = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_html/' + project + '/' + filename + '/', false, false, false, true, true, false);
-});
-
-$$(document).on('page:afterin', '.page[data-name="editor_html"]', function (callback) {
-    panel_left_morph();
-
-    var project = callback.detail.route.params.project;
-    var filename = callback.detail.route.params.filename;
-    file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-save-html').attr('data-project', project);
-    $$(document).find('#btn-design-html').attr('data-project', project);
-    $$(document).find('#btn-design-html').attr('data-file', filename);
-
-    self.module = undefined;
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    fs.readFile(path.join(dir_project_www, 'pages/' + filename), 'utf-8', (err, code_data) => {
-        app.preloader.show();
-
-        if (err) {
-            app.preloader.hide();
-            console.log(err);
-            return;
-        } else {
-            editorRequire.config({
-                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
-            });
-
-            editorRequire(['vs/editor/editor.main'], function () {
-                loadTheme('Monokai').then(function (callback) {
-                    me = monaco.editor;
-                    me.defineTheme(callback.base, {
-                        base: callback.base,
-                        inherit: true,
-                        rules: [callback.rules],
-                        colors: callback.colors
-                    });
-                    me.setTheme(callback.base);
-
-                    we = window.editor;
-                    we = me.create(document.getElementById('container'), {
-                        value: '\n' + code_data,
-                        parameterHints: { enabled: true },
-                        scrollBeyondLastLine: false,
-                        fixedOverflowWidgets: true,
-                        lineNumbers: 'on',
-                        folding: true,
-                        foldingHighlight: true,
-                        showFoldingControls: 'always',
-                        fontLigatures: true,
-                        showUnused: true,
-                        smoothScrolling: true,
-                        language: 'html'
-                    });
-                });
-
-                app.preloader.hide();
-            });
-        }
-    });
-});
-
-$$(document).on('click', '#btn-save-html', function () {
-    var project = $$(this).attr('data-project');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    var editor_html = we.getValue();
-    fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_html, 'utf-8');
-    app.toast.create({
-        text: 'File Saved',
-        position: 'center',
-        closeTimeout: 2000
-    }).open();
-});
 
 $$(document).on('click', '#btn-create-html', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -873,7 +620,7 @@ function list_js(project) {
                     //     '   </div>' +
                     //     '</li>');
                     $$(document).find('#list-file-js-new').append(
-                        '<div class="treeview-item" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -895,7 +642,7 @@ function list_js(project) {
                     //     '   </div>' +
                     //     '</li>');
                     $$(document).find('#list-file-js-new').append(
-                        '<div class="treeview-item" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -908,91 +655,6 @@ function list_js(project) {
         }
     });
 }
-
-$$(document).on('click', '#btn-code-editor-js', function () {
-    var project = $$(this).attr('data-project');
-    var filename = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_js/' + project + '/' + filename + '/', false, false, false, true, true, false);
-});
-
-$$(document).on('page:afterin', '.page[data-name="editor_js"]', function (callback) {
-    panel_left_morph();
-
-    var project = callback.detail.route.params.project;
-    var filename = callback.detail.route.params.filename;
-    file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-save-js').attr('data-project', project);
-
-    self.module = undefined;
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    fs.readFile(path.join(dir_project_www, 'js_app/' + filename), 'utf-8', (err, code_data) => {
-        app.preloader.show();
-
-        if (err) {
-            app.preloader.hide();
-            console.log(err);
-            return;
-        } else {
-            editorRequire.config({
-                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
-            });
-
-            editorRequire(['vs/editor/editor.main'], function () {
-                loadTheme('Monokai').then(function (callback) {
-                    me = monaco.editor;
-                    me.defineTheme(callback.base, {
-                        base: callback.base,
-                        inherit: true,
-                        rules: [callback.rules],
-                        colors: callback.colors
-                    });
-                    me.setTheme(callback.base);
-
-                    we = window.editor;
-                    we = me.create(document.getElementById('container'), {
-                        value: '\n' + code_data,
-                        parameterHints: { enabled: true },
-                        scrollBeyondLastLine: false,
-                        fixedOverflowWidgets: true,
-                        lineNumbers: 'on',
-                        folding: true,
-                        foldingHighlight: true,
-                        showFoldingControls: 'always',
-                        fontLigatures: true,
-                        showUnused: true,
-                        smoothScrolling: true,
-                        language: 'javascript'
-                    });
-                });
-
-                app.preloader.hide();
-            });
-        }
-    });
-});
-
-$$(document).on('click', '#btn-save-js', function () {
-    var project = $$(this).attr('data-project');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    var editor_js = we.getValue();
-    fs.writeFileSync(path.join(dir_project_www, 'js_app/' + file_open_active), editor_js, 'utf-8');
-    app.toast.create({
-        text: 'File Saved',
-        position: 'center',
-        closeTimeout: 2000
-    }).open();
-});
 
 $$(document).on('click', '#btn-create-js', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -1080,7 +742,7 @@ function list_css(project) {
                     //     '   </div>' +
                     //     '</li>');
                     $$(document).find('#list-file-css-new').append(
-                        '<div class="treeview-item" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -1102,7 +764,7 @@ function list_css(project) {
                     //     '   </div>' +
                     //     '</li>');
                     $$(document).find('#list-file-css-new').append(
-                        '<div class="treeview-item" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -1115,91 +777,6 @@ function list_css(project) {
         }
     });
 }
-
-$$(document).on('click', '#btn-code-editor-css', function () {
-    var project = $$(this).attr('data-project');
-    var filename = $$(this).attr('data-file');
-
-    navigate_main_to('/editor_css/' + project + '/' + filename + '/', false, false, false, true, true, false);
-});
-
-$$(document).on('page:afterin', '.page[data-name="editor_css"]', function (callback) {
-    panel_left_morph();
-
-    var project = callback.detail.route.params.project;
-    var filename = callback.detail.route.params.filename;
-    file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-save-css').attr('data-project', project);
-
-    self.module = undefined;
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    fs.readFile(path.join(dir_project_www, 'css/' + filename), 'utf-8', (err, code_data) => {
-        app.preloader.show();
-
-        if (err) {
-            app.preloader.hide();
-            console.log(err);
-            return;
-        } else {
-            editorRequire.config({
-                baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
-            });
-
-            editorRequire(['vs/editor/editor.main'], function () {
-                loadTheme('Monokai').then(function (callback) {
-                    me = monaco.editor;
-                    me.defineTheme(callback.base, {
-                        base: callback.base,
-                        inherit: true,
-                        rules: [callback.rules],
-                        colors: callback.colors
-                    });
-                    me.setTheme(callback.base);
-
-                    we = window.editor;
-                    we = me.create(document.getElementById('container'), {
-                        value: '\n' + code_data,
-                        parameterHints: { enabled: true },
-                        scrollBeyondLastLine: false,
-                        fixedOverflowWidgets: true,
-                        lineNumbers: 'on',
-                        folding: true,
-                        foldingHighlight: true,
-                        showFoldingControls: 'always',
-                        fontLigatures: true,
-                        showUnused: true,
-                        smoothScrolling: true,
-                        language: 'css'
-                    });
-                });
-
-                app.preloader.hide();
-            });
-        }
-    });
-});
-
-$$(document).on('click', '#btn-save-css', function () {
-    var project = $$(this).attr('data-project');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    var editor_css = we.getValue();
-    fs.writeFileSync(path.join(dir_project_www, 'css/' + file_open_active), editor_css, 'utf-8');
-    app.toast.create({
-        text: 'File Saved',
-        position: 'center',
-        closeTimeout: 2000
-    }).open();
-});
 
 $$(document).on('click', '#btn-create-css', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -1359,43 +936,44 @@ document.addEventListener('keydown', function (event) {
         page_count = page_history.length;
         page_current = page_history[page_count - 1];
 
-        if (page_current.split('/')[1] === "designer") {
-            var editor_html = editor.getHtml();
-            var html = pretty(editor_html, { ocd: true });
+        console.log(page_current);
+        // if (page_current.split('/')[1] === "designer") {
+        //     var editor_html = editor.getHtml();
+        //     var html = pretty(editor_html, { ocd: true });
 
-            fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), html, 'utf-8');
+        //     fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), html, 'utf-8');
 
-            window.localStorage.clear();
-        } else if (page_current.split('/')[1] === "editor_js_main") {
-            var editor_js = we.getValue();
-            fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
-        } else if (page_current.split('/')[1] === "editor_js_package") {
-            var editor_js = we.getValue();
-            fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
-        } else {
-            if (file_open_active === 'index.html') {
-                var editor_html = we.getValue();
-                fs.writeFileSync(path.join(dir_project_www, file_open_active), editor_html, 'utf-8');
-            } else {
-                var file_type = file_open_active.split('.');
-                if (file_type[1] === "html") {
-                    var editor_html = we.getValue();
-                    fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_html, 'utf-8');
-                } else if (file_type[1] === "js") {
-                    var editor_js = we.getValue();
-                    fs.writeFileSync(path.join(dir_project_www, 'js_app/' + file_open_active), editor_js, 'utf-8');
-                } else if (file_type[1] === "css") {
-                    var editor_css = we.getValue();
-                    fs.writeFileSync(path.join(dir_project_www, 'css/' + file_open_active), editor_css, 'utf-8');
-                }
-            }
-        }
+        //     window.localStorage.clear();
+        // } else if (page_current.split('/')[1] === "editor_js_main") {
+        //     var editor_js = we.getValue();
+        //     fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
+        // } else if (page_current.split('/')[1] === "editor_js_package") {
+        //     var editor_js = we.getValue();
+        //     fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
+        // } else {
+        //     if (file_open_active === 'index.html') {
+        //         var editor_html = we.getValue();
+        //         fs.writeFileSync(path.join(dir_project_www, file_open_active), editor_html, 'utf-8');
+        //     } else {
+        //         var file_type = file_open_active.split('.');
+        //         if (file_type[1] === "html") {
+        //             var editor_html = we.getValue();
+        //             fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_html, 'utf-8');
+        //         } else if (file_type[1] === "js") {
+        //             var editor_js = we.getValue();
+        //             fs.writeFileSync(path.join(dir_project_www, 'js_app/' + file_open_active), editor_js, 'utf-8');
+        //         } else if (file_type[1] === "css") {
+        //             var editor_css = we.getValue();
+        //             fs.writeFileSync(path.join(dir_project_www, 'css/' + file_open_active), editor_css, 'utf-8');
+        //         }
+        //     }
+        // }
 
-        app.toast.create({
-            text: 'File Saved',
-            position: 'center',
-            closeTimeout: 2000
-        }).open();
+        // app.toast.create({
+        //     text: 'File Saved',
+        //     position: 'center',
+        //     closeTimeout: 2000
+        // }).open();
     }
 });
 
