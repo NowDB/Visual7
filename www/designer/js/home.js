@@ -245,7 +245,7 @@ $$(document).on('click', '#btn-app-run', function() {
  * Code Editor
  */
 
-$$(document).on('page:afterin', '.page[data-name="editor"]', function(callback) {
+$$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
@@ -368,6 +368,14 @@ $$(document).on('click', '#btn-code-editor', function() {
     var project = project_open_active;
     var filename = $$(this).attr('data-file');
     file_open_active = filename;
+
+    page_history = app.views.main.history;
+    page_count = page_history.length;
+    page_current = page_history[page_count - 1];
+
+    if (page_current.split('/')[1] === "designer") {
+        navigate_main_back();
+    }
 
     code_editor(project, filename);
 });
@@ -828,7 +836,7 @@ $$(document).on('click', '#btn-design-html', function() {
     var project = $$(this).attr('data-project');
     var fileName = $$(this).attr('data-file');
 
-    navigate_main_to('/designer/' + project + '/' + fileName + '/', true, false, false, false, true, false);
+    navigate_main_to('/designer/' + project + '/' + fileName + '/', false, false, false, false, false, false);
 });
 
 $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback) {
