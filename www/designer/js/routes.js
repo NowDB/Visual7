@@ -17,39 +17,14 @@ routes = [{
         url: './designer/pages/project.html'
     },
     {
-        name: 'editor_html_index',
-        path: '/editor_html_index/:project/:filename/',
-        url: './designer/pages/editor_html_index.html'
-    },
-    {
-        name: 'editor_html',
-        path: '/editor_html/:project/:filename/',
-        url: './designer/pages/editor_html.html'
-    },
-    {
-        name: 'editor_js',
-        path: '/editor_js/:project/:filename/',
-        url: './designer/pages/editor_js.html'
-    },
-    {
-        name: 'editor_js_main',
-        path: '/editor_js_main/:project/:filename/',
-        url: './designer/pages/editor_js_main.html'
-    },
-    {
-        name: 'editor_js_package',
-        path: '/editor_js_package/:project/:filename/',
-        url: './designer/pages/editor_js_package.html'
-    },
-    {
-        name: 'editor_css',
-        path: '/editor_css/:project/:filename/',
-        url: './designer/pages/editor_css.html'
-    },
-    {
         name: 'editor',
         path: '/editor/:project/:filename/',
         url: './designer/pages/editor.html'
+    },
+    {
+        name: 'doc_pre_requisite',
+        path: '/doc_pre_requisite/',
+        url: './designer/pages/docs/doc_pre_requisite.html'
     },
     {
         path: '(.*)',
