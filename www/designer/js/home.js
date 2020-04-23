@@ -4,7 +4,7 @@
 
 panel_left_morph();
 
-var terminal_home = function() {
+var terminal_home = function () {
     term = new Terminal({
         fontFamily: 'Fira Code, Iosevka, monospace',
         fontSize: 12,
@@ -28,31 +28,31 @@ var terminal_home = function() {
         env: process.env
     });
 
-    term.onData(function(data) {
+    term.onData(function (data) {
         ptyProcess.write(data);
     });
 
-    term.onResize(function(size) {
+    term.onResize(function (size) {
         ptyProcess.resize(
             Math.max(size ? size.cols : term.cols, 1),
             Math.max(size ? size.rows : term.rows, 1)
         );
     });
 
-    ptyProcess.on('data', function(data) {
+    ptyProcess.on('data', function (data) {
         term.write(data);
     });
 }
 
 terminal_home();
 
-$$(document).on('click', '#btn-reload', function() {
+$$(document).on('click', '#btn-reload', function () {
     app.preloader.show();
 
     window.location.reload();
 });
 
-$$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
+$$(document).on('page:afterin', '.page[data-name="home"]', function (e) {
     panel_left_morph();
 
     var page_height = $$(document).find('.page-content').height();
@@ -63,8 +63,8 @@ $$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
  * Project
  */
 
-$$(document).on('click', '#btn-application-new-electron', function() {
-    app.dialog.prompt('Name', 'Create New Project', function(fileName) {
+$$(document).on('click', '#btn-application-new-electron', function () {
+    app.dialog.prompt('Name', 'Create New Project', function (fileName) {
         navigate_main_to('/');
 
         app.progressbar.show('multi');
@@ -166,7 +166,7 @@ function list_project() {
             } else {
                 $$(document).find('#list-file-project').empty();
                 for (var i = 0; i < dir.length; i++) {
-                    if (dir[i] === "NowDB Data Manager 1.1.0.exe" || dir[i] === "NowDB Data Manager Setup 1.1.0.exe") {
+                    if (dir[i] === "NowDB Data Manager 1.1.0.exe" || dir[i] === "NowDB Data Manager Setup 1.1.0.exe" || dir[i] === "NowDB Data Manager-1.1.0.AppImage" || dir[i] === "NowDB Data Manager-1.1.0.dmg") {
                         // Do Nothing
                     } else {
                         $$(document).find('#list-file-project').append(
@@ -184,14 +184,14 @@ function list_project() {
     });
 }
 
-$$(document).on('click', '#btn-project-open', function() {
+$$(document).on('click', '#btn-project-open', function () {
     var project = $$(this).attr('data-project');
     project_open_active = project;
     navigate_left_to('/project/' + project + '/');
     navigate_main_to('/editor/' + project + '/index.html/');
 });
 
-$$(document).on('click', '#btn-project-folder-open', function() {
+$$(document).on('click', '#btn-project-folder-open', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     if (os.platform() === "darwin") {
         const { spawn } = require('child_process');
@@ -211,7 +211,7 @@ $$(document).on('click', '#btn-project-folder-open', function() {
     }
 });
 
-$$(document).on('page:afterin', '.page[data-name="project"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="project"]', function (callback) {
     var project = callback.detail.route.params.name;
 
     $$(document).find('#project-name').html(project);
@@ -223,7 +223,7 @@ $$(document).on('page:afterin', '.page[data-name="project"]', function(callback)
     list_other(project);
 });
 
-$$(document).on('click', '#btn-app-run', function() {
+$$(document).on('click', '#btn-app-run', function () {
     if (os.platform() === "darwin") {
         ptyProcessEditor.write('cd ~\r');
         ptyProcessEditor.write('cd Visual7\r');
@@ -242,7 +242,7 @@ $$(document).on('click', '#btn-app-run', function() {
     }
 });
 
-$$(document).on('click', '#btn-app-distribute', function() {
+$$(document).on('click', '#btn-app-distribute', function () {
     if (os.platform() === "darwin") {
         ptyProcessEditor.write('cd ~\r');
         ptyProcessEditor.write('cd Visual7\r');
@@ -261,7 +261,7 @@ $$(document).on('click', '#btn-app-distribute', function() {
     }
 });
 
-$$(document).on('click', '#btn-app-dir', function() {
+$$(document).on('click', '#btn-app-dir', function () {
     if (os.platform() === "darwin") {
         ptyProcessEditor.write('open ~/Visual/' + project_open_active + '\r');
     } else if (os.platform() === "linux") {
@@ -278,7 +278,7 @@ $$(document).on('click', '#btn-app-dir', function() {
  * Code Editor
  */
 
-$$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
+$$(document).on('page:init', '.page[data-name="editor"]', function (callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
@@ -307,8 +307,8 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
                 baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
             });
 
-            editorRequire(['vs/editor/editor.main'], function() {
-                loadTheme('Monokai').then(function(callback) {
+            editorRequire(['vs/editor/editor.main'], function () {
+                loadTheme('Monokai').then(function (callback) {
                     me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
@@ -361,18 +361,18 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
                     env: process.env
                 });
 
-                termEditor.onData(function(data) {
+                termEditor.onData(function (data) {
                     ptyProcessEditor.write(data);
                 });
 
-                termEditor.onResize(function(size) {
+                termEditor.onResize(function (size) {
                     ptyProcessEditor.resize(
                         Math.max(size ? size.cols : termEditor.cols, 1),
                         Math.max(size ? size.rows : termEditor.rows, 1)
                     );
                 });
 
-                ptyProcessEditor.on('data', function(data) {
+                ptyProcessEditor.on('data', function (data) {
                     termEditor.write(data);
                 });
 
@@ -394,7 +394,7 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
     });
 });
 
-$$(document).on('click', '#btn-code-editor', function() {
+$$(document).on('click', '#btn-code-editor', function () {
     var project = project_open_active;
     var filename = $$(this).attr('data-file');
     file_open_active = filename;
@@ -514,7 +514,7 @@ function code_editor(project, filename) {
     });
 }
 
-$$(document).on('click', '#btn-code-save', function() {
+$$(document).on('click', '#btn-code-save', function () {
     var editor_value = we.getValue();
     fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
     app.toast.create({
@@ -524,7 +524,7 @@ $$(document).on('click', '#btn-code-save', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-code-remove', function() {
+$$(document).on('click', '#btn-code-remove', function () {
     app.dialog.create({
         title: 'Information',
         text: 'Remove This File <span>' + file_open_active + ' </span>?',
@@ -532,8 +532,8 @@ $$(document).on('click', '#btn-code-remove', function() {
             text: '<span>cancel</span>'
         }, {
             text: '<span>Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(filepath_open_active), function(err) {
+            onClick: function () {
+                fs.unlink(path.join(filepath_open_active), function (err) {
                     if (err) {
                         console.log(err);
                         window.location.reload();
@@ -711,12 +711,12 @@ function list_other(project) {
  * Create File 
  */
 
-$$(document).on('click', '#btn-create-html', function() {
+$$(document).on('click', '#btn-create-html', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New HTML File', function(fileName) {
+    app.dialog.prompt('Filename', 'New HTML File', function (fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'html') {
             app.dialog.alert('Allow .html only', 'Information');
@@ -733,12 +733,12 @@ $$(document).on('click', '#btn-create-html', function() {
     });
 });
 
-$$(document).on('click', '#btn-create-js', function() {
+$$(document).on('click', '#btn-create-js', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New Javascript File', function(fileName) {
+    app.dialog.prompt('Filename', 'New Javascript File', function (fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'js') {
             app.dialog.alert('Allow .js only', 'Information');
@@ -754,12 +754,12 @@ $$(document).on('click', '#btn-create-js', function() {
     });
 });
 
-$$(document).on('click', '#btn-create-css', function() {
+$$(document).on('click', '#btn-create-css', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New CSS File', function(fileName) {
+    app.dialog.prompt('Filename', 'New CSS File', function (fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'css') {
             app.dialog.alert('Allow .css only', 'Information');
@@ -775,7 +775,7 @@ $$(document).on('click', '#btn-create-css', function() {
     });
 });
 
-$$(document).on('click', '#btn-create-file', function() {
+$$(document).on('click', '#btn-create-file', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
@@ -798,7 +798,7 @@ $$(document).on('click', '#btn-create-file', function() {
     }
 });
 
-$$(document).on('click', '#btn-remove-other', function() {
+$$(document).on('click', '#btn-remove-other', function () {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -812,8 +812,8 @@ $$(document).on('click', '#btn-remove-other', function() {
             text: '<span>cancel</span>'
         }, {
             text: '<span>Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(dir_project_www, 'file/' + fileName), function(err) {
+            onClick: function () {
+                fs.unlink(path.join(dir_project_www, 'file/' + fileName), function (err) {
                     if (err) return console.log(err);
                     list_other(project_open_active);
                 });
@@ -828,7 +828,7 @@ $$(document).on('click', '#btn-remove-other', function() {
  * Keyboard Binding
  */
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
@@ -862,14 +862,14 @@ document.addEventListener('keydown', function(event) {
  * UI Designer
  */
 
-$$(document).on('click', '#btn-design-html', function() {
+$$(document).on('click', '#btn-design-html', function () {
     var project = $$(this).attr('data-project');
     var fileName = $$(this).attr('data-file');
 
     navigate_main_to('/designer/' + project + '/' + fileName + '/', false, false, false, false, false, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="designer"]', function(callback) {
+$$(document).on('page:afterin', '.page[data-name="designer"]', function (callback) {
     panel_left_morph();
 
     window.localStorage.clear();
@@ -1014,7 +1014,7 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback
     delete require.cache[require.resolve('./designer/grapesjs/block/toolbar_bottom_with_badge.js')];
 });
 
-$$(document).on('click', '#btn-save-design', function() {
+$$(document).on('click', '#btn-save-design', function () {
     var editor_html = editor.getHtml();
     var html = pretty(editor_html, { ocd: true });
 
@@ -1031,15 +1031,15 @@ $$(document).on('click', '#btn-save-design', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-design-undo', function() {
+$$(document).on('click', '#btn-design-undo', function () {
     editor.UndoManager.undo(1);
 });
 
-$$(document).on('click', '#btn-design-redo', function() {
+$$(document).on('click', '#btn-design-redo', function () {
     editor.UndoManager.redo(1);
 });
 
-$$(document).on('click', '#btn-design-clear', function() {
+$$(document).on('click', '#btn-design-clear', function () {
     app.dialog.create({
         title: 'Information',
         text: 'Do you want to clear all design?',
@@ -1047,7 +1047,7 @@ $$(document).on('click', '#btn-design-clear', function() {
             text: '<span>Cancel</span>'
         }, {
             text: '<span>Ok</span>',
-            onClick: function() {
+            onClick: function () {
                 editor.DomComponents.clear();
 
                 window.localStorage.clear();
@@ -1058,33 +1058,33 @@ $$(document).on('click', '#btn-design-clear', function() {
     }).open();
 });
 
-$$(document).on('click', '#btn-design-preview', function() {
+$$(document).on('click', '#btn-design-preview', function () {
     editor.runCommand('preview');
 });
 
-$$(document).on('click', '#btn-design-code', function() {
+$$(document).on('click', '#btn-design-code', function () {
     editor.runCommand('export-template');
 });
 
-$$(document).on('click', '#btn-design-computer', function() {
+$$(document).on('click', '#btn-design-computer', function () {
     editor.setDevice('Desktop');
 });
 
-$$(document).on('click', '#btn-design-tablet', function() {
+$$(document).on('click', '#btn-design-tablet', function () {
     editor.setDevice('Tablet');
 });
 
-$$(document).on('click', '#btn-design-smartphone', function() {
+$$(document).on('click', '#btn-design-smartphone', function () {
     editor.setDevice('Mobile portrait');
 });
 
-$$(document).on('click', '#btn-design-outline', function() {
+$$(document).on('click', '#btn-design-outline', function () {
     editor.runCommand('sw-visibility');
     $$(document).find('#btn-design-unoutline').show();
     $$(document).find('#btn-design-outline').hide();
 });
 
-$$(document).on('click', '#btn-design-unoutline', function() {
+$$(document).on('click', '#btn-design-unoutline', function () {
     editor.stopCommand('sw-visibility');
     $$(document).find('#btn-design-unoutline').hide();
     $$(document).find('#btn-design-outline').show();
@@ -1094,7 +1094,7 @@ $$(document).on('click', '#btn-design-unoutline', function() {
  * Snippet Code
  */
 
-$$(document).on('click', '#code-if', function() {
+$$(document).on('click', '#code-if', function () {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1109,7 +1109,7 @@ $$(document).on('click', '#code-if', function() {
     we.setPosition(position);
 });
 
-$$(document).on('click', '#code-if-else', function() {
+$$(document).on('click', '#code-if-else', function () {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1126,7 +1126,7 @@ $$(document).on('click', '#code-if-else', function() {
     we.setPosition(position);
 });
 
-$$(document).on('click', '#code-if-else-if', function() {
+$$(document).on('click', '#code-if-else-if', function () {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1147,22 +1147,22 @@ $$(document).on('click', '#code-if-else-if', function() {
  * NowDB Data Manager
  */
 
-$$(document).on('click', '#btn-nowdb-windows-portable', function() {
+$$(document).on('click', '#btn-nowdb-windows-portable', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/')
     downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager%201.1.0.exe?raw=true", path.join(dir_visual7, 'NowDB Data Manager 1.1.0.exe'));
 });
 
-$$(document).on('click', '#btn-nowdb-windows-installer', function() {
+$$(document).on('click', '#btn-nowdb-windows-installer', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/')
     downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager%20Setup%201.1.0.exe?raw=true", path.join(dir_visual7, 'NowDB Data Manager Setup 1.1.0.exe'));
 });
 
-$$(document).on('click', '#btn-nowdb-macos-installer', function() {
+$$(document).on('click', '#btn-nowdb-macos-installer', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/')
     downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager-1.1.0.dmg?raw=true", path.join(dir_visual7, 'NowDB Data Manager-1.1.0.dmg'));
 });
 
-$$(document).on('click', '#btn-nowdb-linux-portable', function() {
+$$(document).on('click', '#btn-nowdb-linux-portable', function () {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/')
     downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager-1.1.0.AppImage?raw=true", path.join(dir_visual7, 'NowDB Data Manager-1.1.0.AppImage'));
 });
@@ -1182,17 +1182,17 @@ function downloadNowDB(file_url, targetPath) {
     var out = fs.createWriteStream(targetPath);
     req.pipe(out);
 
-    req.on('response', function(data) {
+    req.on('response', function (data) {
         total_bytes = parseInt(data.headers['content-length']);
     });
 
-    req.on('data', function(chunk) {
+    req.on('data', function (chunk) {
         received_bytes += chunk.length;
 
         showProgress(received_bytes, total_bytes);
     });
 
-    req.on('end', function() {
+    req.on('end', function () {
         dialog_nowdb.close();
 
         if (os.platform() === "darwin") {
