@@ -516,7 +516,8 @@ $$(document).on('click', '#btn-code-remove', function() {
 });
 
 /**
- * HTML
+ * List Project File
+ * @param {*} project 
  */
 
 function list_html(project) {
@@ -526,34 +527,12 @@ function list_html(project) {
 
     fs.readdir(path.join(dir_project_www, 'pages/'), (err, dir) => {
         $$(document).find('#list-file-html-new').empty();
-        // $$(document).find('#list-file-html').append(
-        //     '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-html">' +
-        //     '   <div class="item-content">' +
-        //     '       <div class="item-inner">' +
-        //     '           <div class="item-title text-color-teal">pages/</div>' +
-        //     '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-        //     '       </div>' +
-        //     '   </div>' +
-        //     '</li>');
         if (dir.length === 0) {
             //Do Nothing
         } else {
             for (var i = 0; i < dir.length; i++) {
                 let fileName = dir[i];
                 if (fileName === '404.html' || fileName === 'about.html' || fileName === 'home.html') {
-                    // $$(document).find('#list-file-html').append(
-                    //     '<li>' +
-                    //     '   <div class="item-content">' +
-                    //     '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
-                    //     '       <div class="item-inner">' +
-                    //     '           <div class="item-title">' + fileName + '</div>' +
-                    //     '           <div class="item-after">' +
-                    //     '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
-                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                    //     '           </div>' +
-                    //     '       </div>' +
-                    //     '   </div>' +
-                    //     '</li>');
                     $$(document).find('#list-file-html-new').append(
                         '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
@@ -564,19 +543,6 @@ function list_html(project) {
                         '    </div>' +
                         '</div>');
                 } else {
-                    // $$(document).find('#list-file-html').append(
-                    //     '<li>' +
-                    //     '   <div class="item-content">' +
-                    //     '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-html" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
-                    //     '       <div class="item-inner">' +
-                    //     '           <div class="item-title">' + fileName + '</div>' +
-                    //     '           <div class="item-after">' +
-                    //     '               <i title="UI Designer" class="material-icons" id="btn-design-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;margin-right:10px;">web</i>' +
-                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-html" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                    //     '           </div>' +
-                    //     '       </div>' +
-                    //     '   </div>' +
-                    //     '</li>');
                     $$(document).find('#list-file-html-new').append(
                         '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
@@ -591,57 +557,6 @@ function list_html(project) {
         }
     });
 }
-
-$$(document).on('click', '#btn-create-html', function() {
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    app.dialog.prompt('Filename', 'New HTML File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'html') {
-            app.dialog.alert('Allow .html only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName + '.html'), '', 'utf-8');
-        } else {
-            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName), '', 'utf-8');
-        }
-
-        list_html(project_open_active);
-    });
-});
-
-$$(document).on('click', '#btn-remove-html', function() {
-    var fileName = $$(this).attr('data-file');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    app.dialog.create({
-        title: 'Information',
-        text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
-        buttons: [{
-            text: '<span class="text-color-red">cancel</span>'
-        }, {
-            text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(dir_project_www, 'pages/' + fileName), function(err) {
-                    if (err) return console.log(err);
-                    list_html(project_open_active);
-
-                    navigate_main_to('/');
-                });
-            }
-        }],
-        verticalButtons: false,
-        animate: false
-    }).open();
-});
-
-/**
- * JS
- */
 
 function list_js(project) {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -650,33 +565,12 @@ function list_js(project) {
 
     fs.readdir(path.join(dir_project_www, 'js_app/'), (err, dir) => {
         $$(document).find('#list-file-js-new').empty();
-        // $$(document).find('#list-file-js').append(
-        //     '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-js">' +
-        //     '   <div class="item-content">' +
-        //     '       <div class="item-inner">' +
-        //     '           <div class="item-title text-color-teal">js_app/</div>' +
-        //     '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-        //     '       </div>' +
-        //     '   </div>' +
-        //     '</li>');
         if (dir.length === 0) {
             //Do Nothing
         } else {
             for (var i = 0; i < dir.length; i++) {
                 let fileName = dir[i];
                 if (fileName === 'constant.js' || fileName === 'init.js' || fileName === 'listener.js' || fileName === 'routes.js') {
-                    // $$(document).find('#list-file-js').append(
-                    //     '<li>' +
-                    //     '   <div class="item-content">' +
-                    //     '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
-                    //     '       <div class="item-inner">' +
-                    //     '           <div class="item-title">' + fileName + '</div>' +
-                    //     '           <div class="item-after">' +
-                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                    //     '           </div>' +
-                    //     '        </div>' +
-                    //     '   </div>' +
-                    //     '</li>');
                     $$(document).find('#list-file-js-new').append(
                         '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
@@ -687,18 +581,6 @@ function list_js(project) {
                         '    </div>' +
                         '</div>');
                 } else {
-                    // $$(document).find('#list-file-js').append(
-                    //     '<li>' +
-                    //     '   <div class="item-content">' +
-                    //     '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-js" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
-                    //     '       <div class="item-inner">' +
-                    //     '           <div class="item-title">' + fileName + '</div>' +
-                    //     '           <div class="item-after">' +
-                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-js" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                    //     '           </div>' +
-                    //     '        </div>' +
-                    //     '   </div>' +
-                    //     '</li>');
                     $$(document).find('#list-file-js-new').append(
                         '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
@@ -713,57 +595,6 @@ function list_js(project) {
         }
     });
 }
-
-$$(document).on('click', '#btn-create-js', function() {
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    app.dialog.prompt('Filename', 'New Javascript File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'js') {
-            app.dialog.alert('Allow .js only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName + '.js'), '', 'utf-8');
-        } else {
-            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName), '', 'utf-8');
-        }
-
-        list_js(project_open_active);
-    });
-});
-
-$$(document).on('click', '#btn-remove-js', function() {
-    var fileName = $$(this).attr('data-file');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    app.dialog.create({
-        title: 'Information',
-        text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
-        buttons: [{
-            text: '<span class="text-color-red">cancel</span>'
-        }, {
-            text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(dir_project_www, 'js_app/' + fileName), function(err) {
-                    if (err) return console.log(err);
-                    list_js(project_open_active);
-
-                    navigate_main_to('/');
-                });
-            }
-        }],
-        verticalButtons: false,
-        animate: false
-    }).open();
-});
-
-/**
- * CSS
- */
 
 function list_css(project) {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -772,33 +603,12 @@ function list_css(project) {
 
     fs.readdir(path.join(dir_project_www, 'css/'), (err, dir) => {
         $$(document).find('#list-file-css-new').empty();
-        // $$(document).find('#list-file-css').append(
-        //     '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-css">' +
-        //     '   <div class="item-content">' +
-        //     '       <div class="item-inner">' +
-        //     '           <div class="item-title text-color-teal">css/</div>' +
-        //     '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-        //     '       </div>' +
-        //     '   </div>' +
-        //     '</li>');
         if (dir.length === 0) {
             //Do Nothing
         } else {
             for (var i = 0; i < dir.length; i++) {
                 let fileName = dir[i];
                 if (fileName === 'framework7-icons.css' || fileName === 'framework7.bundle.css' || fileName === 'framework7.bundle.min.css' || fileName === 'framework7.bundle.rtl.css' || fileName === 'framework7.bundle.rtl.min.css' || fileName === 'framework7.css' || fileName === 'framework7.min.css' || fileName === 'framework7.rtl.css' || fileName === 'framework7.rtl.min.css' || fileName === 'custom.css') {
-                    // $$(document).find('#list-file-css').append(
-                    //     '<li>' +
-                    //     '   <div class="item-content">' +
-                    //     '       <div class="item-media"><i class="material-icons text-color-gray">delete</i></div>' +
-                    //     '       <div class="item-inner">' +
-                    //     '           <div class="item-title">' + fileName + '</div>' +
-                    //     '           <div class="item-after">' +
-                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                    //     '           </div>' +
-                    //     '        </div>' +
-                    //     '   </div>' +
-                    //     '</li>');
                     $$(document).find('#list-file-css-new').append(
                         '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
@@ -809,18 +619,6 @@ function list_css(project) {
                         '    </div>' +
                         '</div>');
                 } else {
-                    // $$(document).find('#list-file-css').append(
-                    //     '<li>' +
-                    //     '   <div class="item-content">' +
-                    //     '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-css" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
-                    //     '       <div class="item-inner">' +
-                    //     '           <div class="item-title">' + fileName + '</div>' +
-                    //     '           <div class="item-after">' +
-                    //     '               <i title="Code Editor" class="material-icons" id="btn-code-editor-css" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">code</i>' +
-                    //     '           </div>' +
-                    //     '        </div>' +
-                    //     '   </div>' +
-                    //     '</li>');
                     $$(document).find('#list-file-css-new').append(
                         '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
                         '    <div class="treeview-item-root">' +
@@ -836,57 +634,6 @@ function list_css(project) {
     });
 }
 
-$$(document).on('click', '#btn-create-css', function() {
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    app.dialog.prompt('Filename', 'New CSS File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'css') {
-            app.dialog.alert('Allow .css only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName + '.js'), '', 'utf-8');
-        } else {
-            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName), '', 'utf-8');
-        }
-
-        list_css(project_open_active);
-    });
-});
-
-$$(document).on('click', '#btn-remove-css', function() {
-    var fileName = $$(this).attr('data-file');
-
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    app.dialog.create({
-        title: 'Information',
-        text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
-        buttons: [{
-            text: '<span class="text-color-red">cancel</span>'
-        }, {
-            text: '<span class="text-color-teal">Ok</span>',
-            onClick: function() {
-                fs.unlink(path.join(dir_project_www, 'css/' + fileName), function(err) {
-                    if (err) return console.log(err);
-                    list_css(project_open_active);
-
-                    navigate_main_to('/');
-                });
-            }
-        }],
-        verticalButtons: false,
-        animate: false
-    }).open();
-});
-
-/**
- * Other
- */
-
 function list_other(project) {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project);
@@ -894,15 +641,6 @@ function list_other(project) {
 
     fs.readdir(path.join(dir_project_www, 'file/'), (err, dir) => {
         $$(document).find('#list-file-other-new').empty();
-        // $$(document).find('#list-file-other').append(
-        //     '<li style="color: rgba(0, 0, 0, 0.54);background-color: #f4f4f4;cursor: pointer;" id="btn-create-file">' +
-        //     '   <div class="item-content">' +
-        //     '       <div class="item-inner">' +
-        //     '           <div class="item-title text-color-teal">file/</div>' +
-        //     '           <div class="item-after"><i class="material-icons text-color-deeporange">add</i></div>' +
-        //     '       </div>' +
-        //     '   </div>' +
-        //     '</li>');
         if (dir.length === 0) {
             //Do Nothing
         } else {
@@ -930,6 +668,67 @@ function list_other(project) {
         }
     });
 }
+
+/**
+ * Create File 
+ */
+
+$$(document).on('click', '#btn-create-html', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    app.dialog.prompt('Filename', 'New HTML File', function(fileName) {
+        fileType = fileName.split('.');
+        if (fileType[1] !== 'html') {
+            app.dialog.alert('Allow .html only', 'Information');
+        } else if (fileType === null) {
+            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName + '.html'), '', 'utf-8');
+        } else {
+            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName), '', 'utf-8');
+        }
+
+        list_html(project_open_active);
+    });
+});
+
+$$(document).on('click', '#btn-create-js', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    app.dialog.prompt('Filename', 'New Javascript File', function(fileName) {
+        fileType = fileName.split('.');
+        if (fileType[1] !== 'js') {
+            app.dialog.alert('Allow .js only', 'Information');
+        } else if (fileType === null) {
+            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName + '.js'), '', 'utf-8');
+        } else {
+            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName), '', 'utf-8');
+        }
+
+        list_js(project_open_active);
+    });
+});
+
+$$(document).on('click', '#btn-create-css', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project_open_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    app.dialog.prompt('Filename', 'New CSS File', function(fileName) {
+        fileType = fileName.split('.');
+        if (fileType[1] !== 'css') {
+            app.dialog.alert('Allow .css only', 'Information');
+        } else if (fileType === null) {
+            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName + '.js'), '', 'utf-8');
+        } else {
+            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName), '', 'utf-8');
+        }
+
+        list_css(project_open_active);
+    });
+});
 
 $$(document).on('click', '#btn-create-file', function() {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
