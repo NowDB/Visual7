@@ -252,7 +252,6 @@ $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback)
     var filename = callback.detail.route.params.filename;
     
     $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-design-html').hide();
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project);
@@ -404,6 +403,8 @@ function code_editor(project, filename) {
 
             $$(document).find('#btn-design-html').show();
         }
+
+        $$(document).find('#btn-snippet-js-logic').hide();
     } else if (filename_split[fileext] === "js") {
         if (filename_split[0] === "main") {
             filepath = path.join(dir_project, filename_raw);
@@ -415,12 +416,14 @@ function code_editor(project, filename) {
         }
 
         $$(document).find('#btn-design-html').hide();
+        $$(document).find('#btn-snippet-js-logic').show();
     } else if (filename_split[fileext] === "css") {
         filepath = path.join(dir_project_www, 'css');
         filepath = path.join(filepath, filename_raw);
         filelang = 'css';
 
         $$(document).find('#btn-design-html').hide();
+        $$(document).find('#btn-snippet-js-logic').hide();
     } else if (filename_split[fileext] === "json") {
         if (filename_split[0] === "package") {
             filepath = path.join(dir_project, filename_raw);
@@ -428,6 +431,7 @@ function code_editor(project, filename) {
         }
 
         $$(document).find('#btn-design-html').hide();
+        $$(document).find('#btn-snippet-js-logic').hide();
     }
 
     filepath_open_active = filepath;
