@@ -461,6 +461,11 @@ $$(document).on('click', '#btn-code-save', function () {
     }).open();
 });
 
+$$(document).on('click', '#btn-code-remove', function () {
+    console.log(file_open_active);
+    console.log(filepath_open_active);
+});
+
 /**
  * HTML
  */
