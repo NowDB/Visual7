@@ -166,14 +166,18 @@ function list_project() {
             } else {
                 $$(document).find('#list-file-project').empty();
                 for (var i = 0; i < dir.length; i++) {
-                    $$(document).find('#list-file-project').append(
-                        '<li>' +
-                        '   <div class="item-content item-link">' +
-                        '       <div class="item-inner" id="btn-project-open" data-project="' + dir[i] + '">' +
-                        '           <div class="item-title">' + dir[i] + '</div>' +
-                        '       </div>' +
-                        '   </div>' +
-                        '</li>');
+                    if (dir[i] === "NowDB Data Manager 1.1.0.exe" || dir[i] === "NowDB Data Manager Setup 1.1.0.exe") {
+                        // Do Nothing
+                    } else {
+                        $$(document).find('#list-file-project').append(
+                            '<li>' +
+                            '   <div class="item-content item-link">' +
+                            '       <div class="item-inner" id="btn-project-open" data-project="' + dir[i] + '">' +
+                            '           <div class="item-title">' + dir[i] + '</div>' +
+                            '       </div>' +
+                            '   </div>' +
+                            '</li>');
+                    }
                 }
             }
         }
@@ -1117,100 +1121,24 @@ $$(document).on('click', '#code-if-else-if', function() {
  * NowDB Data Manager
  */
 
-$$(document).on('click', '#btn-app-nowdb', function() {
-    var executablePath = null;
+$$(document).on('click', '#btn-nowdb-windows-portable', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/')
+    downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager%201.1.0.exe?raw=true", path.join(dir_visual7, 'NowDB Data Manager 1.1.0.exe'));
+});
 
-    if (app.device.os === "windows") {
-        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe');
-        fs.stat(executablePath, function fsStat(err, stats) {
-            if (err) {
-                app.dialog.create({
-                    title: 'Information',
-                    text: 'NowDB Data Manager is Not Available',
-                    buttons: [{
-                        text: '<span>Later</span>'
-                    }, {
-                        text: '<span>Download</span>',
-                        onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.exe", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe'));
-                        }
-                    }],
-                    verticalButtons: false,
-                    animate: false
-                }).open();
-            } else {
-                var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
+$$(document).on('click', '#btn-nowdb-windows-installer', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/')
+    downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager%20Setup%201.1.0.exe?raw=true", path.join(dir_visual7, 'NowDB Data Manager Setup 1.1.0.exe'));
+});
 
-                    console.log(data.toString());
-                });
-            }
-        });
-    } else if (app.device.os === "macos") {
-        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg');
-        fs.stat(executablePath, function fsStat(err, stats) {
-            if (err) {
-                app.dialog.create({
-                    title: 'Information',
-                    text: 'NowDB Data Manager is Not Available',
-                    buttons: [{
-                        text: '<span>Later</span>'
-                    }, {
-                        text: '<span>Download</span>',
-                        onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager-1.1.0.dmg", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg'));
-                        }
-                    }],
-                    verticalButtons: false,
-                    animate: false
-                }).open();
-            } else {
-                var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
+$$(document).on('click', '#btn-nowdb-macos-installer', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/')
+    downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager-1.1.0.dmg?raw=true", path.join(dir_visual7, 'NowDB Data Manager-1.1.0.dmg'));
+});
 
-                    console.log(data.toString());
-                });
-            }
-        });
-    } else {
-        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage');
-        fs.stat(executablePath, function fsStat(err, stats) {
-            if (err) {
-                app.dialog.create({
-                    title: 'Information',
-                    text: 'NowDB Data Manager is Not Available',
-                    buttons: [{
-                        text: '<span>Later</span>'
-                    }, {
-                        text: '<span>Download</span>',
-                        onClick: function() {
-                            downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.AppImage", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage'));
-                        }
-                    }],
-                    verticalButtons: false,
-                    animate: false
-                }).open();
-            } else {
-                var child = require('child_process').execFile;
-                child(executablePath, function(err, data) {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
-
-                    console.log(data.toString());
-                });
-            }
-        });
-    }
+$$(document).on('click', '#btn-nowdb-linux-portable', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/')
+    downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager-1.1.0.AppImage?raw=true", path.join(dir_visual7, 'NowDB Data Manager-1.1.0.AppImage'));
 });
 
 function downloadNowDB(file_url, targetPath) {
@@ -1241,54 +1169,15 @@ function downloadNowDB(file_url, targetPath) {
     req.on('end', function() {
         dialog_nowdb.close();
 
-        app.dialog.create({
-            title: 'Information',
-            text: 'File Downloaded',
-            buttons: [{
-                text: '<span>Open</span>',
-                onClick: function() {
-                    if (app.device.os === "windows") {
-                        var child = require('child_process').execFile;
-                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe');
-
-                        child(executablePath, function(err, data) {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-
-                            console.log(data.toString());
-                        });
-                    } else if (app.device.os === "macos") {
-                        var child = require('child_process').execFile;
-                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg');
-
-                        child(executablePath, function(err, data) {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-
-                            console.log(data.toString());
-                        });
-                    } else {
-                        var child = require('child_process').execFile;
-                        var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage');
-
-                        child(executablePath, function(err, data) {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-
-                            console.log(data.toString());
-                        });
-                    }
-                }
-            }],
-            verticalButtons: false,
-            animate: false
-        }).open();
+        if (os.platform() === "darwin") {
+            ptyProcess.write('open ~/Visual7\r');
+        } else if (os.platform() === "linux") {
+            ptyProcess.write('nautilus ~/Visual7\r');
+        } else {
+            ptyProcess.write('cd %homepath%\r');
+            ptyProcess.write('cd Visual7\r');
+            ptyProcess.write('explorer .\r');
+        }
     });
 }
 

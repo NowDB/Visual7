@@ -6,6 +6,7 @@ const { dialog } = electron.remote;
 const BrowserWindow = electron.remote.BrowserWindow;
 const path = require('path');
 const url = require('url');
+const request = require('request');
 // const fs = require('fs');
 const fs = require('fs-extra');
 const os = require('os');
