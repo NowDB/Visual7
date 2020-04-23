@@ -4,7 +4,7 @@
 
 panel_left_morph();
 
-var terminal_home = function () {
+var terminal_home = function() {
     term = new Terminal({
         fontFamily: 'Fira Code, Iosevka, monospace',
         fontSize: 12,
@@ -28,31 +28,31 @@ var terminal_home = function () {
         env: process.env
     });
 
-    term.onData(function (data) {
+    term.onData(function(data) {
         ptyProcess.write(data);
     });
 
-    term.onResize(function (size) {
+    term.onResize(function(size) {
         ptyProcess.resize(
             Math.max(size ? size.cols : term.cols, 1),
             Math.max(size ? size.rows : term.rows, 1)
         );
     });
 
-    ptyProcess.on('data', function (data) {
+    ptyProcess.on('data', function(data) {
         term.write(data);
     });
 }
 
 terminal_home();
 
-$$(document).on('click', '#btn-reload', function () {
+$$(document).on('click', '#btn-reload', function() {
     app.preloader.show();
 
     window.location.reload();
 });
 
-$$(document).on('page:afterin', '.page[data-name="home"]', function (e) {
+$$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
     panel_left_morph();
 
     var page_height = $$(document).find('.page-content').height();
@@ -63,8 +63,8 @@ $$(document).on('page:afterin', '.page[data-name="home"]', function (e) {
  * Project
  */
 
-$$(document).on('click', '#btn-application-new-electron', function () {
-    app.dialog.prompt('Name', 'Create New Project', function (fileName) {
+$$(document).on('click', '#btn-application-new-electron', function() {
+    app.dialog.prompt('Name', 'Create New Project', function(fileName) {
         navigate_main_to('/');
 
         app.progressbar.show('multi');
@@ -180,14 +180,14 @@ function list_project() {
     });
 }
 
-$$(document).on('click', '#btn-project-open', function () {
+$$(document).on('click', '#btn-project-open', function() {
     var project = $$(this).attr('data-project');
     project_open_active = project;
     navigate_left_to('/project/' + project + '/');
     navigate_main_to('/editor/' + project + '/index.html/');
 });
 
-$$(document).on('click', '#btn-project-folder-open', function () {
+$$(document).on('click', '#btn-project-folder-open', function() {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     if (os.platform() === "darwin") {
         const { spawn } = require('child_process');
@@ -207,7 +207,7 @@ $$(document).on('click', '#btn-project-folder-open', function () {
     }
 });
 
-$$(document).on('page:afterin', '.page[data-name="project"]', function (callback) {
+$$(document).on('page:afterin', '.page[data-name="project"]', function(callback) {
     var project = callback.detail.route.params.name;
 
     $$(document).find('#project-name').html(project);
@@ -222,7 +222,7 @@ $$(document).on('page:afterin', '.page[data-name="project"]', function (callback
     list_other(project);
 });
 
-$$(document).on('click', '#btn-app-run', function () {
+$$(document).on('click', '#btn-app-run', function() {
     if (os.platform() === "darwin") {
         ptyProcessEditor.write('cd ~\r');
         ptyProcessEditor.write('cd Visual7\r');
@@ -245,12 +245,12 @@ $$(document).on('click', '#btn-app-run', function () {
  * Code Editor
  */
 
-$$(document).on('page:afterin', '.page[data-name="editor"]', function (callback) {
+$$(document).on('page:afterin', '.page[data-name="editor"]', function(callback) {
     panel_left_morph();
 
     var project = callback.detail.route.params.project;
     var filename = callback.detail.route.params.filename;
-    
+
     $$(document).find('#page-title').html(filename);
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -258,7 +258,7 @@ $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback)
     var dir_project_www = path.join(dir_project, 'www/');
 
     file_open_active = filename;
-    filepath_open_active = path.join(dir_project_www,filename);
+    filepath_open_active = path.join(dir_project_www, filename);
 
     self.module = undefined;
 
@@ -274,8 +274,8 @@ $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback)
                 baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
             });
 
-            editorRequire(['vs/editor/editor.main'], function () {
-                loadTheme('Monokai').then(function (callback) {
+            editorRequire(['vs/editor/editor.main'], function() {
+                loadTheme('Monokai').then(function(callback) {
                     me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
@@ -328,18 +328,18 @@ $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback)
                     env: process.env
                 });
 
-                termEditor.onData(function (data) {
+                termEditor.onData(function(data) {
                     ptyProcessEditor.write(data);
                 });
 
-                termEditor.onResize(function (size) {
+                termEditor.onResize(function(size) {
                     ptyProcessEditor.resize(
                         Math.max(size ? size.cols : termEditor.cols, 1),
                         Math.max(size ? size.rows : termEditor.rows, 1)
                     );
                 });
 
-                ptyProcessEditor.on('data', function (data) {
+                ptyProcessEditor.on('data', function(data) {
                     termEditor.write(data);
                 });
 
@@ -364,13 +364,10 @@ $$(document).on('page:afterin', '.page[data-name="editor"]', function (callback)
     });
 });
 
-$$(document).on('click', '#btn-code-editor', function () {
+$$(document).on('click', '#btn-code-editor', function() {
     var project = project_open_active;
     var filename = $$(this).attr('data-file');
     file_open_active = filename;
-
-    $$(document).find('#page-title').html(filename);
-    $$(document).find('#btn-save').attr('data-project', project);
 
     code_editor(project, filename);
 });
@@ -386,6 +383,34 @@ function code_editor(project, filename) {
     var filename_raw = filename;
     var filename_split = filename_raw.split('.');
     fileext = filename_split.length - 1;
+
+    $$(document).find('#page-title').html(filename_raw);
+    $$(document).find('#btn-save').attr('data-project', project);
+
+    if (filename_raw === 'index.html' ||
+        filename_raw === 'main.js' ||
+        filename_raw === 'package.json' ||
+        filename_raw === 'custom.css' ||
+        filename_raw === 'framework7-icons.css' ||
+        filename_raw === 'framework7.bundle.css' ||
+        filename_raw === 'framework7.bundle.min.css' ||
+        filename_raw === 'framework7.bundle.rtl.css' ||
+        filename_raw === 'framework7.bundle.rtl.min.css' ||
+        filename_raw === 'framework7.css' ||
+        filename_raw === 'framework7.min.css' ||
+        filename_raw === 'framework7.rtl.css' ||
+        filename_raw === 'framework7.rtl.min.css' ||
+        filename_raw === 'constant.js' ||
+        filename_raw === 'init.js' ||
+        filename_raw === 'listener.js' ||
+        filename_raw === 'routes.js' ||
+        filename_raw === '404.html' ||
+        filename_raw === 'about.html' ||
+        filename_raw === 'home.html') {
+        $$(document).find('#btn-code-remove').hide();
+    } else {
+        $$(document).find('#btn-code-remove').show();
+    }
 
     $$(document).find('#btn-design-html').attr('data-project', project);
     $$(document).find('#btn-design-html').attr('data-file', filename_raw);
@@ -451,7 +476,7 @@ function code_editor(project, filename) {
     });
 }
 
-$$(document).on('click', '#btn-code-save', function () {
+$$(document).on('click', '#btn-code-save', function() {
     var editor_value = we.getValue();
     fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
     app.toast.create({
@@ -461,9 +486,33 @@ $$(document).on('click', '#btn-code-save', function () {
     }).open();
 });
 
-$$(document).on('click', '#btn-code-remove', function () {
-    console.log(file_open_active);
-    console.log(filepath_open_active);
+$$(document).on('click', '#btn-code-remove', function() {
+    app.dialog.create({
+        title: 'Information',
+        text: 'Remove This File <span class="text-color-red">' + file_open_active + ' </span>?',
+        buttons: [{
+            text: '<span class="text-color-red">cancel</span>'
+        }, {
+            text: '<span class="text-color-teal">Ok</span>',
+            onClick: function() {
+                fs.unlink(path.join(filepath_open_active), function(err) {
+                    if (err) {
+                        console.log(err);
+                        window.location.reload();
+                    } else {
+                        list_html(project_open_active);
+                        list_js(project_open_active);
+                        list_css(project_open_active);
+                        list_other(project_open_active);
+
+                        code_editor(project_open_active, 'index.html');
+                    }
+                });
+            }
+        }],
+        verticalButtons: false,
+        animate: false
+    }).open();
 });
 
 /**
@@ -543,12 +592,12 @@ function list_html(project) {
     });
 }
 
-$$(document).on('click', '#btn-create-html', function () {
+$$(document).on('click', '#btn-create-html', function() {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New HTML File', function (fileName) {
+    app.dialog.prompt('Filename', 'New HTML File', function(fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'html') {
             app.dialog.alert('Allow .html only', 'Information');
@@ -562,7 +611,7 @@ $$(document).on('click', '#btn-create-html', function () {
     });
 });
 
-$$(document).on('click', '#btn-remove-html', function () {
+$$(document).on('click', '#btn-remove-html', function() {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -576,8 +625,8 @@ $$(document).on('click', '#btn-remove-html', function () {
             text: '<span class="text-color-red">cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function () {
-                fs.unlink(path.join(dir_project_www, 'pages/' + fileName), function (err) {
+            onClick: function() {
+                fs.unlink(path.join(dir_project_www, 'pages/' + fileName), function(err) {
                     if (err) return console.log(err);
                     list_html(project_open_active);
 
@@ -665,12 +714,12 @@ function list_js(project) {
     });
 }
 
-$$(document).on('click', '#btn-create-js', function () {
+$$(document).on('click', '#btn-create-js', function() {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New Javascript File', function (fileName) {
+    app.dialog.prompt('Filename', 'New Javascript File', function(fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'js') {
             app.dialog.alert('Allow .js only', 'Information');
@@ -684,7 +733,7 @@ $$(document).on('click', '#btn-create-js', function () {
     });
 });
 
-$$(document).on('click', '#btn-remove-js', function () {
+$$(document).on('click', '#btn-remove-js', function() {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -698,8 +747,8 @@ $$(document).on('click', '#btn-remove-js', function () {
             text: '<span class="text-color-red">cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function () {
-                fs.unlink(path.join(dir_project_www, 'js_app/' + fileName), function (err) {
+            onClick: function() {
+                fs.unlink(path.join(dir_project_www, 'js_app/' + fileName), function(err) {
                     if (err) return console.log(err);
                     list_js(project_open_active);
 
@@ -787,12 +836,12 @@ function list_css(project) {
     });
 }
 
-$$(document).on('click', '#btn-create-css', function () {
+$$(document).on('click', '#btn-create-css', function() {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New CSS File', function (fileName) {
+    app.dialog.prompt('Filename', 'New CSS File', function(fileName) {
         fileType = fileName.split('.');
         if (fileType[1] !== 'css') {
             app.dialog.alert('Allow .css only', 'Information');
@@ -806,7 +855,7 @@ $$(document).on('click', '#btn-create-css', function () {
     });
 });
 
-$$(document).on('click', '#btn-remove-css', function () {
+$$(document).on('click', '#btn-remove-css', function() {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -820,8 +869,8 @@ $$(document).on('click', '#btn-remove-css', function () {
             text: '<span class="text-color-red">cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function () {
-                fs.unlink(path.join(dir_project_www, 'css/' + fileName), function (err) {
+            onClick: function() {
+                fs.unlink(path.join(dir_project_www, 'css/' + fileName), function(err) {
                     if (err) return console.log(err);
                     list_css(project_open_active);
 
@@ -882,7 +931,7 @@ function list_other(project) {
     });
 }
 
-$$(document).on('click', '#btn-create-file', function () {
+$$(document).on('click', '#btn-create-file', function() {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
@@ -905,7 +954,7 @@ $$(document).on('click', '#btn-create-file', function () {
     }
 });
 
-$$(document).on('click', '#btn-remove-other', function () {
+$$(document).on('click', '#btn-remove-other', function() {
     var fileName = $$(this).attr('data-file');
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
@@ -919,8 +968,8 @@ $$(document).on('click', '#btn-remove-other', function () {
             text: '<span class="text-color-red">cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function () {
-                fs.unlink(path.join(dir_project_www, 'file/' + fileName), function (err) {
+            onClick: function() {
+                fs.unlink(path.join(dir_project_www, 'file/' + fileName), function(err) {
                     if (err) return console.log(err);
                     list_other(project_open_active);
                 });
@@ -935,7 +984,7 @@ $$(document).on('click', '#btn-remove-other', function () {
  * Keyboard Binding
  */
 
-document.addEventListener('keydown', function (event) {
+document.addEventListener('keydown', function(event) {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
@@ -990,14 +1039,14 @@ document.addEventListener('keydown', function (event) {
  * UI Designer
  */
 
-$$(document).on('click', '#btn-design-html', function () {
+$$(document).on('click', '#btn-design-html', function() {
     var project = $$(this).attr('data-project');
     var fileName = $$(this).attr('data-file');
 
     navigate_main_to('/designer/' + project + '/' + fileName + '/', true, false, false, false, true, false);
 });
 
-$$(document).on('page:afterin', '.page[data-name="designer"]', function (callback) {
+$$(document).on('page:afterin', '.page[data-name="designer"]', function(callback) {
     panel_left_morph();
 
     window.localStorage.clear();
@@ -1142,7 +1191,7 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function (callbac
     delete require.cache[require.resolve('./designer/grapesjs/block/toolbar_bottom_with_badge.js')];
 });
 
-$$(document).on('click', '#btn-save-design', function () {
+$$(document).on('click', '#btn-save-design', function() {
     var editor_html = editor.getHtml();
     var html = pretty(editor_html, { ocd: true });
 
@@ -1159,15 +1208,15 @@ $$(document).on('click', '#btn-save-design', function () {
     }).open();
 });
 
-$$(document).on('click', '#btn-design-undo', function () {
+$$(document).on('click', '#btn-design-undo', function() {
     editor.UndoManager.undo(1);
 });
 
-$$(document).on('click', '#btn-design-redo', function () {
+$$(document).on('click', '#btn-design-redo', function() {
     editor.UndoManager.redo(1);
 });
 
-$$(document).on('click', '#btn-design-clear', function () {
+$$(document).on('click', '#btn-design-clear', function() {
     app.dialog.create({
         title: 'Information',
         text: 'Do you want to clear all design?',
@@ -1175,7 +1224,7 @@ $$(document).on('click', '#btn-design-clear', function () {
             text: '<span class="text-color-red">Cancel</span>'
         }, {
             text: '<span class="text-color-teal">Ok</span>',
-            onClick: function () {
+            onClick: function() {
                 editor.DomComponents.clear();
 
                 window.localStorage.clear();
@@ -1186,33 +1235,33 @@ $$(document).on('click', '#btn-design-clear', function () {
     }).open();
 });
 
-$$(document).on('click', '#btn-design-preview', function () {
+$$(document).on('click', '#btn-design-preview', function() {
     editor.runCommand('preview');
 });
 
-$$(document).on('click', '#btn-design-code', function () {
+$$(document).on('click', '#btn-design-code', function() {
     editor.runCommand('export-template');
 });
 
-$$(document).on('click', '#btn-design-computer', function () {
+$$(document).on('click', '#btn-design-computer', function() {
     editor.setDevice('Desktop');
 });
 
-$$(document).on('click', '#btn-design-tablet', function () {
+$$(document).on('click', '#btn-design-tablet', function() {
     editor.setDevice('Tablet');
 });
 
-$$(document).on('click', '#btn-design-smartphone', function () {
+$$(document).on('click', '#btn-design-smartphone', function() {
     editor.setDevice('Mobile portrait');
 });
 
-$$(document).on('click', '#btn-design-outline', function () {
+$$(document).on('click', '#btn-design-outline', function() {
     editor.runCommand('sw-visibility');
     $$(document).find('#btn-design-unoutline').show();
     $$(document).find('#btn-design-outline').hide();
 });
 
-$$(document).on('click', '#btn-design-unoutline', function () {
+$$(document).on('click', '#btn-design-unoutline', function() {
     editor.stopCommand('sw-visibility');
     $$(document).find('#btn-design-unoutline').hide();
     $$(document).find('#btn-design-outline').show();
@@ -1222,7 +1271,7 @@ $$(document).on('click', '#btn-design-unoutline', function () {
  * Snippet Code
  */
 
-$$(document).on('click', '#code-if', function () {
+$$(document).on('click', '#code-if', function() {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1237,7 +1286,7 @@ $$(document).on('click', '#code-if', function () {
     we.setPosition(position);
 });
 
-$$(document).on('click', '#code-if-else', function () {
+$$(document).on('click', '#code-if-else', function() {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1254,7 +1303,7 @@ $$(document).on('click', '#code-if-else', function () {
     we.setPosition(position);
 });
 
-$$(document).on('click', '#code-if-else-if', function () {
+$$(document).on('click', '#code-if-else-if', function() {
     app.popover.close();
 
     var position = we.getPosition();
@@ -1275,7 +1324,7 @@ $$(document).on('click', '#code-if-else-if', function () {
  * NowDB Data Manager
  */
 
-$$(document).on('click', '#btn-app-nowdb', function () {
+$$(document).on('click', '#btn-app-nowdb', function() {
     var executablePath = null;
 
     if (app.device.os === "windows") {
@@ -1289,7 +1338,7 @@ $$(document).on('click', '#btn-app-nowdb', function () {
                         text: '<span class="text-color-red">Later</span>'
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
-                        onClick: function () {
+                        onClick: function() {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.exe", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe'));
                         }
                     }],
@@ -1298,7 +1347,7 @@ $$(document).on('click', '#btn-app-nowdb', function () {
                 }).open();
             } else {
                 var child = require('child_process').execFile;
-                child(executablePath, function (err, data) {
+                child(executablePath, function(err, data) {
                     if (err) {
                         console.error(err);
                         return;
@@ -1319,7 +1368,7 @@ $$(document).on('click', '#btn-app-nowdb', function () {
                         text: '<span class="text-color-red">Later</span>'
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
-                        onClick: function () {
+                        onClick: function() {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager-1.1.0.dmg", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg'));
                         }
                     }],
@@ -1328,7 +1377,7 @@ $$(document).on('click', '#btn-app-nowdb', function () {
                 }).open();
             } else {
                 var child = require('child_process').execFile;
-                child(executablePath, function (err, data) {
+                child(executablePath, function(err, data) {
                     if (err) {
                         console.error(err);
                         return;
@@ -1349,7 +1398,7 @@ $$(document).on('click', '#btn-app-nowdb', function () {
                         text: '<span class="text-color-red">Later</span>'
                     }, {
                         text: '<span class="text-color-teal">Download</span>',
-                        onClick: function () {
+                        onClick: function() {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.AppImage", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage'));
                         }
                     }],
@@ -1358,7 +1407,7 @@ $$(document).on('click', '#btn-app-nowdb', function () {
                 }).open();
             } else {
                 var child = require('child_process').execFile;
-                child(executablePath, function (err, data) {
+                child(executablePath, function(err, data) {
                     if (err) {
                         console.error(err);
                         return;
@@ -1386,17 +1435,17 @@ function downloadNowDB(file_url, targetPath) {
     var out = fs.createWriteStream(targetPath);
     req.pipe(out);
 
-    req.on('response', function (data) {
+    req.on('response', function(data) {
         total_bytes = parseInt(data.headers['content-length']);
     });
 
-    req.on('data', function (chunk) {
+    req.on('data', function(chunk) {
         received_bytes += chunk.length;
 
         showProgress(received_bytes, total_bytes);
     });
 
-    req.on('end', function () {
+    req.on('end', function() {
         dialog_nowdb.close();
 
         app.dialog.create({
@@ -1404,12 +1453,12 @@ function downloadNowDB(file_url, targetPath) {
             text: 'File Downloaded',
             buttons: [{
                 text: '<span class="text-color-teal">Open</span>',
-                onClick: function () {
+                onClick: function() {
                     if (app.device.os === "windows") {
                         var child = require('child_process').execFile;
                         var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe');
 
-                        child(executablePath, function (err, data) {
+                        child(executablePath, function(err, data) {
                             if (err) {
                                 console.error(err);
                                 return;
@@ -1421,7 +1470,7 @@ function downloadNowDB(file_url, targetPath) {
                         var child = require('child_process').execFile;
                         var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg');
 
-                        child(executablePath, function (err, data) {
+                        child(executablePath, function(err, data) {
                             if (err) {
                                 console.error(err);
                                 return;
@@ -1433,7 +1482,7 @@ function downloadNowDB(file_url, targetPath) {
                         var child = require('child_process').execFile;
                         var executablePath = path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage');
 
-                        child(executablePath, function (err, data) {
+                        child(executablePath, function(err, data) {
                             if (err) {
                                 console.error(err);
                                 return;
