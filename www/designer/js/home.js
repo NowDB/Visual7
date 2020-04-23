@@ -215,9 +215,6 @@ $$(document).on('page:afterin', '.page[data-name="project"]', function(callback)
     var project = callback.detail.route.params.name;
 
     $$(document).find('#project-name').html(project);
-    $$(document).find('#btn-code-editor-html-index').attr('data-project', project);
-    $$(document).find('#btn-code-editor-js-main').attr('data-project', project);
-    $$(document).find('#btn-code-editor-js-package').attr('data-project', project);
     $$(document).find('#btn-code-editor').attr('data-project', project);
 
     list_html(project);
@@ -242,6 +239,38 @@ $$(document).on('click', '#btn-app-run', function() {
         ptyProcessEditor.write('cd Visual7\r');
         ptyProcessEditor.write('cd ' + project_open_active + '\r');
         ptyProcessEditor.write('electron .\r');
+    }
+});
+
+$$(document).on('click', '#btn-app-distribute', function() {
+    if (os.platform() === "darwin") {
+        ptyProcessEditor.write('cd ~\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('npm run dist\r');
+    } else if (os.platform() === "linux") {
+        ptyProcessEditor.write('cd ~\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('npm run dist\r');
+    } else {
+        ptyProcessEditor.write('cd %homepath%\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('npm run dist\r');
+    }
+});
+
+$$(document).on('click', '#btn-app-dir', function() {
+    if (os.platform() === "darwin") {
+        ptyProcessEditor.write('open ~/Visual/' + project_open_active + '\r');
+    } else if (os.platform() === "linux") {
+        ptyProcessEditor.write('nautilus ~/Visual7/' + project_open_active + '\r');
+    } else {
+        ptyProcessEditor.write('cd %homepath%\r');
+        ptyProcessEditor.write('cd Visual7\r');
+        ptyProcessEditor.write('cd ' + project_open_active + '\r');
+        ptyProcessEditor.write('explorer .\r');
     }
 });
 
@@ -351,17 +380,14 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
                     ptyProcessEditor.write('cd ~\r');
                     ptyProcessEditor.write('cd Visual7\r');
                     ptyProcessEditor.write('cd ' + project + '\r');
-                    ptyProcessEditor.write('clear\r');
                 } else if (os.platform() === "linux") {
                     ptyProcessEditor.write('cd ~\r');
                     ptyProcessEditor.write('cd Visual7\r');
                     ptyProcessEditor.write('cd ' + project + '\r');
-                    ptyProcessEditor.write('clear\r');
                 } else {
                     ptyProcessEditor.write('cd %homepath%\r');
                     ptyProcessEditor.write('cd Visual7\r');
                     ptyProcessEditor.write('cd ' + project + '\r');
-                    ptyProcessEditor.write('cls\r');
                 }
             });
         }
