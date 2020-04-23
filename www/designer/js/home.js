@@ -139,10 +139,10 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                     }
                 } else {
                     app.dialog.create({
-                        title: '<span class="text-color-red">Failed</span>',
+                        title: '<span>Failed</span>',
                         text: 'Project Exist',
                         buttons: [{
-                            text: '<span class="text-color-teal">Ok</span>'
+                            text: '<span>Ok</span>'
                         }],
                         verticalButtons: false,
                         animate: false
@@ -489,11 +489,11 @@ $$(document).on('click', '#btn-code-save', function() {
 $$(document).on('click', '#btn-code-remove', function() {
     app.dialog.create({
         title: 'Information',
-        text: 'Remove This File <span class="text-color-red">' + file_open_active + ' </span>?',
+        text: 'Remove This File <span>' + file_open_active + ' </span>?',
         buttons: [{
-            text: '<span class="text-color-red">cancel</span>'
+            text: '<span>cancel</span>'
         }, {
-            text: '<span class="text-color-teal">Ok</span>',
+            text: '<span>Ok</span>',
             onClick: function() {
                 fs.unlink(path.join(filepath_open_active), function(err) {
                     if (err) {
@@ -684,11 +684,14 @@ $$(document).on('click', '#btn-create-html', function() {
             app.dialog.alert('Allow .html only', 'Information');
         } else if (fileType === null) {
             fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName + '.html'), '', 'utf-8');
+            code_editor(project_open_active, fileName + '.html');
         } else {
             fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName), '', 'utf-8');
+            code_editor(project_open_active, fileName);
         }
 
         list_html(project_open_active);
+
     });
 });
 
@@ -703,8 +706,10 @@ $$(document).on('click', '#btn-create-js', function() {
             app.dialog.alert('Allow .js only', 'Information');
         } else if (fileType === null) {
             fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName + '.js'), '', 'utf-8');
+            code_editor(project_open_active, fileName + '.js');
         } else {
             fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName), '', 'utf-8');
+            code_editor(project_open_active, fileName);
         }
 
         list_js(project_open_active);
@@ -722,8 +727,10 @@ $$(document).on('click', '#btn-create-css', function() {
             app.dialog.alert('Allow .css only', 'Information');
         } else if (fileType === null) {
             fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName + '.js'), '', 'utf-8');
+            code_editor(project_open_active, fileName + '.css');
         } else {
             fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName), '', 'utf-8');
+            code_editor(project_open_active, fileName);
         }
 
         list_css(project_open_active);
@@ -762,11 +769,11 @@ $$(document).on('click', '#btn-remove-other', function() {
 
     app.dialog.create({
         title: 'Information',
-        text: 'Remove This File <span class="text-color-red">' + fileName + ' </span>?',
+        text: 'Remove This File <span>' + fileName + ' </span>?',
         buttons: [{
-            text: '<span class="text-color-red">cancel</span>'
+            text: '<span>cancel</span>'
         }, {
-            text: '<span class="text-color-teal">Ok</span>',
+            text: '<span>Ok</span>',
             onClick: function() {
                 fs.unlink(path.join(dir_project_www, 'file/' + fileName), function(err) {
                     if (err) return console.log(err);
@@ -793,44 +800,23 @@ document.addEventListener('keydown', function(event) {
         page_count = page_history.length;
         page_current = page_history[page_count - 1];
 
-        console.log(page_current);
-        // if (page_current.split('/')[1] === "designer") {
-        //     var editor_html = editor.getHtml();
-        //     var html = pretty(editor_html, { ocd: true });
+        if (page_current.split('/')[1] === "designer") {
+            var editor_html = editor.getHtml();
+            var html = pretty(editor_html, { ocd: true });
 
-        //     fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), html, 'utf-8');
+            fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), html, 'utf-8');
 
-        //     window.localStorage.clear();
-        // } else if (page_current.split('/')[1] === "editor_js_main") {
-        //     var editor_js = we.getValue();
-        //     fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
-        // } else if (page_current.split('/')[1] === "editor_js_package") {
-        //     var editor_js = we.getValue();
-        //     fs.writeFileSync(path.join(dir_project, file_open_active), editor_js, 'utf-8');
-        // } else {
-        //     if (file_open_active === 'index.html') {
-        //         var editor_html = we.getValue();
-        //         fs.writeFileSync(path.join(dir_project_www, file_open_active), editor_html, 'utf-8');
-        //     } else {
-        //         var file_type = file_open_active.split('.');
-        //         if (file_type[1] === "html") {
-        //             var editor_html = we.getValue();
-        //             fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_html, 'utf-8');
-        //         } else if (file_type[1] === "js") {
-        //             var editor_js = we.getValue();
-        //             fs.writeFileSync(path.join(dir_project_www, 'js_app/' + file_open_active), editor_js, 'utf-8');
-        //         } else if (file_type[1] === "css") {
-        //             var editor_css = we.getValue();
-        //             fs.writeFileSync(path.join(dir_project_www, 'css/' + file_open_active), editor_css, 'utf-8');
-        //         }
-        //     }
-        // }
+            window.localStorage.clear();
+        } else if (page_current.split('/')[1] === "editor") {
+            var editor_value = we.getValue();
+            fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
+        }
 
-        // app.toast.create({
-        //     text: 'File Saved',
-        //     position: 'center',
-        //     closeTimeout: 2000
-        // }).open();
+        app.toast.create({
+            text: 'File Saved',
+            position: 'center',
+            closeTimeout: 2000
+        }).open();
     }
 });
 
@@ -1020,9 +1006,9 @@ $$(document).on('click', '#btn-design-clear', function() {
         title: 'Information',
         text: 'Do you want to clear all design?',
         buttons: [{
-            text: '<span class="text-color-red">Cancel</span>'
+            text: '<span>Cancel</span>'
         }, {
-            text: '<span class="text-color-teal">Ok</span>',
+            text: '<span>Ok</span>',
             onClick: function() {
                 editor.DomComponents.clear();
 
@@ -1134,9 +1120,9 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                     title: 'Information',
                     text: 'NowDB Data Manager is Not Available',
                     buttons: [{
-                        text: '<span class="text-color-red">Later</span>'
+                        text: '<span>Later</span>'
                     }, {
-                        text: '<span class="text-color-teal">Download</span>',
+                        text: '<span>Download</span>',
                         onClick: function() {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.exe", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.exe'));
                         }
@@ -1164,9 +1150,9 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                     title: 'Information',
                     text: 'NowDB Data Manager is Not Available',
                     buttons: [{
-                        text: '<span class="text-color-red">Later</span>'
+                        text: '<span>Later</span>'
                     }, {
-                        text: '<span class="text-color-teal">Download</span>',
+                        text: '<span>Download</span>',
                         onClick: function() {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager-1.1.0.dmg", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.dmg'));
                         }
@@ -1194,9 +1180,9 @@ $$(document).on('click', '#btn-app-nowdb', function() {
                     title: 'Information',
                     text: 'NowDB Data Manager is Not Available',
                     buttons: [{
-                        text: '<span class="text-color-red">Later</span>'
+                        text: '<span>Later</span>'
                     }, {
-                        text: '<span class="text-color-teal">Download</span>',
+                        text: '<span>Download</span>',
                         onClick: function() {
                             downloadNowDB("https://github.com/taufiksu/NowDB-Data-Manager-Release/raw/master/NowDB%20Data%20Manager%201.1.0.AppImage", path.join(__dirname, 'nowdb/NowDB Data Manager-1.1.0.AppImage'));
                         }
@@ -1251,7 +1237,7 @@ function downloadNowDB(file_url, targetPath) {
             title: 'Information',
             text: 'File Downloaded',
             buttons: [{
-                text: '<span class="text-color-teal">Open</span>',
+                text: '<span>Open</span>',
                 onClick: function() {
                     if (app.device.os === "windows") {
                         var child = require('child_process').execFile;
