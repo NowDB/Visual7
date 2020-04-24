@@ -263,7 +263,8 @@ $$(document).on('click', '#btn-app-distribute', function() {
 
 $$(document).on('click', '#btn-app-dir', function() {
     if (os.platform() === "darwin") {
-        ptyProcessEditor.write('open ~/Visual/' + project_open_active + '\r');
+        ptyProcessEditor.write('cd ~/Visual/' + project_open_active + '\r');
+        ptyProcessEditor.write('open .\r');
     } else if (os.platform() === "linux") {
         ptyProcessEditor.write('nautilus ~/Visual7/' + project_open_active + '\r');
     } else {
