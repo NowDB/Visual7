@@ -103,6 +103,9 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                     copyDir(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
                     copyDir(path.join(__dirname, 'js_app/'), path.join(dir_project_www, 'js_app/'));
                     copyDir(path.join(__dirname, 'pages/'), path.join(dir_project_www, 'pages/'));
+                    if (os.platform() === "darwin") {
+                        copyDir(path.join(__dirname, '../build/'), path.join(dir_project, 'build/'));
+                    }
 
                     list_project();
 
