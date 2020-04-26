@@ -11,6 +11,8 @@ var terminal_home = function() {
         experimentalCharAtlas: 'dynamic'
     });
 
+    term.setOption('theme', { background: '#1e1e1e' });
+
     const fitAddon = new FitAddon();
     term.loadAddon(fitAddon);
 
@@ -347,6 +349,8 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
                     fontSize: 12,
                     experimentalCharAtlas: 'dynamic'
                 });
+
+                termEditor.setOption('theme', { background: '#1e1e1e' });
 
                 const fitAddon = new FitAddon();
                 termEditor.loadAddon(fitAddon);
