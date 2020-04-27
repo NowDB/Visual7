@@ -779,3 +779,205 @@ $$(document).on('click', '#code-toast-custom-close-button', function() {
     we.setValue(splitedText.join("\n"));
     we.setPosition(position);
 });
+
+$$(document).on('click', '#code-dialog-alert', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.alert('Description', 'Title');";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-confirmation', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.confirm('Are you feel good today?', function() {\n" +
+        "\tapp.dialog.alert('Yes');\n" +
+        "}, function() {\n" +
+        "\tapp.dialog.alert('No');\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-prompt', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.prompt('What is your name?', function(name) {\n" +
+        "\tapp.dialog.alert('Ok, your name is ' + name);\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-horizontal', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.create({\n" +
+        "\ttitle: 'Title',\n" +
+        "\ttext: 'Information',\n" +
+        "\tbuttons: [{\n" +
+        "\t\t\ttext: 'Option',\n" +
+        "\t\t\tonClick: function() {\n" +
+        "\t\t\t\tapp.dialog.alert('Option');\n" +
+        "\t\t\t}\n" +
+        "\t\t},\n" +
+        "\t\t{\n" +
+        "\t\t\ttext: 'Cancel',\n" +
+        "\t\t\tonClick: function() {\n" +
+        "\t\t\t\tapp.dialog.alert('Cancel');\n" +
+        "\t\t\t}\n" +
+        "\t\t},\n" +
+        "\t\t{\n" +
+        "\t\t\ttext: 'Yes',\n" +
+        "\t\t\tonClick: function() {\n" +
+        "\t\t\t\tapp.dialog.alert('Yes');\n" +
+        "\t\t\t}\n" +
+        "\t\t},\n" +
+        "\t]\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-vertical', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.create({\n" +
+        "\ttitle: 'Title',\n" +
+        "\ttext: 'Information',\n" +
+        "\tbuttons: [{\n" +
+        "\t\t\ttext: 'Option',\n" +
+        "\t\t\tonClick: function() {\n" +
+        "\t\t\t\tapp.dialog.alert('Option');\n" +
+        "\t\t\t}\n" +
+        "\t\t},\n" +
+        "\t\t{\n" +
+        "\t\t\ttext: 'Cancel',\n" +
+        "\t\t\tonClick: function() {\n" +
+        "\t\t\t\tapp.dialog.alert('Cancel');\n" +
+        "\t\t\t}\n" +
+        "\t\t},\n" +
+        "\t\t{\n" +
+        "\t\t\ttext: 'Yes',\n" +
+        "\t\t\tonClick: function() {\n" +
+        "\t\t\t\tapp.dialog.alert('Yes');\n" +
+        "\t\t\t}\n" +
+        "\t\t},\n" +
+        "\t],\n" +
+        "\tverticalButtons: true\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-login', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.login('Enter your username and password', function(username, password) {\n" +
+        "\tapp.dialog.alert('Thank you!<br>Username:' + username + '<br>Password:' + password);\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-password', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.password('Enter your username and password', function(password) {\n" +
+        "\tapp.dialog.alert('Thank you!<br>Password:' + password);\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-preloader', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.preloader('Title');\n" +
+        "setTimeout(function() {\n" +
+        "\tapp.dialog.close();\n" +
+        "}, 3000);";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-progress', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.dialog.progress('Title');\n" +
+        "setTimeout(function() {\n" +
+        "\tapp.dialog.close();\n" +
+        "}, 3000);";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-dialog-progress-percent', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "var progress = 0;\n" +
+        "var dialog = app.dialog.progress('Loading assets', progress);\n" +
+        "dialog.setText('Image 1 of 10');\n" +
+        "var interval = setInterval(function() {\n" +
+        "\tprogress += 10;\n" +
+        "\tdialog.setProgress(progress);\n" +
+        "\tdialog.setText('Image ' + ((progress) / 10) + ' of 10');\n" +
+        "\tif (progress === 100) {\n" +
+        "\t\tclearInterval(interval);\n" +
+        "\t\tdialog.close();\n" +
+        "\t}\n" +
+        "}, 300);";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
