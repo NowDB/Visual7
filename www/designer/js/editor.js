@@ -512,3 +512,63 @@ $$(document).on('click', '#code-page-afterin-dialog-progress', function() {
     we.setValue(splitedText.join("\n"));
     we.setPosition(position);
 });
+
+$$(document).on('click', '#code-selector-click', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('click', '#selector_id_or_class', function () {\n" +
+        "\tapp.dialog.alert('click');\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-selector-change', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('change', '#selector_id_or_class', function () {\n" +
+        "\tapp.dialog.alert('change');\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-selector-keyup', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('keyup', '#selector_id_or_class', function () {\n" +
+        "\tapp.dialog.alert('keyup');\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-selector-keydown', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('keydown', '#selector_id_or_class', function () {\n" +
+        "\tapp.dialog.alert('keydown');\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});

@@ -12,10 +12,13 @@
             </div>
             <div class="title" id="page-title"></div>
             <div class="right">
-                <a class="link icon-only text-color-gray popover-open btn-snippet-js" title="Page Init" href="#" data-popover=".snippet-page" style="display: none;">
+                <a class="link icon-only text-color-gray popover-open btn-snippet-js" title="Event on Selector" href="#" data-popover=".snippet-selector" style="display: none;">
+                    <i class="icon material-icons">check_box</i>
+                </a>
+                <a class="link icon-only text-color-gray popover-open btn-snippet-js" title="Event on Page" href="#" data-popover=".snippet-page" style="display: none;">
                     <i class="icon material-icons">view_carousel</i>
                 </a>
-                <a class="link icon-only text-color-gray popover-open btn-snippet-js" title="Condition" href="#" data-popover=".popover-links" style="display: none;">
+                <a class="link icon-only text-color-gray popover-open btn-snippet-js" title="Condition" href="#" data-popover=".snippet-if" style="display: none;">
                     <i class="icon material-icons">device_hub</i>
                 </a>
                 <a class="link icon-only text-color-gray" title="UI Designer" id="btn-design-html" style="display: none;">
@@ -31,13 +34,13 @@
         <div class="row no-margin no-padding" style="height: 100%;">
             <div class="col-100 no-margin" style="height: 100%;">
                 <div class="row no-margin no-padding" style="height: 70%;overflow: hidden;" id="container"></div>
-                <div class="row no-margin no-padding" style="height: 30%;min-height: 50px;">
+                <div class="row no-margin no-padding" style="height: 30%;min-height: 50px;border-top: 1px solid gray;">
                     <div class="col-100" style="height: 100%" id="term-editor"></div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="popover popover-links">
+    <div class="popover snippet-if">
         <div class="popover-inner">
             <div class="list">
                 <ul>
@@ -63,6 +66,18 @@
                     <li><a class="list-button item-link" href="#" id="code-page-afterin-progress-multi">with progressbar colorfull</a></li>
                     <li><a class="list-button item-link" href="#" id="code-page-afterin-dialog-preloader">with dialog preloader</a></li>
                     <li><a class="list-button item-link" href="#" id="code-page-afterin-dialog-progress">with dialog progress</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="popover snippet-selector">
+        <div class="popover-inner">
+            <div class="list">
+                <ul>
+                    <li><a class="list-button item-link" href="#" id="code-selector-click">click</a></li>
+                    <li><a class="list-button item-link" href="#" id="code-selector-change">change</a></li>
+                    <li><a class="list-button item-link" href="#" id="code-selector-keyup">keyup</a></li>
+                    <li><a class="list-button item-link" href="#" id="code-selector-keydown">keydown</a></li>
                 </ul>
             </div>
         </div>
