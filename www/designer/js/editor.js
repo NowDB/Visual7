@@ -572,3 +572,78 @@ $$(document).on('click', '#code-selector-keydown', function() {
     we.setValue(splitedText.join("\n"));
     we.setPosition(position);
 });
+
+$$(document).on('click', '#code-notifications-full-layout', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.notification.create({\n" +
+        "\ticon: '<i class=\"icon material-icons\">notifications</i>',\n" +
+        "\ttitle: 'Visual7',\n" +
+        "\ttitleRightText: 'now',\n" +
+        "\tsubtitle: 'This is a subtitle',\n" +
+        "\ttext: 'This is a simple notification message',\n" +
+        "\tcloseTimeout: 3000,\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Notification closed');\n" +
+        "\t\t},\n" +
+        "\t},\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-notifications-close-button', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.notification.create({\n" +
+        "\ticon: '<i class=\"icon material-icons\">notifications</i>',\n" +
+        "\ttitle: 'Visual7',\n" +
+        "\ttitleRightText: 'now',\n" +
+        "\tsubtitle: 'This is a subtitle',\n" +
+        "\ttext: 'This is a simple notification message',\n" +
+        "\tcloseButton: true,\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Notification closed');\n" +
+        "\t\t},\n" +
+        "\t},\n" +
+        "}).open()";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-notifications-click-close', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.notification.create({\n" +
+        "\ticon: '<i class=\"icon material-icons\">notifications</i>',\n" +
+        "\ttitle: 'Visual7',\n" +
+        "\ttitleRightText: 'now',\n" +
+        "\tsubtitle: 'This is a subtitle',\n" +
+        "\ttext: 'This is a simple notification message',\n" +
+        "\tcloseOnClick: true,\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Notification closed');\n" +
+        "\t\t},\n" +
+        "\t},\n" +
+        "}).open()";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
