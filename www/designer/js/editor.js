@@ -647,3 +647,135 @@ $$(document).on('click', '#code-notifications-click-close', function() {
     we.setValue(splitedText.join("\n"));
     we.setPosition(position);
 });
+
+$$(document).on('click', '#code-toast-top', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.toast.create({\n" +
+        "\ttext: 'Toast',\n" +
+        "\tposition: 'top',\n" +
+        "\tcloseTimeout: 2000,\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Toast Closed');\n" +
+        "\t\t},\n" +
+        "\t}\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-toast-bottom', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.toast.create({\n" +
+        "\ttext: 'Toast',\n" +
+        "\tcloseTimeout: 2000,\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Toast Closed');\n" +
+        "\t\t},\n" +
+        "\t}\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-toast-center', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.toast.create({\n" +
+        "\ttext: 'Toast',\n" +
+        "\tposition: 'center',\n" +
+        "\tcloseTimeout: 2000,\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Toast Closed');\n" +
+        "\t\t},\n" +
+        "\t}\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-toast-center-icon', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.toast.create({\n" +
+        "\ttext: 'Toast',\n" +
+        "\ticon: app.theme === 'ios' ? '<i class=\"material-icons\">notifications</i>' : '<i class=\"material-icons\">notifications_none</i>',\n" +
+        "\tposition: 'center',\n" +
+        "\tcloseTimeout: 2000,\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Toast Closed');\n" +
+        "\t\t},\n" +
+        "\t}\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-toast-close-button', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.toast.create({\n" +
+        "\ttext: 'Toast',\n" +
+        "\tcloseButton: true,\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Toast Closed');\n" +
+        "\t\t},\n" +
+        "\t}\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-toast-custom-close-button', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "app.toast.create({\n" +
+        "\ttext: 'Toast',\n" +
+        "\tcloseButton: true,\n" +
+        "\tcloseButtonText: 'Close Me',\n" +
+        "\tcloseButtonColor: 'red',\n" +
+        "\ton: {\n" +
+        "\t\tclose: function () {\n" +
+        "\t\t\tapp.dialog.alert('Toast Closed');\n" +
+        "\t\t},\n" +
+        "\t}\n" +
+        "}).open();";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
