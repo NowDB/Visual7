@@ -417,3 +417,98 @@ $$(document).on('click', '#code-page-out', function() {
     we.setValue(splitedText.join("\n"));
     we.setPosition(position);
 });
+
+$$(document).on('click', '#code-page-afterin-preloader', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('page:afterin', '.page[data-name=\"your_page_name\"]', function (callback) {\n" +
+        "\tconsole.log(callback.detail.route.params);\n\n" +
+        "\tapp.preloader.show();\n" +
+        "\tsetTimeout(function () {//Wait for 5 Sec\n" +
+        "\t\tapp.preloader.hide();\n" +
+        "\t}, 5000);\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-page-afterin-progress', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('page:afterin', '.page[data-name=\"your_page_name\"]', function (callback) {\n" +
+        "\tconsole.log(callback.detail.route.params);\n\n" +
+        "\tapp.progressbar.show();\n" +
+        "\tsetTimeout(function () {//Wait for 5 Sec\n" +
+        "\t\tapp.progressbar.hide();\n" +
+        "\t}, 5000);\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-page-afterin-progress-multi', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('page:afterin', '.page[data-name=\"your_page_name\"]', function (callback) {\n" +
+        "\tconsole.log(callback.detail.route.params);\n\n" +
+        "\tapp.progressbar.show('multi');\n" +
+        "\tsetTimeout(function () {//Wait for 5 Sec\n" +
+        "\t\tapp.progressbar.hide();\n" +
+        "\t}, 5000);\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-page-afterin-dialog-preloader', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('page:afterin', '.page[data-name=\"your_page_name\"]', function (callback) {\n" +
+        "\tconsole.log(callback.detail.route.params);\n\n" +
+        "\tapp.dialog.preloader('Loading');\n" +
+        "\tsetTimeout(function () {//Wait for 5 Sec\n" +
+        "\t\tapp.dialog.close();\n" +
+        "\t}, 5000);\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
+
+$$(document).on('click', '#code-page-afterin-dialog-progress', function() {
+    app.popover.close();
+
+    var position = we.getPosition();
+    var text = we.getValue(position);
+    var splitedText = text.split("\n");
+    var lineContent = splitedText[position.lineNumber - 1];
+    var textToInsert = "$$(document).on('page:afterin', '.page[data-name=\"your_page_name\"]', function (callback) {\n" +
+        "\tconsole.log(callback.detail.route.params);\n\n" +
+        "\tapp.dialog.progress('Loading');\n" +
+        "\tsetTimeout(function () {//Wait for 5 Sec\n" +
+        "\t\tapp.dialog.close();\n" +
+        "\t}, 5000);\n" +
+        "});";
+    splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
+    we.setValue(splitedText.join("\n"));
+    we.setPosition(position);
+});
