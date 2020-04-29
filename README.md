@@ -13,3 +13,9 @@ cd Visual7
 npm install electron -g --verbose --unsafe-perm=true
 npm install
 ```
+
+## Running
+```sh
+cd Visual7
+electron .
+```
