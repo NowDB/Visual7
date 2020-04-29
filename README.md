@@ -13,10 +13,3 @@ cd Visual7
 npm install electron -g --verbose --unsafe-perm=true
 npm install
 ```
-
-## Additional Directory
-```sh
-cd www/
-mkdir file
-mkdir nowdb
-```
