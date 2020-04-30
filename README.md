@@ -14,9 +14,8 @@ npm install electron -g --verbose --unsafe-perm=true
 npm install
 ```
 
-## Additional Directory
+## Running
 ```sh
-cd www/
-mkdir file
-mkdir nowdb
+cd Visual7
+electron .
 ```
