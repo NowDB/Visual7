@@ -403,14 +403,14 @@ $$(document).on('click', '#code-page-beforeout', function() {
     we.setPosition(position);
 });
 
-$$(document).on('click', '#code-page-out', function() {
+$$(document).on('click', '#code-page-afterout', function() {
     app.popover.close();
 
     var position = we.getPosition();
     var text = we.getValue(position);
     var splitedText = text.split("\n");
     var lineContent = splitedText[position.lineNumber - 1];
-    var textToInsert = "$$(document).on('page:out', '.page[data-name=\"your_page_name\"]', function(callback) {\n" +
+    var textToInsert = "$$(document).on('page:afterout', '.page[data-name=\"your_page_name\"]', function(callback) {\n" +
         "\tconsole.log(callback.detail.route.params)\n" +
         "});";
     splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
