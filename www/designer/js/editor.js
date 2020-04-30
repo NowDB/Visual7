@@ -336,7 +336,7 @@ $$(document).on('click', '#code-page-init', function() {
     var splitedText = text.split("\n");
     var lineContent = splitedText[position.lineNumber - 1];
     var textToInsert = "$$(document).on('page:init', '.page[data-name=\"your_page_name\"]', function(callback) {\n" +
-        "\tconsole.log(callback.detail.route.params)\n" +
+        "\tconsole.log(callback.detail.route.params);\n" +
         "});";
     splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
     we.setValue(splitedText.join("\n"));
@@ -351,7 +351,7 @@ $$(document).on('click', '#code-page-reinit', function() {
     var splitedText = text.split("\n");
     var lineContent = splitedText[position.lineNumber - 1];
     var textToInsert = "$$(document).on('page:reinit', '.page[data-name=\"your_page_name\"]', function(callback) {\n" +
-        "\tconsole.log(callback.detail.route.params)\n" +
+        "\tconsole.log(callback.detail.route.params);\n" +
         "});";
     splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
     we.setValue(splitedText.join("\n"));
@@ -366,7 +366,7 @@ $$(document).on('click', '#code-page-beforein', function() {
     var splitedText = text.split("\n");
     var lineContent = splitedText[position.lineNumber - 1];
     var textToInsert = "$$(document).on('page:beforein', '.page[data-name=\"your_page_name\"]', function(callback) {\n" +
-        "\tconsole.log(callback.detail.route.params)\n" +
+        "\tconsole.log(callback.detail.route.params);\n" +
         "});";
     splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
     we.setValue(splitedText.join("\n"));
@@ -381,7 +381,7 @@ $$(document).on('click', '#code-page-afterin', function() {
     var splitedText = text.split("\n");
     var lineContent = splitedText[position.lineNumber - 1];
     var textToInsert = "$$(document).on('page:afterin', '.page[data-name=\"your_page_name\"]', function(callback) {\n" +
-        "\tconsole.log(callback.detail.route.params)\n" +
+        "\tconsole.log(callback.detail.route.params);\n" +
         "});";
     splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
     we.setValue(splitedText.join("\n"));
@@ -396,7 +396,7 @@ $$(document).on('click', '#code-page-beforeout', function() {
     var splitedText = text.split("\n");
     var lineContent = splitedText[position.lineNumber - 1];
     var textToInsert = "$$(document).on('page:beforeout', '.page[data-name=\"your_page_name\"]', function(callback) {\n" +
-        "\tconsole.log(callback.detail.route.params)\n" +
+        "\tconsole.log(callback.detail.route.params);\n" +
         "});";
     splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
     we.setValue(splitedText.join("\n"));
@@ -411,7 +411,7 @@ $$(document).on('click', '#code-page-afterout', function() {
     var splitedText = text.split("\n");
     var lineContent = splitedText[position.lineNumber - 1];
     var textToInsert = "$$(document).on('page:afterout', '.page[data-name=\"your_page_name\"]', function(callback) {\n" +
-        "\tconsole.log(callback.detail.route.params)\n" +
+        "\tconsole.log(callback.detail.route.params);\n" +
         "});";
     splitedText[position.lineNumber - 1] = [lineContent.slice(0, position.column - 1), textToInsert, lineContent.slice(position.column - 1)].join(''); // Append the text exactly at the selected position (position.column -1)
     we.setValue(splitedText.join("\n"));
