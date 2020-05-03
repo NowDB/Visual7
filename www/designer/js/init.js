@@ -4,7 +4,7 @@ var app = new Framework7({
     root: '#app',
     id: 'net.nowdb.visual7',
     name: 'Visual7',
-    theme: 'aurora',
+    theme: 'ios',
     routes: routes,
     touch: {
         fastclick: true,

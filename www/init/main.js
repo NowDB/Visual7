@@ -24,11 +24,6 @@ function createWindow() {
     });
 }
 
-ipcMain.on('getmac', (event, args) => {
-    var uuid = mymachine();
-    event.sender.send('getmac-return', '{"uuid":"' + uuid + '"}');
-});
-
 app.on('ready', createWindow);
 
 app.on('window-all-closed', function() {
