@@ -117,6 +117,11 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
 });
 
 $$(document).on('click', '#btn-code-editor', function() {
+    // Save Previous Code
+    var editor_value = we.getValue();
+    fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
+
+    // Append New Code
     var project = project_open_active;
     var filename = $$(this).attr('data-file');
     file_open_active = filename;
@@ -236,15 +241,15 @@ function code_editor(project, filename) {
     });
 }
 
-$$(document).on('click', '#btn-code-save', function() {
-    var editor_value = we.getValue();
-    fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
-    app.toast.create({
-        text: 'File Saved',
-        position: 'center',
-        closeTimeout: 2000
-    }).open();
-});
+// $$(document).on('click', '#btn-code-save', function() {
+//     var editor_value = we.getValue();
+//     fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
+//     app.toast.create({
+//         text: 'File Saved',
+//         position: 'center',
+//         closeTimeout: 2000
+//     }).open();
+// });
 
 $$(document).on('click', '#btn-code-remove', function() {
     app.dialog.create({
