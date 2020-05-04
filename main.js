@@ -18,7 +18,7 @@ function createWindow() {
         icon: path.join(__dirname, '/www/img/256x256.png')
     });
 
-    mainWindow.loadFile('www/browser.html');
+    mainWindow.loadFile('www/index.html');
 
     // mainWindow.webContents.openDevTools();
 

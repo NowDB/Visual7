@@ -76,7 +76,6 @@ $$(document).on('click', '#btn-application-new-electron', function() {
         var dir_visual7 = path.join(os.homedir(), 'Visual7/');
         var dir_project = path.join(dir_visual7, fileName);
         var dir_project_www = path.join(dir_project, 'www/');
-        var dir_init = path.join(__dirname, 'init/');
 
         fs.readdir(dir_visual7, (err, dir) => {
             if (err) {
@@ -94,21 +93,25 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                     mkdir(dir_project_www);
                     mkdir(path.join(dir_project_www, 'file/'));
 
-                    copy(path.join(__dirname, 'index.html'), path.join(dir_project_www, 'index.html'));
-                    copy(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
-                    copy(path.join(dir_init, 'main.js'), path.join(dir_project, 'main.js'));
-                    copy(path.join(dir_init, 'package.json'), path.join(dir_project, 'package.json'));
-
+                    // Depedencies (F7 and Other)
                     copyDir(path.join(__dirname, 'css/'), path.join(dir_project_www, 'css/'));
                     copyDir(path.join(__dirname, 'fonts/'), path.join(dir_project_www, 'fonts/'));
                     copyDir(path.join(__dirname, 'img/'), path.join(dir_project_www, 'img/'));
                     copyDir(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
-                    copyDir(path.join(__dirname, 'js_app/'), path.join(dir_project_www, 'js_app/'));
-                    copyDir(path.join(__dirname, 'pages/'), path.join(dir_project_www, 'pages/'));
+                    copy(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
+
                     if (os.platform() === "darwin") {
                         copyDir(path.join(__dirname, '../build/'), path.join(dir_project, 'build/'));
                     }
 
+                    // Template
+                    copy(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'index.html'), path.join(dir_project_www, 'index.html'));
+                    copy(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'main.js'), path.join(dir_project, 'main.js'));
+                    copy(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'package.json'), path.join(dir_project, 'package.json'));
+                    copyDir(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'js_app/'), path.join(dir_project_www, 'js_app/'));
+                    copyDir(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'pages/'), path.join(dir_project_www, 'pages/'));
+
+                    // Finilization
                     list_project();
 
                     if (os.platform() === "darwin") {
