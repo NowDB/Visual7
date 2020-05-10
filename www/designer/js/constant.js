@@ -20,6 +20,7 @@ const pty = require('node-pty');
 const { Terminal } = require('xterm');
 const { FitAddon } = require('xterm-addon-fit');
 const beautify = require('beautify');
+const shell = require('electron').shell;
 
 let term = null;
 let ptyProcess = null;
