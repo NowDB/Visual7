@@ -1,7 +1,8 @@
 blockManager.add('template-1', {
     label: 'Template 1',
     attributes: {
-        style: 'background-image:url("f7/img/template_1.png");background-size: contain;background-repeat: no-repeat;background-position: center center;',
+        // style: 'background-image:url("f7/img/template_1.png");background-size: contain;background-repeat: no-repeat;background-position: center center;',
+        class: 'fa fa-square',
         title: 'Page with Navbar'
     },
     content: '<div class="page">' +

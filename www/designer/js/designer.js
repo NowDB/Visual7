@@ -94,7 +94,7 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback
     require('./designer/grapesjs/block/popover.js');
     require('./designer/grapesjs/block/progress_bar.js');
     require('./designer/grapesjs/block/range_slider.js');
-    require('./designer/grapesjs/block/screen.js');
+    // require('./designer/grapesjs/block/screen.js');
     require('./designer/grapesjs/block/searchbar.js');
     require('./designer/grapesjs/block/smart_select.js');
     require('./designer/grapesjs/block/stepper.js');

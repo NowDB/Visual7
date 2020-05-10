@@ -39,13 +39,18 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
                     me.setTheme(callback.base);
 
                     we = window.editor;
-                    we = me.create(document.getElementById('container'), {
+                    we = me.create(document.getElementById('editor-container'), {
                         value: code_data,
                         parameterHints: { enabled: true },
                         scrollBeyondLastLine: false,
                         fixedOverflowWidgets: true,
                         lineNumbers: 'on',
+                        lineDecorationsWidth: 36,
+                        matchBrackets: "always",
+                        lineHeight: 19,
                         folding: true,
+                        autoIndent: true,
+                        automaticLayout: true,
                         foldingHighlight: true,
                         showFoldingControls: 'always',
                         fontLigatures: true,
@@ -124,8 +129,20 @@ $$(document).on('click', '#btn-code-editor', function() {
     if (page_current.split('/')[1] === "designer") {
         editor_value = editor.getHtml();
         editor_value = pretty(editor_value, { ocd: true });
+        editor_style = editor.getCss();
+        editor_style = pretty(editor_style, { ocd: true });
 
         fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
+
+        var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+        var dir_project = path.join(dir_visual7, project_open_active);
+        var dir_project_www = path.join(dir_project, 'www/');
+        var customcss = path.join(path.join(dir_project_www, 'css'), 'custom.css');
+        fs.readFile(customcss, 'utf-8', (err, code_data) => {
+            var customcss_value = beautify(editor_style, { format: 'css' });
+            customcss_value = code_data + customcss_value;
+            fs.writeFileSync(customcss, customcss_value, 'utf-8');
+        });
 
         code_editor(project_open_active, file_open_active);
 

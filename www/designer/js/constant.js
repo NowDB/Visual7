@@ -19,6 +19,8 @@ const editorRequire = editorLoader.require;
 const pty = require('node-pty');
 const { Terminal } = require('xterm');
 const { FitAddon } = require('xterm-addon-fit');
+const beautify = require('beautify');
+
 let term = null;
 let ptyProcess = null;
 let termEditor = null;

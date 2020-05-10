@@ -53,6 +53,7 @@
         "electron-rebuild": "^1.10.1"
     },
     "dependencies": {
+        "beautify": "0.0.8",
         "child_process": "^1.0.2",
         "electron-packager": "^14.2.1",
         "electron-prompt": "^1.5.1",
