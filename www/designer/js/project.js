@@ -569,10 +569,12 @@ document.addEventListener('keydown', function(event) {
         page_current = page_history[page_count - 1];
 
         if (page_current.split('/')[1] === "designer") {
-            var editor_html = editor.getHtml();
-            var html = pretty(editor_html, { ocd: true });
+            editor_value = editor.getHtml();
+            editor_value = pretty(editor_value, { ocd: true });
 
-            fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), html, 'utf-8');
+            fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_value, 'utf-8');
+
+            code_editor(project_open_active, file_open_active);
 
             window.localStorage.clear();
         } else if (page_current.split('/')[1] === "editor") {

@@ -40,7 +40,7 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
 
                     we = window.editor;
                     we = me.create(document.getElementById('container'), {
-                        value: '\n' + code_data,
+                        value: code_data,
                         parameterHints: { enabled: true },
                         scrollBeyondLastLine: false,
                         fixedOverflowWidgets: true,
@@ -117,24 +117,31 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
 });
 
 $$(document).on('click', '#btn-code-editor', function() {
-    // Save Previous Code
-    var editor_value = we.getValue();
-    fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
-
-    // Append New Code
-    var project = project_open_active;
-    var filename = $$(this).attr('data-file');
-    file_open_active = filename;
-
     page_history = app.views.main.history;
     page_count = page_history.length;
     page_current = page_history[page_count - 1];
 
     if (page_current.split('/')[1] === "designer") {
-        navigate_main_back();
-    }
+        editor_value = editor.getHtml();
+        editor_value = pretty(editor_value, { ocd: true });
 
-    code_editor(project, filename);
+        fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
+
+        code_editor(project_open_active, file_open_active);
+
+        navigate_main_back();
+    } else {
+        // Save Previous Code
+        editor_value = we.getValue();
+        fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
+
+        // Append New Code
+        var project = project_open_active;
+        var filename = $$(this).attr('data-file');
+        file_open_active = filename;
+
+        code_editor(project, filename);
+    }
 });
 
 function code_editor(project, filename) {

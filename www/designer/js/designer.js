@@ -150,22 +150,24 @@ $$(document).on('page:afterin', '.page[data-name="designer"]', function(callback
     delete require.cache[require.resolve('./designer/grapesjs/block/toolbar_bottom_with_badge.js')];
 });
 
-$$(document).on('click', '#btn-save-design', function() {
-    var editor_html = editor.getHtml();
-    var html = pretty(editor_html, { ocd: true });
+// $$(document).on('click', '#btn-save-design', function() {
+//     editor_value = editor.getHtml();
+//     editor_value = pretty(editor_value, { ocd: true });
 
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
+//     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+//     var dir_project = path.join(dir_visual7, project_open_active);
+//     var dir_project_www = path.join(dir_project, 'www/');
 
-    fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), html, 'utf-8');
+//     fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_value, 'utf-8');
 
-    app.toast.create({
-        text: 'File Saved',
-        position: 'center',
-        closeTimeout: 2000
-    }).open();
-});
+//     code_editor(project_open_active, file_open_active);
+
+//     app.toast.create({
+//         text: 'File Saved',
+//         position: 'center',
+//         closeTimeout: 2000
+//     }).open();
+// });
 
 $$(document).on('click', '#btn-design-undo', function() {
     editor.UndoManager.undo(1);
