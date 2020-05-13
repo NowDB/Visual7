@@ -203,7 +203,7 @@ $$(document).on('click', '#btn-project-open', function() {
     var project = $$(this).attr('data-project');
     project_open_active = project;
 
-    app.sheet.open('.sheet-terminal');
+    app.sheet.close('.sheet-terminal');
 
     if (os.platform() === "darwin") {
         ptyProcess.write('cd ~\r');
@@ -336,7 +336,7 @@ function list_html(project) {
                 let fileName = dir[i];
                 if (fileName === '404.html' || fileName === 'about.html' || fileName === 'home.html') {
                     $$(document).find('#list-file-html-new').append(
-                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;" data-dir="pages" data-type="html">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -346,7 +346,7 @@ function list_html(project) {
                         '</div>');
                 } else {
                     $$(document).find('#list-file-html-new').append(
-                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;" data-dir="pages" data-type="html">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -374,7 +374,7 @@ function list_js(project) {
                 let fileName = dir[i];
                 if (fileName === 'constant.js' || fileName === 'init.js' || fileName === 'listener.js' || fileName === 'routes.js') {
                     $$(document).find('#list-file-js-new').append(
-                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;" data-dir="js_app" data-type="javascript">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -384,7 +384,7 @@ function list_js(project) {
                         '</div>');
                 } else {
                     $$(document).find('#list-file-js-new').append(
-                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;" data-dir="js_app" data-type="javascript">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -412,7 +412,7 @@ function list_css(project) {
                 let fileName = dir[i];
                 if (fileName === 'framework7-icons.css' || fileName === 'framework7.bundle.css' || fileName === 'framework7.bundle.min.css' || fileName === 'framework7.bundle.rtl.css' || fileName === 'framework7.bundle.rtl.min.css' || fileName === 'framework7.css' || fileName === 'framework7.min.css' || fileName === 'framework7.rtl.css' || fileName === 'framework7.rtl.min.css' || fileName === 'custom.css') {
                     $$(document).find('#list-file-css-new').append(
-                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;" data-dir="css" data-type="css">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +
@@ -422,7 +422,7 @@ function list_css(project) {
                         '</div>');
                 } else {
                     $$(document).find('#list-file-css-new').append(
-                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;">' +
+                        '<div class="treeview-item" id="btn-code-editor" data-project="' + project + '" data-file="' + fileName + '" style="cursor: pointer;" data-dir="css" data-type="css">' +
                         '    <div class="treeview-item-root">' +
                         '        <div class="treeview-item-content">' +
                         '            <i class="icon f7-icons">document_text_fill</i>' +

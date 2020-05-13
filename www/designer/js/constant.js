@@ -27,13 +27,14 @@ let ptyProcessEditor = null;
 let file_open_active = '';
 let filepath_open_active = '';
 let project_open_active = '';
+let tab_link_active = '';
 let editor_value = '';
 // UI Designer
 let editor = null;
 let blockManager = null;
 // Code Editor
 let me = null;
-let we = null;
+var we = [];
 
 fs.readdir(path.join(os.homedir(), 'Visual7/'), (err, dir) => {
     if (err) {

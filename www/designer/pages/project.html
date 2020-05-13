@@ -51,26 +51,6 @@
                     <div class="treeview-toggle"></div>
                     <div class="treeview-item-content">
                         <i class="icon material-icons">folder</i>
-                        <div class="treeview-item-label">js_app</div>
-                    </div>
-                </div>
-                <div class="treeview-item-children" id="list-file-js-new"></div>
-            </div>
-            <div class="treeview-item">
-                <div class="treeview-item-root">
-                    <div class="treeview-toggle"></div>
-                    <div class="treeview-item-content">
-                        <i class="icon material-icons">folder</i>
-                        <div class="treeview-item-label">pages</div>
-                    </div>
-                </div>
-                <div class="treeview-item-children" id="list-file-html-new"></div>
-            </div>
-            <div class="treeview-item">
-                <div class="treeview-item-root">
-                    <div class="treeview-toggle"></div>
-                    <div class="treeview-item-content">
-                        <i class="icon material-icons">folder</i>
                         <div class="treeview-item-label">file</div>
                     </div>
                 </div>
@@ -86,7 +66,27 @@
                 </div>
                 <div class="treeview-item-children" id="list-file-img-new"></div>
             </div>
-            <div class="treeview-item" data-file="index.html" style="cursor: pointer;" id="btn-code-editor">
+            <div class="treeview-item">
+                <div class="treeview-item-root">
+                    <div class="treeview-toggle"></div>
+                    <div class="treeview-item-content">
+                        <i class="icon material-icons">folder</i>
+                        <div class="treeview-item-label">js_app</div>
+                    </div>
+                </div>
+                <div class="treeview-item-children" id="list-file-js-new"></div>
+            </div>
+            <div class="treeview-item">
+                <div class="treeview-item-root">
+                    <div class="treeview-toggle"></div>
+                    <div class="treeview-item-content">
+                        <i class="icon material-icons">folder</i>
+                        <div class="treeview-item-label">pages</div>
+                    </div>
+                </div>
+                <div class="treeview-item-children" id="list-file-html-new"></div>
+            </div>
+            <div class="treeview-item" data-dir="root" data-file="index.html" style="cursor: pointer;" id="btn-code-editor" data-type="html">
                 <div class="treeview-item-root">
                     <div class="treeview-item-content">
                         <i class="icon f7-icons">document_text_fill</i>
@@ -94,7 +94,7 @@
                     </div>
                 </div>
             </div>
-            <div class="treeview-item" data-file="main.js" style="cursor: pointer;" id="btn-code-editor">
+            <div class="treeview-item" data-dir="root" data-file="main.js" style="cursor: pointer;" id="btn-code-editor" data-type="javascript">
                 <div class="treeview-item-root">
                     <div class="treeview-item-content">
                         <i class="icon f7-icons">document_text_fill</i>
@@ -102,10 +102,10 @@
                     </div>
                 </div>
             </div>
-            <div class="treeview-item" data-file="package.json" style="cursor: pointer;" id="btn-code-editor">
+            <div class="treeview-item" data-dir="root" data-file="package.json" style="cursor: pointer;" id="btn-code-editor" data-type="json">
                 <div class="treeview-item-root">
                     <div class="treeview-item-content">
-                        <i class="icon f7-icons">ldocument_text_fill</i>
+                        <i class="icon f7-icons">document_text_fill</i>
                         <div class="treeview-item-label">package.json</div>
                     </div>
                 </div>
