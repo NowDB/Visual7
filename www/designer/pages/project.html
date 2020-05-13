@@ -7,31 +7,33 @@
                     <i class="icon material-icons text-color-gray">clear</i>
                 </a>
             </div>
+            <div class="title" id="project-name">Project</div>
             <div class="right">
-                <a class="link icon-only text-color-deeporange" title="Open Directory" id="btn-app-dir">
-                    <i class="icon material-icons">folder_open</i>
-                </a>
-                <a class="link icon-only text-color-gray" title="Distribute" id="btn-app-distribute">
-                    <i class="icon material-icons">memory</i>
-                </a>
-                <a class="link icon-only text-color-teal" title="Run" id="btn-app-run">
-                    <i class="icon material-icons">play_arrow</i>
-                </a>
             </div>
         </div>
     </div>
+    <div class="toolbar toolbar-top">
+        <div class="toolbar-inner">
+            <a class="link icon-only text-color-deeporange" id="btn-app-dir" title="Directory">
+                <i class="icon f7-icons">folder</i>
+            </a>
+            <a class="link icon-only text-color-pink" id="btn-app-distribute" title="Distribute">
+                <i class="icon f7-icons">archivebox</i>
+            </a>
+            <a class="link icon-only text-color-teal" id="btn-app-run" title="Run">
+                <i class="icon f7-icons">play_rectangle</i>
+            </a>
+            <a class="link sheet-open" data-sheet=".sheet-terminal" title="Terminal">
+                <i class="icon f7-icons color-gray">greaterthan_square</i>
+            </a>
+        </div>
+    </div>
     <div class="page-content">
-        <div class="list no-margin no-hairlines no-hairlines-between">
-            <ul id="list-file-index">
-                <li>
-                    <div class="item-content">
-                        <div class="item-inner">
-                            <div class="item-title text-color-yellow" id="project-name">project</div>
-                            <div class=" item-after link popover-open" href="#" data-popover="#create-file"><i title="Create New File" class="material-icons text-color-deeporange">add</i></div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
+        <!-- <div class="row padding">
+            <button class="col button button-outline button-round link popover-open" href="#" data-popover="#create-file">Create New File</button>
+        </div> -->
+        <div class="row padding">
+            <button class="col button button-outline button-round link" id="btn-create-new-file">Create New File</button>
         </div>
         <div class="treeview">
             <div class="treeview-item">
@@ -73,6 +75,16 @@
                     </div>
                 </div>
                 <div class="treeview-item-children" id="list-file-other-new"></div>
+            </div>
+            <div class="treeview-item">
+                <div class="treeview-item-root">
+                    <div class="treeview-toggle"></div>
+                    <div class="treeview-item-content">
+                        <i class="icon material-icons">folder</i>
+                        <div class="treeview-item-label">img</div>
+                    </div>
+                </div>
+                <div class="treeview-item-children" id="list-file-img-new"></div>
             </div>
             <div class="treeview-item" data-file="index.html" style="cursor: pointer;" id="btn-code-editor">
                 <div class="treeview-item-root">

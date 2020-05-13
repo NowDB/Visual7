@@ -46,13 +46,15 @@ var terminal_home = function() {
     });
 }
 
-terminal_home();
-
 $$(document).on('click', '#btn-reload', function() {
     app.preloader.show();
 
     window.location.reload();
 });
+
+app.sheet.open('.sheet-terminal');
+
+terminal_home();
 
 $$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
     panel_left_morph();
@@ -66,6 +68,8 @@ $$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
  */
 
 $$(document).on('click', '#btn-application-new-electron', function() {
+    app.sheet.open('.sheet-terminal');
+
     app.dialog.prompt('Name', 'Create New Project', function(fileName) {
         navigate_main_to('/');
 
@@ -146,6 +150,9 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                         ptyProcess.write('cls\r');
                     }
                 } else {
+                    app.progressbar.hide();
+                    app.sheet.close('.sheet-terminal');
+
                     app.dialog.create({
                         title: '<span>Failed</span>',
                         text: 'Project Exist',
@@ -195,6 +202,23 @@ function list_project() {
 $$(document).on('click', '#btn-project-open', function() {
     var project = $$(this).attr('data-project');
     project_open_active = project;
+
+    app.sheet.open('.sheet-terminal');
+
+    if (os.platform() === "darwin") {
+        ptyProcess.write('cd ~\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project + '\r');
+    } else if (os.platform() === "linux") {
+        ptyProcess.write('cd ~\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project + '\r');
+    } else {
+        ptyProcess.write('cd %homepath%\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project + '\r');
+    }
+
     navigate_left_to('/project/' + project + '/');
     navigate_main_to('/editor/' + project + '/index.html/');
 });
@@ -229,57 +253,67 @@ $$(document).on('page:afterin', '.page[data-name="project"]', function(callback)
     list_js(project);
     list_css(project);
     list_other(project);
+    list_img(project);
 });
 
 $$(document).on('click', '#btn-app-run', function() {
+    app.sheet.open('.sheet-terminal');
+
     if (os.platform() === "darwin") {
-        ptyProcessEditor.write('cd ~\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('electron .\r');
+        ptyProcess.write('cd ~\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project_open_active + '\r');
+        ptyProcess.write('electron .\r');
     } else if (os.platform() === "linux") {
-        ptyProcessEditor.write('cd ~\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('electron .\r');
+        ptyProcess.write('cd ~\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project_open_active + '\r');
+        ptyProcess.write('electron .\r');
     } else {
-        ptyProcessEditor.write('cd %homepath%\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('electron .\r');
+        ptyProcess.write('cd %homepath%\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project_open_active + '\r');
+        ptyProcess.write('electron .\r');
     }
 });
 
 $$(document).on('click', '#btn-app-distribute', function() {
+    app.sheet.open('.sheet-terminal');
+
     if (os.platform() === "darwin") {
-        ptyProcessEditor.write('cd ~\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('npm run dist\r');
+        ptyProcess.write('cd ~\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project_open_active + '\r');
+        ptyProcess.write('npm run dist\r');
+        ptyProcess.write('cd dist\r');
+        ptyProcess.write('open .\r');
     } else if (os.platform() === "linux") {
-        ptyProcessEditor.write('cd ~\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('npm run dist\r');
+        ptyProcess.write('cd ~\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project_open_active + '\r');
+        ptyProcess.write('npm run dist\r');
+        ptyProcess.write('nautilus ~/Visual7/' + project_open_active + '/dist\r');
     } else {
-        ptyProcessEditor.write('cd %homepath%\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('npm run dist\r');
+        ptyProcess.write('cd %homepath%\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project_open_active + '\r');
+        ptyProcess.write('npm run dist\r');
+        ptyProcess.write('cd dist\r');
+        ptyProcess.write('explorer .\r');
     }
 });
 
 $$(document).on('click', '#btn-app-dir', function() {
     if (os.platform() === "darwin") {
-        ptyProcessEditor.write('cd ~/Visual/' + project_open_active + '\r');
-        ptyProcessEditor.write('open .\r');
+        ptyProcess.write('cd ~/Visual/' + project_open_active + '\r');
+        ptyProcess.write('open .\r');
     } else if (os.platform() === "linux") {
-        ptyProcessEditor.write('nautilus ~/Visual7/' + project_open_active + '\r');
+        ptyProcess.write('nautilus ~/Visual7/' + project_open_active + '\r');
     } else {
-        ptyProcessEditor.write('cd %homepath%\r');
-        ptyProcessEditor.write('cd Visual7\r');
-        ptyProcessEditor.write('cd ' + project_open_active + '\r');
-        ptyProcessEditor.write('explorer .\r');
+        ptyProcess.write('cd %homepath%\r');
+        ptyProcess.write('cd Visual7\r');
+        ptyProcess.write('cd ' + project_open_active + '\r');
+        ptyProcess.write('explorer .\r');
     }
 });
 
@@ -437,72 +471,119 @@ function list_other(project) {
     });
 }
 
+function list_img(project) {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, project);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    fs.readdir(path.join(dir_project_www, 'img/'), (err, dir) => {
+        $$(document).find('#list-file-other-new').empty();
+        if (dir.length === 0) {
+            //Do Nothing
+        } else {
+            for (var i = 0; i < dir.length; i++) {
+                let fileName = dir[i];
+                $$(document).find('#list-file-img').append(
+                    '<li>' +
+                    '    <div class="item-content">' +
+                    '       <div class="item-media"><i class="material-icons text-color-red" id="btn-remove-other" data-file="' + fileName + '" style="cursor: pointer;">delete</i></div>' +
+                    '       <div class="item-inner">' +
+                    '       <div class="item-title">' + fileName + '</div>' +
+                    '       </div>' +
+                    '    </div>' +
+                    '</li>');
+                $$(document).find('#list-file-img-new').append(
+                    '<div class="treeview-item">' +
+                    '    <div class="treeview-item-root">' +
+                    '        <div class="treeview-item-content">' +
+                    '            <i class="icon f7-icons">document_text_fill</i>' +
+                    '            <div class="treeview-item-label">' + fileName + '</div>' +
+                    '        </div>' +
+                    '    </div>' +
+                    '</div>');
+            }
+        }
+    });
+}
+
 /**
  * Create File 
  */
 
-$$(document).on('click', '#btn-create-html', function() {
+
+$$(document).on('click', '#btn-create-new-file', function() {
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project_open_active);
     var dir_project_www = path.join(dir_project, 'www/');
 
-    app.dialog.prompt('Filename', 'New HTML File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'html') {
-            app.dialog.alert('Allow .html only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName + '.html'), '', 'utf-8');
-            code_editor(project_open_active, fileName + '.html');
-        } else {
-            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName), '', 'utf-8');
-            code_editor(project_open_active, fileName);
-        }
+    app.dialog.create({
+        title: 'Visual7',
+        text: 'Create New File',
+        buttons: [{
+                text: '<span class="text-color-white">HTML</span>',
+                onClick: function() {
+                    app.dialog.prompt('Filename (.html)', 'New HTML File', function(fileName) {
+                        fileType = fileName.split('.');
+                        if (fileType[1] !== 'html') {
+                            app.dialog.alert('Allow .html only', 'Information');
+                        } else if (fileType === null) {
+                            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName + '.html'), '', 'utf-8');
+                            code_editor(project_open_active, fileName + '.html');
+                        } else {
+                            fs.writeFileSync(path.join(dir_project_www, 'pages/' + fileName), '', 'utf-8');
+                            code_editor(project_open_active, fileName);
+                        }
 
-        list_html(project_open_active);
+                        list_html(project_open_active);
 
-    });
-});
+                    });
+                }
+            },
+            {
+                text: '<span class="text-color-white">JS</span>',
+                onClick: function() {
+                    app.dialog.prompt('Filename (.js)', 'New Javascript File', function(fileName) {
+                        fileType = fileName.split('.');
+                        if (fileType[1] !== 'js') {
+                            app.dialog.alert('Allow .js only', 'Information');
+                        } else if (fileType === null) {
+                            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName + '.js'), '', 'utf-8');
+                            code_editor(project_open_active, fileName + '.js');
+                        } else {
+                            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName), '', 'utf-8');
+                            code_editor(project_open_active, fileName);
+                        }
 
-$$(document).on('click', '#btn-create-js', function() {
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
+                        list_js(project_open_active);
+                    });
+                }
+            },
+            {
+                text: '<span class="text-color-white">CSS</span>',
+                onClick: function() {
+                    app.dialog.prompt('Filename (.css)', 'New CSS File', function(fileName) {
+                        fileType = fileName.split('.');
+                        if (fileType[1] !== 'css') {
+                            app.dialog.alert('Allow .css only', 'Information');
+                        } else if (fileType === null) {
+                            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName + '.js'), '', 'utf-8');
+                            code_editor(project_open_active, fileName + '.css');
+                        } else {
+                            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName), '', 'utf-8');
+                            code_editor(project_open_active, fileName);
+                        }
 
-    app.dialog.prompt('Filename', 'New Javascript File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'js') {
-            app.dialog.alert('Allow .js only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName + '.js'), '', 'utf-8');
-            code_editor(project_open_active, fileName + '.js');
-        } else {
-            fs.writeFileSync(path.join(dir_project_www, 'js_app/' + fileName), '', 'utf-8');
-            code_editor(project_open_active, fileName);
-        }
-
-        list_js(project_open_active);
-    });
-});
-
-$$(document).on('click', '#btn-create-css', function() {
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, project_open_active);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    app.dialog.prompt('Filename', 'New CSS File', function(fileName) {
-        fileType = fileName.split('.');
-        if (fileType[1] !== 'css') {
-            app.dialog.alert('Allow .css only', 'Information');
-        } else if (fileType === null) {
-            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName + '.js'), '', 'utf-8');
-            code_editor(project_open_active, fileName + '.css');
-        } else {
-            fs.writeFileSync(path.join(dir_project_www, 'css/' + fileName), '', 'utf-8');
-            code_editor(project_open_active, fileName);
-        }
-
-        list_css(project_open_active);
-    });
+                        list_css(project_open_active);
+                    });
+                }
+            },
+            {
+                text: '<span class="text-color-red">Cancel</span>'
+            }
+        ],
+        verticalButtons: true,
+        animate: false
+    }).open();
 });
 
 $$(document).on('click', '#btn-create-file', function() {
@@ -546,6 +627,7 @@ $$(document).on('click', '#btn-remove-other', function() {
                 fs.unlink(path.join(dir_project_www, 'file/' + fileName), function(err) {
                     if (err) return console.log(err);
                     list_other(project_open_active);
+                    list_img(project_open_active);
                 });
             }
         }],
@@ -614,50 +696,53 @@ $$(document).on('click', '#btn-nowdb-linux-portable', function() {
     downloadNowDB("https://github.com/NowDB/Data-Manager/blob/master/NowDB%20Data%20Manager-1.1.0.AppImage?raw=true", path.join(dir_visual7, 'NowDB Data Manager-1.1.0.AppImage'));
 });
 
-function downloadNowDB(file_url, targetPath) {
-    dialog_nowdb = app.dialog.progress('<i class="material-icons">get_app</i>', progress_nowdb);
-    dialog_nowdb.setText('0 of 100%');
+function downloadNowDB(url, dest, cb) {
+    var progress_nowdb = 0;
+    var dialog_nowdb = '';
 
-    var received_bytes = 0;
     var total_bytes = 0;
+    var received_bytes = 0;
 
-    var req = request({
-        method: 'GET',
-        uri: file_url
+    var file = fs.createWriteStream(dest);
+
+    var req = https.get(url, function(response) {
+        if ([301, 302].indexOf(response.statusCode) !== -1) {
+            body = [];
+            downloadNowDB(response.headers.location, dest, cb);
+        } else if ([200].indexOf(response.statusCode) !== -1) {
+            dialog_nowdb = app.dialog.progress('<i class="material-icons">get_app</i>', progress_nowdb);
+
+            response.on('data', (chunk) => {
+                received_bytes += chunk.length;
+                percentage = (received_bytes * 100) / total_bytes;
+                percent = Math.round(percentage).toFixed(0);
+
+                dialog_nowdb.setProgress(percent);
+                dialog_nowdb.setText(percent + ' %');
+            });
+
+            response.on('end', () => {
+                dialog_nowdb.close();
+
+                if (os.platform() === "darwin") {
+                    ptyProcess.write('open ~/Visual7\r');
+                } else if (os.platform() === "linux") {
+                    ptyProcess.write('nautilus ~/Visual7\r');
+                } else {
+                    ptyProcess.write('cd %homepath%\r');
+                    ptyProcess.write('cd Visual7\r');
+                    ptyProcess.write('explorer .\r');
+                }
+            });
+        }
+
+        response.pipe(file);
+        file.on('finish', function() {
+            file.close();
+        });
     });
-
-    var out = fs.createWriteStream(targetPath);
-    req.pipe(out);
 
     req.on('response', function(data) {
         total_bytes = parseInt(data.headers['content-length']);
     });
-
-    req.on('data', function(chunk) {
-        received_bytes += chunk.length;
-
-        showProgress(received_bytes, total_bytes);
-    });
-
-    req.on('end', function() {
-        dialog_nowdb.close();
-
-        if (os.platform() === "darwin") {
-            ptyProcess.write('open ~/Visual7\r');
-        } else if (os.platform() === "linux") {
-            ptyProcess.write('nautilus ~/Visual7\r');
-        } else {
-            ptyProcess.write('cd %homepath%\r');
-            ptyProcess.write('cd Visual7\r');
-            ptyProcess.write('explorer .\r');
-        }
-    });
-}
-
-function showProgress(received, total) {
-    var percentage = (received * 100) / total;
-    var percent = Math.round(percentage).toFixed(0);
-    dialog_nowdb.setProgress(percent);
-    dialog_nowdb.setText(percent + ' of 100%');
-    // console.log(percentage + "% | " + received + " bytes out of " + total + " bytes.");
-}
+};

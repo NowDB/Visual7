@@ -28,8 +28,10 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
             });
 
             editorRequire(['vs/editor/editor.main'], function() {
+                me = monaco.editor;
+                we = window.editor;
+
                 loadTheme('Monokai').then(function(callback) {
-                    me = monaco.editor;
                     me.defineTheme(callback.base, {
                         base: callback.base,
                         inherit: true,
@@ -38,7 +40,6 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
                     });
                     me.setTheme(callback.base);
 
-                    we = window.editor;
                     we = me.create(document.getElementById('editor-container'), {
                         value: code_data,
                         parameterHints: { enabled: true },
@@ -61,61 +62,6 @@ $$(document).on('page:init', '.page[data-name="editor"]', function(callback) {
                 });
 
                 app.preloader.hide();
-
-                // Terminal Project
-                termEditor = new Terminal({
-                    fontFamily: 'Fira Code, Iosevka, monospace',
-                    fontSize: 12,
-                    experimentalCharAtlas: 'dynamic'
-                });
-
-                termEditor.setOption('theme', { background: '#1e1e1e' });
-
-                const fitAddon = new FitAddon();
-                termEditor.loadAddon(fitAddon);
-
-                const terminalElem = document.getElementById('term-editor');
-                termEditor.open(terminalElem);
-
-                fitAddon.fit();
-
-                const shell = process.env[os.platform() === 'win32' ? 'COMSPEC' : 'SHELL'];
-                ptyProcessEditor = pty.spawn(shell, [], {
-                    name: 'xterm-color',
-                    cols: term.cols,
-                    rows: term.rows,
-                    cwd: process.cwd(),
-                    env: process.env
-                });
-
-                termEditor.onData(function(data) {
-                    ptyProcessEditor.write(data);
-                });
-
-                termEditor.onResize(function(size) {
-                    ptyProcessEditor.resize(
-                        Math.max(size ? size.cols : termEditor.cols, 1),
-                        Math.max(size ? size.rows : termEditor.rows, 1)
-                    );
-                });
-
-                ptyProcessEditor.on('data', function(data) {
-                    termEditor.write(data);
-                });
-
-                if (os.platform() === "darwin") {
-                    ptyProcessEditor.write('cd ~\r');
-                    ptyProcessEditor.write('cd Visual7\r');
-                    ptyProcessEditor.write('cd ' + project + '\r');
-                } else if (os.platform() === "linux") {
-                    ptyProcessEditor.write('cd ~\r');
-                    ptyProcessEditor.write('cd Visual7\r');
-                    ptyProcessEditor.write('cd ' + project + '\r');
-                } else {
-                    ptyProcessEditor.write('cd %homepath%\r');
-                    ptyProcessEditor.write('cd Visual7\r');
-                    ptyProcessEditor.write('cd ' + project + '\r');
-                }
             });
         }
     });
@@ -264,16 +210,6 @@ function code_editor(project, filename) {
         }
     });
 }
-
-// $$(document).on('click', '#btn-code-save', function() {
-//     var editor_value = we.getValue();
-//     fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
-//     app.toast.create({
-//         text: 'File Saved',
-//         position: 'center',
-//         closeTimeout: 2000
-//     }).open();
-// });
 
 $$(document).on('click', '#btn-code-remove', function() {
     app.dialog.create({

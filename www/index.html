@@ -14,8 +14,6 @@
     <link rel="stylesheet" href="fonts/material-icons.css">
     <link rel="stylesheet" href="designer/grapesjs/css/grapes.min.css">
     <link rel="stylesheet" href="../node_modules/xterm/css/xterm.css" />
-    <script type="text/javascript" src="../node_modules/xterm/lib/xterm.js"></script>
-    <script type="text/javascript" src="../node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
     <title>Visual7</title>
 </head>
 
@@ -75,16 +73,30 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="js/framework7.bundle.min.js"></script>
-    <script type="text/javascript" src="designer/grapesjs/grapes.min.js"></script>
-    <script type="text/javascript" src="designer/grapesjs/grapesjs-plugin-export.min.js"></script>
-    <script type="text/javascript" src="designer/js/constant.js"></script>
-    <script type="text/javascript" src="designer/js/routes.js"></script>
-    <script type="text/javascript" src="designer/js/init.js"></script>
-    <script type="text/javascript" src="designer/js/listener.js"></script>
-    <script type="text/javascript" src="designer/js/project.js"></script>
-    <script type="text/javascript" src="designer/js/editor.js"></script>
-    <script type="text/javascript" src="designer/js/designer.js"></script>
+    <div class="sheet-modal sheet-terminal">
+        <div class="toolbar">
+            <div class="toolbar-inner">
+                <div class="left">Terminal</div>
+                <div class="right">
+                    <a class="link sheet-close text-color-white" href="#">
+                        <i class="icon f7-icons">multiply</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="sheet-modal-inner" id="term"></div>
+    </div>
+
+    <script src="js/framework7.bundle.min.js"></script>
+    <script src="designer/grapesjs/grapes.min.js"></script>
+    <script src="designer/grapesjs/grapesjs-plugin-export.min.js"></script>
+    <script src="designer/js/constant.js"></script>
+    <script src="designer/js/routes.js"></script>
+    <script src="designer/js/init.js"></script>
+    <script src="designer/js/listener.js"></script>
+    <script src="designer/js/project.js"></script>
+    <script src="designer/js/editor.js"></script>
+    <script src="designer/js/designer.js"></script>
 </body>
 
 </html>

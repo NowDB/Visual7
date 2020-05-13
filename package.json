@@ -14,7 +14,8 @@
     "build": {
         "appId": "com.nowdb.visual7",
         "dmg": {
-            "contents": [{
+            "contents": [
+                {
                     "x": 110,
                     "y": 150
                 },
@@ -70,7 +71,6 @@
         "open-file-explorer": "^1.0.2",
         "pretty": "^2.0.0",
         "rebuild": "^0.1.2",
-        "request": "^2.88.2",
         "sha1": "^1.1.1",
         "shelljs": "^0.8.3",
         "sudo-prompt": "^9.1.1",
