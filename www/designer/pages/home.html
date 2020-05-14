@@ -7,7 +7,7 @@
                     <i class="icon material-icons color-gray">menu</i>
                 </a>
             </div>
-            <div class="title" id="page-title">Welcome to Visual7</div>
+            <div class="title" id="page-title" style="font-weight:normal;">Welcome to Visual7</div>
             <div class="right">
                 <a class="button sheet-open" href="#" data-sheet=".sheet-terminal" title="Open Terminal">
                     <i class="icon f7-icons color-gray">greaterthan_square</i>
@@ -19,7 +19,55 @@
         <div class="row no-margin no-padding" style="height: 100%;">
             <div class="col-100 no-margin padding-top padding-left padding-right" style="height: 100%;">
                 <div class="row no-padding" style="height: 62%; min-height: 50px">
-                    <div class="col-40 no-padding">
+                    <div class="col-70 no-padding">
+                        <div class="card no-margin margin-bottom">
+                            <div class="card-header">New Project</div>
+                            <div class="card-content card-content-padding">
+                                <div class="row">
+                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;">
+                                        <span style="font-size:small;">Single View</span>
+                                        <br/><br/>
+                                        <a class="button button-outline button-small color-deeporange" id="btn-application-new-electron">Create</a>
+                                    </div>
+                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;">
+                                        <span style="font-size:small;">Split View</span>
+                                        <br/><br/>
+                                        <a class="button button-outline button-small color-blue">Coming Soon</a>
+                                    </div>
+                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;">
+                                        <span style="font-size:small;">Split View (2)</span>
+                                        <br/><br/>
+                                        <a class="button button-outline button-small color-blue">Coming Soon</a>
+                                    </div>
+                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;">
+                                        <span style="font-size:small;">Single Tabs</span>
+                                        <br/><br/>
+                                        <a class="button button-outline button-small color-blue">Coming Soon</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card no-margin">
+                            <div class="card-header">NowDB Data Manager</div>
+                            <div class="card-content card-content-padding">
+                                <div class="row">
+                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;"><i class="f7-icons" style="font-size: x-large;">logo_windows</i><br/>Windows<br/>
+                                        <a class="text-color-deeporange" id="btn-nowdb-windows-portable">Portable (42 MB)</a>
+                                    </div>
+                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;"><i class="f7-icons" style="font-size: x-large;">logo_windows</i><br/>Windows<br/>
+                                        <a class="text-color-deeporange" id="btn-nowdb-windows-installer">Installer (46 MB)</a>
+                                    </div>
+                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;"><i class="f7-icons" style="font-size: x-large;">logo_apple</i><br/>MacOS<br/>
+                                        <a class="text-color-deeporange" id="btn-nowdb-macos-installer">Installer (74 MB)</a>
+                                    </div>
+                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;"><i class="f7-icons" style="font-size: x-large;">macwindow</i><br/>Linux<br/>
+                                        <a class="text-color-deeporange" id="btn-nowdb-linux-portable">Portable (65 MB)</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-30 no-padding">
                         <div class="card no-margin">
                             <div class="card-header">Documentation</div>
                             <div class="card-content">
@@ -29,27 +77,6 @@
                                         <li><a onclick="shell.openExternal('https://electronjs.org');">ElectronJS</a></li>
                                         <li><a onclick="shell.openExternal('https://nodejs.org');">NodeJS</a></li>
                                     </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-60 no-padding">
-                        <div class="card no-margin">
-                            <div class="card-header">NowDB Data Manager</div>
-                            <div class="card-content card-content-padding">
-                                <div class="row">
-                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;"><i class="f7-icons" style="font-size: x-large;">logo_windows</i><br/>Windows<br/>
-                                        <a id="btn-nowdb-windows-portable">Portable (42 MB)</a>
-                                    </div>
-                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;"><i class="f7-icons" style="font-size: x-large;">logo_windows</i><br/>Windows<br/>
-                                        <a id="btn-nowdb-windows-installer">Installer (46 MB)</a>
-                                    </div>
-                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;"><i class="f7-icons" style="font-size: x-large;">logo_apple</i><br/>MacOS<br/>
-                                        <a id="btn-nowdb-macos-installer">Installer (74 MB)</a>
-                                    </div>
-                                    <div class="col-25 elevation-3 padding text-align-center" style="font-size:x-small;"><i class="f7-icons" style="font-size: x-large;">macwindow</i><br/>Linux<br/>
-                                        <a id="btn-nowdb-linux-portable">Portable (65 MB)</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
