@@ -20,17 +20,27 @@ const editorRequire = editorLoader.require;
 const { Terminal } = require('xterm');
 const { FitAddon } = require('xterm-addon-fit');
 const beautify = require('beautify');
-let term = null;
-let ptyProcess = null;
-let termEditor = null;
-let ptyProcessEditor = null;
+
 let file_open_active = '';
 let filepath_open_active = '';
-let project_open_active = '';
 let tab_link_active = '';
 let tab_project_active = '';
 let tab_dir_active = '';
 let editor_value = '';
+
+// Global Variables
+let term = null;
+let ptyProcess = null;
+let active_os = os.homedir();
+let active_visual7 = path.join(os.homedir(), 'Visual7/');
+let active_project = '';
+let active_dir_project = '';
+let active_dir_project_www = '';
+let active_file_name = '';
+let active_file_name_replace = '';
+let active_file_type = '';
+let active_file_dir = '';
+
 // UI Designer
 let editor = null;
 let blockManager = null;
