@@ -4,37 +4,25 @@
         <div class="navbar-inner">
             <div class="left">
                 <a class="link icon-only" title="Close Project" id="btn-reload">
-                    <i class="icon material-icons text-color-gray">clear</i>
+                    <i class="icon f7-icons text-color-gray">arrow_left_circle</i>
                 </a>
             </div>
-            <div class="title" id="project-name">Project</div>
+            <div class="title" id="project-name" style="font-weight:normal;">Project</div>
             <div class="right">
+                <a class="link icon-only text-color-deeporange" id="btn-app-dir" title="Directory">
+                    <i class="icon f7-icons">folder</i>
+                </a>
             </div>
         </div>
     </div>
     <div class="toolbar toolbar-top">
         <div class="toolbar-inner">
-            <a class="link icon-only text-color-deeporange" id="btn-app-dir" title="Directory">
-                <i class="icon f7-icons">folder</i>
-            </a>
-            <a class="link icon-only text-color-pink" id="btn-app-distribute" title="Distribute">
-                <i class="icon f7-icons">archivebox</i>
-            </a>
-            <a class="link icon-only text-color-teal" id="btn-app-run" title="Run">
-                <i class="icon f7-icons">play_rectangle</i>
-            </a>
-            <a class="link sheet-open" data-sheet=".sheet-terminal" title="Terminal">
-                <i class="icon f7-icons color-gray">greaterthan_square</i>
-            </a>
+            <a href="javascript:void(0)" class="link"></a>
+            <a href="javascript:void(0)" class="link padding"><button class="button button-outline button-round button-small" id="btn-create-new-file" style="font-weight:normal;">Create New File</button></a>
+            <a href="javascript:void(0)" class="link"></a>
         </div>
     </div>
     <div class="page-content">
-        <!-- <div class="row padding">
-            <button class="col button button-outline button-round link popover-open" href="#" data-popover="#create-file">Create New File</button>
-        </div> -->
-        <div class="row padding">
-            <button class="col button button-outline button-round link" id="btn-create-new-file">Create New File</button>
-        </div>
         <div class="treeview">
             <div class="treeview-item">
                 <div class="treeview-item-root">

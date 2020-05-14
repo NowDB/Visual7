@@ -47,6 +47,7 @@ let func_tab_open = null;
 let func_tab_open_sibling = null;
 let func_tab_close = null;
 let func_tab_toolbar = null;
+let func_tab_toolbar_close = null;
 let func_file_save = null;
 let func_file_remove = null;
 

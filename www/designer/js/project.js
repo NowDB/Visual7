@@ -543,7 +543,7 @@ $$(document).on('click', '#btn-create-new-file', function() {
                 text: '<span class="text-color-red">Cancel</span>'
             }
         ],
-        verticalButtons: true,
+        verticalButtons: false,
         animate: false
     }).open();
 });
@@ -552,36 +552,51 @@ $$(document).on('click', '#btn-create-new-file', function() {
  * Keyboard Binding
  */
 
-// document.addEventListener('keydown', function(event) {
-//     var dir_project = path.join(active_visual7, active_project);
-//     var dir_project_www = path.join(dir_project, 'www/');
+document.addEventListener('keydown', function(event) {
+    if (event.code == 'KeyS' && (event.ctrlKey || event.metaKey)) {
+        page_history = app.views.main.history;
+        page_count = page_history.length;
+        page_current = page_history[page_count - 1];
 
-//     if (event.code == 'KeyS' && (event.ctrlKey || event.metaKey)) {
-//         page_history = app.views.main.history;
-//         page_count = page_history.length;
-//         page_current = page_history[page_count - 1];
+        if (page_current.split('/')[1] === "designer") {
+            editor_value = editor.getHtml();
+            editor_value = pretty(editor_value, { ocd: true });
+            editor_style = editor.getCss();
+            editor_style = pretty(editor_style, { ocd: true });
 
-//         if (page_current.split('/')[1] === "designer") {
-//             editor_value = editor.getHtml();
-//             editor_value = pretty(editor_value, { ocd: true });
+            // save designer
+            fs.writeFileSync(active_file_path, editor_value, 'utf-8');
+            var customcss = path.join(path.join(active_dir_project_www, 'css'), 'custom.css');
+            fs.readFile(customcss, 'utf-8', (err, code_data) => {
+                var customcss_value = beautify(editor_style, { format: 'css' });
+                customcss_value = code_data + customcss_value;
+                fs.writeFileSync(customcss, customcss_value, 'utf-8');
 
-//             fs.writeFileSync(path.join(dir_project_www, 'pages/' + file_open_active), editor_value, 'utf-8');
+                func_tab_open();
+                func_tab_toolbar(active_file_name, active_file_type);
+            });
 
-//             code_editor(active_project, file_open_active);
+            window.localStorage.clear();
 
-//             window.localStorage.clear();
-//         } else if (page_current.split('/')[1] === "editor") {
-//             var editor_value = we.getValue();
-//             fs.writeFileSync(filepath_open_active, editor_value, 'utf-8');
-//         }
+            app.toast.create({
+                text: 'File Saved',
+                position: 'center',
+                closeTimeout: 2000
+            }).open();
+        } else if (page_current.split('/')[1] === "editor") {
+            if (active_file_name !== '') {
+                var editor_value = we[active_file_name].getValue();
+                fs.writeFileSync(active_file_path, editor_value, 'utf-8');
 
-//         app.toast.create({
-//             text: 'File Saved',
-//             position: 'center',
-//             closeTimeout: 2000
-//         }).open();
-//     }
-// });
+                app.toast.create({
+                    text: 'File Saved',
+                    position: 'center',
+                    closeTimeout: 2000
+                }).open();
+            }
+        }
+    }
+});
 
 /**
  * NowDB Data Manager
