@@ -32,6 +32,10 @@ ipcMain.on('getmac', (event, args) => {
     event.sender.send('getmac-return', '{"uuid":"' + uuid + '"}');
 });
 
+ipcMain.on('devtool', (event, args) => {
+    mainWindow.webContents.openDevTools();
+});
+
 app.on('ready', createWindow);
 
 app.on('window-all-closed', function() {

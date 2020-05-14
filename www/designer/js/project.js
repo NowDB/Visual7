@@ -2,6 +2,11 @@
  * Welcome
  */
 
+$$(document).on('click', '#btn-dev', function() {
+    const { ipcRenderer } = require('electron');
+    ipcRenderer.send('devtool');
+});
+
 panel_left_morph();
 
 var terminal_home = function() {
@@ -55,6 +60,23 @@ $$(document).on('click', '#btn-reload', function() {
 app.sheet.open('.sheet-terminal');
 
 terminal_home();
+
+if (os.platform() === "darwin") {
+    ptyProcess.write('cd ~\r');
+    ptyProcess.write('cd Visual7\r');
+    ptyProcess.write('cd ' + active_project + '\r');
+    ptyProcess.write('clear\r');
+} else if (os.platform() === "linux") {
+    ptyProcess.write('cd ~\r');
+    ptyProcess.write('cd Visual7\r');
+    ptyProcess.write('cd ' + active_project + '\r');
+    ptyProcess.write('clear\r');
+} else {
+    ptyProcess.write('cd %homepath%\r');
+    ptyProcess.write('cd Visual7\r');
+    ptyProcess.write('cd ' + active_project + '\r');
+    ptyProcess.write('cls\r');
+}
 
 $$(document).on('page:afterin', '.page[data-name="home"]', function(e) {
     panel_left_morph();
