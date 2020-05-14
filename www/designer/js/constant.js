@@ -21,32 +21,41 @@ const { Terminal } = require('xterm');
 const { FitAddon } = require('xterm-addon-fit');
 const beautify = require('beautify');
 
-let file_open_active = '';
-let filepath_open_active = '';
-let tab_link_active = '';
-let tab_project_active = '';
-let tab_dir_active = '';
-let editor_value = '';
-
-// Global Variables
 let term = null;
 let ptyProcess = null;
+
 let active_os = os.homedir();
 let active_visual7 = path.join(os.homedir(), 'Visual7/');
 let active_project = '';
+
 let active_dir_project = '';
 let active_dir_project_www = '';
+
 let active_file_name = '';
 let active_file_name_replace = '';
 let active_file_type = '';
 let active_file_dir = '';
+let active_file_path = '';
+
+let active_tab_file = '';
+let active_tab_file_replace = '';
+let active_tab_file_type = '';
+let active_tab_file_dir = '';
+let active_tab_file_path = '';
+
+let func_tab_open = null;
+let func_tab_open_sibling = null;
+let func_tab_close = null;
+let func_tab_toolbar = null;
+let func_file_save = null;
+let func_file_remove = null;
+
+let me = null; // monaco editor
+var we = []; // window editor
 
 // UI Designer
 let editor = null;
 let blockManager = null;
-// Code Editor
-let me = null;
-var we = [];
 
 fs.readdir(path.join(os.homedir(), 'Visual7/'), (err, dir) => {
     if (err) {
