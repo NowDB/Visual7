@@ -28,6 +28,8 @@ let file_open_active = '';
 let filepath_open_active = '';
 let project_open_active = '';
 let tab_link_active = '';
+let tab_project_active = '';
+let tab_dir_active = '';
 let editor_value = '';
 // UI Designer
 let editor = null;

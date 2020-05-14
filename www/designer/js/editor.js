@@ -10,6 +10,8 @@ $$(document).on('click', '#btn-code-editor', function() {
     var file_type = $$(this).attr('data-type');
 
     tab_link_active = file;
+    tab_project_active = project;
+    tab_dir_active = file_dir;
 
     var dir_visual7 = path.join(os.homedir(), 'Visual7/');
     var dir_project = path.join(dir_visual7, project);
@@ -30,7 +32,10 @@ $$(document).on('click', '#btn-code-editor', function() {
     $$(document).find('#tab-link-' + file_replace).remove();
     $$(document).find('#tab-' + file_replace).remove();
 
-    $$(document).find('#tab-link-editor').append('<a id="tab-link-' + file_replace + '" class="tab-link tab-link-active" href="#tab-' + file_replace + '" data-file="' + file + '"><span style="padding-bottom:4px;">' + file + '</span>&nbsp;<i id="btn-code-close" data-fileraw="' + file + '" data-file="' + file_replace + '" data-dir="' + file_dir + '" data-type="' + file_type + '" data-project="' + project + '" class="material-icons no-margin no-padding" style="font-size:large;">close</i></a>');
+    $$(document).find('#tab-link-editor').append('<a id="tab-link-' + file_replace + '" class="tab-link tab-link-active" href="#tab-' + file_replace + '" data-file="' + file + '" data-dir="' + file_dir + '" data-project="' + project + '">' +
+        '   <span style="padding-bottom:4px;font-size:small;">' + file + '</span>' +
+        '   <i id="btn-code-close" data-file="' + file_replace + '" data-fileraw="' + file + '" data-dir="' + file_dir + '" data-type="' + file_type + '" data-project="' + project + '" class="material-icons no-margin no-padding" style="font-size:small;">close</i>' +
+        '</a>');
     $$(document).find('#tab-editor').append('<div id="tab-' + file_replace + '" class="page-content tab tab-active"><div style="height:100%;overflow-y: hidden;" id="editor-' + file_replace + '"></div></div>');
 
     app.preloader.show();
@@ -136,6 +141,8 @@ $$(document).on('click', '#btn-code-editor', function() {
 
 $$(document).on('click', '.tab-link', function() {
     tab_link_active = $$(this).attr('data-file');
+    tab_project_active = $$(this).attr('data-project');
+    tab_dir_active = $$(this).attr('data-dir');
 });
 
 $$(document).on('click', '#btn-code-close', function() {
@@ -325,6 +332,11 @@ $$(document).on('click', '#btn-code-close', function() {
 // }
 
 $$(document).on('click', '#btn-code-remove', function() {
+    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
+    var dir_project = path.join(dir_visual7, tab_project_active);
+    var dir_project_www = path.join(dir_project, 'www/');
+
+    var file_remove_path = path.join(path.join(dir_project_www, tab_dir_active), tab_link_active);
     app.dialog.create({
         title: 'Information',
         text: 'Remove This File <span>' + file_open_active + ' </span>?',
@@ -333,17 +345,31 @@ $$(document).on('click', '#btn-code-remove', function() {
         }, {
             text: '<span>Ok</span>',
             onClick: function() {
-                fs.unlink(path.join(filepath_open_active), function(err) {
+                fs.unlink(file_remove_path, function(err) {
                     if (err) {
                         console.log(err);
                         window.location.reload();
                     } else {
-                        list_html(project_open_active);
-                        list_js(project_open_active);
-                        list_css(project_open_active);
-                        list_other(project_open_active);
+                        //Open Sibling
+                        var file_replace = tab_link_active.split(".").join("_");
+                        var siblings = $$(document).find("#tab-link-" + file_replace).siblings().attr('data-file');
+                        if (siblings !== undefined) {
+                            var file_replace_siblings = siblings.split(".").join("_");
+                            app.tab.show('#tab-' + file_replace_siblings);
+                        }
 
-                        code_editor(project_open_active, 'index.html');
+                        //Close Tab
+                        $$(document).find('#tab-link-' + file_replace).remove();
+                        $$(document).find('#tab-' + file_replace).remove();
+
+                        $$(document).find('#btn-code-remove').hide();
+                        $$(document).find('#btn-design-html').hide();
+                        $$(document).find('.btn-snippet-js').hide();
+
+                        list_html(tab_project_active);
+                        list_js(tab_project_active);
+                        list_css(tab_project_active);
+                        list_other(tab_project_active);
                     }
                 });
             }
