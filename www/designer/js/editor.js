@@ -12,7 +12,6 @@ $$(document).on('click', '#btn-code-editor', function() {
     active_file_name_replace = active_file_name.split(".").join("_");
     active_file_dir = $$(this).attr('data-dir');
     active_file_type = $$(this).attr('data-type');
-
     if (active_file_dir === "root") {
         if (active_file_name === "index.html") {
             active_file_path = path.join(active_dir_project_www, active_file_name);
@@ -23,6 +22,12 @@ $$(document).on('click', '#btn-code-editor', function() {
         active_file_path = path.join(active_dir_project_www, active_file_dir);
         active_file_path = path.join(active_file_path, active_file_name);
     }
+
+    active_tab_file = active_file_name;
+    active_tab_file_replace = active_file_name_replace;
+    active_tab_file_type = active_file_type;
+    active_tab_file_dir = active_file_dir;
+    active_tab_file_path = active_file_path;
 
     page_history = app.views.main.history;
     page_count = page_history.length;
