@@ -486,67 +486,125 @@ function list_img() {
  * Create File 
  */
 
+$$(document).on('click', '#btn-create-html', function() {
+    app.popover.close();
 
-$$(document).on('click', '#btn-create-new-file', function() {
-    app.dialog.create({
-        title: 'Visual7',
-        text: 'Create New File',
-        buttons: [{
-                text: '<span class="text-color-white">HTML</span>',
-                onClick: function() {
-                    app.dialog.prompt('Filename (.html)', 'New HTML File', function(fileName) {
-                        fileType = fileName.split('.');
-                        if (fileType[1] !== 'html') {
-                            app.dialog.alert('Allow .html only', 'Information');
-                        } else if (fileType === null) {
-                            fs.writeFileSync(path.join(active_dir_project_www, 'pages/' + fileName + '.html'), '', 'utf-8');
-                        } else {
-                            fs.writeFileSync(path.join(active_dir_project_www, 'pages/' + fileName), '', 'utf-8');
-                        }
-                        list_html();
-                    });
+    app.dialog.prompt('Filename (.html)', 'New HTML File', function(fileName) {
+        fs.readFile(path.join(active_dir_project_www, 'pages/' + fileName), function(err, data) {
+            if (err) {
+                fileType = fileName.split('.');
+                if (fileType[1] !== 'html') {
+                    app.dialog.alert('Allow .html only', 'Information');
+                } else if (fileType === null) {
+                    fs.writeFileSync(path.join(active_dir_project_www, 'pages/' + fileName + '.html'), '', 'utf-8');
+                } else {
+                    fs.writeFileSync(path.join(active_dir_project_www, 'pages/' + fileName), '', 'utf-8');
                 }
-            },
-            {
-                text: '<span class="text-color-white">JS</span>',
-                onClick: function() {
-                    app.dialog.prompt('Filename (.js)', 'New Javascript File', function(fileName) {
-                        fileType = fileName.split('.');
-                        if (fileType[1] !== 'js') {
-                            app.dialog.alert('Allow .js only', 'Information');
-                        } else if (fileType === null) {
-                            fs.writeFileSync(path.join(active_dir_project_www, 'js_app/' + fileName + '.js'), '', 'utf-8');
-                        } else {
-                            fs.writeFileSync(path.join(active_dir_project_www, 'js_app/' + fileName), '', 'utf-8');
-                        }
-                        list_js();
-                    });
-                }
-            },
-            {
-                text: '<span class="text-color-white">CSS</span>',
-                onClick: function() {
-                    app.dialog.prompt('Filename (.css)', 'New CSS File', function(fileName) {
-                        fileType = fileName.split('.');
-                        if (fileType[1] !== 'css') {
-                            app.dialog.alert('Allow .css only', 'Information');
-                        } else if (fileType === null) {
-                            fs.writeFileSync(path.join(active_dir_project_www, 'css/' + fileName + '.js'), '', 'utf-8');
-                        } else {
-                            fs.writeFileSync(path.join(active_dir_project_www, 'css/' + fileName), '', 'utf-8');
-                        }
-                        list_css();
-                    });
-                }
-            },
-            {
-                text: '<span class="text-color-red">Cancel</span>'
+                list_html();
+                func_code_open(fileName, 'pages', 'html');
+            } else {
+                app.dialog.alert('File Exist');
             }
-        ],
-        verticalButtons: false,
-        animate: false
-    }).open();
+        });
+    });
 });
+
+$$(document).on('click', '#btn-create-js', function() {
+    app.popover.close();
+
+    app.dialog.prompt('Filename (.js)', 'New Javascript File', function(fileName) {
+        fs.readFile(path.join(active_dir_project_www, 'js_app/' + fileName), function(err, data) {
+            if (err) {
+                fileType = fileName.split('.');
+                if (fileType[1] !== 'js') {
+                    app.dialog.alert('Allow .js only', 'Information');
+                } else if (fileType === null) {
+                    fs.writeFileSync(path.join(active_dir_project_www, 'js_app/' + fileName + '.js'), '', 'utf-8');
+                } else {
+                    fs.writeFileSync(path.join(active_dir_project_www, 'js_app/' + fileName), '', 'utf-8');
+                }
+                list_js();
+                func_code_open(fileName, 'js_app', 'javascript');
+            } else {
+                app.dialog.alert('File Exist');
+            }
+        });
+    });
+});
+
+$$(document).on('click', '#btn-create-css', function() {
+    app.popover.close();
+
+    app.dialog.prompt('Filename (.css)', 'New CSS File', function(fileName) {
+        fs.readFile(path.join(active_dir_project_www, 'css/' + fileName), function(err, data) {
+            if (err) {
+                fileType = fileName.split('.');
+                if (fileType[1] !== 'css') {
+                    app.dialog.alert('Allow .css only', 'Information');
+                } else if (fileType === null) {
+                    fs.writeFileSync(path.join(active_dir_project_www, 'css/' + fileName + '.js'), '', 'utf-8');
+                } else {
+                    fs.writeFileSync(path.join(active_dir_project_www, 'css/' + fileName), '', 'utf-8');
+                }
+                list_css();
+                func_code_open(fileName, 'css', 'css');
+            } else {
+                app.dialog.alert('File Exist');
+            }
+        });
+    });
+});
+
+func_code_open = function(file, dir, type) {
+    // save previous
+    if (active_file_name !== '') {
+        func_file_save(active_file_name, active_file_path);
+    }
+
+    active_file_name = file;
+    active_file_name_replace = active_file_name.split(".").join("_");
+    active_file_dir = dir;
+    active_file_type = type;
+
+    if (active_file_dir === "root") {
+        if (active_file_name === "index.html") {
+            active_file_path = path.join(active_dir_project_www, active_file_name);
+        } else if (active_file_name === "main.js" || active_file_name === "package.json") {
+            active_file_path = path.join(active_dir_project, active_file_name);
+        }
+    } else {
+        active_file_path = path.join(active_dir_project_www, active_file_dir);
+        active_file_path = path.join(active_file_path, active_file_name);
+    }
+
+    page_history = app.views.main.history;
+    page_count = page_history.length;
+    page_current = page_history[page_count - 1];
+
+    if (page_current.split('/')[1] === "designer") {
+        editor_value = editor.getHtml();
+        editor_value = pretty(editor_value, { ocd: true });
+        editor_style = editor.getCss();
+        editor_style = pretty(editor_style, { ocd: true });
+
+        // save designer
+        fs.writeFileSync(active_file_path, editor_value, 'utf-8');
+        var customcss = path.join(path.join(active_dir_project_www, 'css'), 'custom.css');
+        fs.readFile(customcss, 'utf-8', (err, code_data) => {
+            var customcss_value = beautify(editor_style, { format: 'css' });
+            customcss_value = code_data + customcss_value;
+            fs.writeFileSync(customcss, customcss_value, 'utf-8');
+
+            func_tab_open();
+            func_tab_toolbar(active_file_name, active_file_type);
+
+            navigate_main_back();
+        });
+    } else {
+        func_tab_open();
+        func_tab_toolbar(active_file_name, active_file_type);
+    }
+}
 
 /**
  * Keyboard Binding

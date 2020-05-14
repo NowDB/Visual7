@@ -43,6 +43,7 @@ let active_tab_file_type = '';
 let active_tab_file_dir = '';
 let active_tab_file_path = '';
 
+let func_code_open = null;
 let func_tab_open = null;
 let func_tab_open_sibling = null;
 let func_tab_close = null;
