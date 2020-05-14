@@ -30,6 +30,12 @@ $$(document).on('click', '.tab-link', function() {
     active_tab_file_dir = $$(this).attr('data-dir');
     active_tab_file_path = $$(this).attr('data-path');
 
+    active_file_name = $$(this).attr('data-file');
+    active_file_name_replace = $$(this).attr('data-replace');
+    active_file_type = $$(this).attr('data-type');
+    active_file_dir = $$(this).attr('data-dir');
+    active_file_path = $$(this).attr('data-path');
+
     func_tab_toolbar(active_tab_file, active_tab_file_type);
 });
 
@@ -44,39 +50,21 @@ $$(document).on('click', '#btn-code-close', function() {
 });
 
 $$(document).on('click', '#btn-code-remove', function() {
-    var dir_visual7 = path.join(os.homedir(), 'Visual7/');
-    var dir_project = path.join(dir_visual7, tab_project_active);
-    var dir_project_www = path.join(dir_project, 'www/');
-
-    var file_remove_path = path.join(path.join(dir_project_www, tab_dir_active), tab_link_active);
     app.dialog.create({
         title: 'Information',
-        text: 'Remove This File <span>' + file_open_active + ' </span>?',
+        text: 'Remove This File <span>' + active_file_name + ' </span>?',
         buttons: [{
-            text: '<span>cancel</span>'
+            text: '<span>Cancel</span>'
         }, {
             text: '<span>Ok</span>',
             onClick: function() {
-                fs.unlink(file_remove_path, function(err) {
+                fs.unlink(active_file_path, function(err) {
                     if (err) {
                         console.log(err);
                         window.location.reload();
                     } else {
-                        //Open Sibling
-                        var file_replace = tab_link_active.split(".").join("_");
-                        var siblings = $$(document).find("#tab-link-" + file_replace).siblings().attr('data-file');
-                        if (siblings !== undefined) {
-                            var file_replace_siblings = siblings.split(".").join("_");
-                            app.tab.show('#tab-' + file_replace_siblings);
-                        }
-
-                        //Close Tab
-                        $$(document).find('#tab-link-' + file_replace).remove();
-                        $$(document).find('#tab-' + file_replace).remove();
-
-                        $$(document).find('#btn-code-remove').hide();
-                        $$(document).find('#btn-design-html').hide();
-                        $$(document).find('.btn-snippet-js').hide();
+                        func_tab_open_sibling(active_file_name_replace);
+                        func_tab_close(active_file_name_replace);
 
                         list_html();
                         list_js();
