@@ -125,16 +125,15 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                     copyDir(path.join(__dirname, 'js/'), path.join(dir_project_www, 'js/'));
                     copy(path.join(__dirname, 'LICENSE'), path.join(dir_project_www, 'LICENSE'));
 
-                    if (os.platform() === "darwin") {
-                        copyDir(path.join(__dirname, '../build/'), path.join(dir_project, 'build/'));
-                    }
-
                     // Template
                     copy(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'index.html'), path.join(dir_project_www, 'index.html'));
                     copy(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'main.js'), path.join(dir_project, 'main.js'));
                     copy(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'package.json'), path.join(dir_project, 'package.json'));
                     copyDir(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'js_app/'), path.join(dir_project_www, 'js_app/'));
                     copyDir(path.join(path.join(path.join(__dirname, 'sample/'), 'basic/'), 'pages/'), path.join(dir_project_www, 'pages/'));
+                    if (os.platform() === "darwin") {
+                        copyDir(path.join(path.join(path.join(__dirname, 'sample/'), 'build/')), path.join(dir_project, 'build/'));
+                    }
 
                     // Finilization
                     list_project();
@@ -147,7 +146,7 @@ $$(document).on('click', '#btn-application-new-electron', function() {
                         ptyProcess.write('cd ' + fileName + '\r');
                         ptyProcess.write('npm install -D electron@latest\r');
                         ptyProcess.write('npm install\r');
-                        ptyProcess.write('cd ..');
+                        ptyProcess.write('cd ..\r');
                         ptyProcess.write('clear\r');
                     } else if (os.platform() === "linux") {
                         app.progressbar.hide();
